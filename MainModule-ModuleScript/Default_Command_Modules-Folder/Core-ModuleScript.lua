@@ -1,0 +1,2173 @@
+return function ( Main, ModFolder, VH_Events )
+	
+	local Util_Events_Folder = game:GetService( "ReplicatedStorage" ):WaitForChild( "VH_Util" )
+	
+	local Players, TextService = game:GetService( "Players" ), game:GetService( "TextService" )
+	
+	Main.Commands.UpTime = {
+		
+		Alias = { "uptime", "serverage" },
+		
+		Description = "Prints how long the server has been up for",
+		
+		Category = "Core",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			if Silent then return true, "Server has been up for " .. string.format( "%.2d:%.2d:%.2d:%.2d", workspace.DistributedGameTime / ( 60 * 60 * 24 ), workspace.DistributedGameTime / ( 60 * 60 ) % 24, workspace.DistributedGameTime / 60 % 60, workspace.DistributedGameTime % 60 ) end
+			
+			Main.Util.SendMessage( Plr, "Server has been up for " .. string.format( "%.2d:%.2d:%.2d:%.2d", workspace.DistributedGameTime / ( 60 * 60 * 24 ), workspace.DistributedGameTime / ( 60 * 60 ) % 24, workspace.DistributedGameTime / 60 % 60, workspace.DistributedGameTime % 60 ), "Info" )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.Destroy = {
+		
+		Alias = { "destroy" },
+		
+		Description = "Destroys the admin",
+		
+		Category = "Core",
+		
+		NoTest = true,
+		
+		CanRun = "$owner, $debugger",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			Main.Destroy( )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.UpdateConfig = {
+		
+		Alias = { "updateconfig" },
+		
+		Description = "Prints your config updated to the latest version",
+		
+		Category = "Core",
+		
+		CanRun = "$owner, $debugger",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			if not game:GetService( "RunService" ):IsStudio( ) then return false, "Must be run from PlaySolo" end
+			
+			for a = 1, 500 do
+				
+				print( string.rep( " ", a % 2) )
+				
+			end
+			
+			print( Main.Util.CreateConfigString( ) .. "\n\n---------------------\n\nNext insert the 'V-Handle Setup' ( https://www.roblox.com/library/543870970/V-Handle-Setup ) model and paste the above text from 'local Config =' to 'return Config' into the new VH_Config\nFinally replace your V-Handle setup model in the ServerScriptService with this new one" )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.Update = {
+		
+		Alias = { "update" },
+		
+		Description = "Updates the module to the latest version",
+		
+		Category = "Core",
+		
+		NoTest = true,
+		
+		CanRun = "$superadmin, $debugger",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local NewMain = Main.GetLatest( )
+			
+			if not NewMain or type( NewMain ) == "string" then return false, NewMain end
+			
+			Main.Destroy( true )
+			
+			if pcall( function ( ) require( NewMain ) end ) and _G.VH_Admin then return true end
+			
+			require( game:GetService( "ServerStorage" ):WaitForChild( "EmergencyFunctions" ) )
+			
+			return true
+			
+		end
+		
+	}
+	
+	if game:GetService( "RunService" ):IsStudio( ) then
+		
+		Main.Commands.FakeUpdate = {
+			
+			Alias = { "fakeupdate" },
+			
+			Description = "Updates the modules using a clone of itself (Useful when debugging updates with an unpublished version of the admin)",
+			
+			Category = "Core",
+			
+			NoTest = true,
+			
+			CanRun = "$owner, $debugger",
+			
+			Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+				
+				if not Main.Clone then return false end
+				
+				local Clone = Main.Clone
+				
+				Main.Clone = nil
+				
+				Main.Destroy( true )
+				
+				if pcall( function ( ) require( Clone ) end ) and _G.VH_Admin then return true end
+				
+				require( game:GetService( "ServerStorage" ):WaitForChild( "EmergencyFunctions" ) )
+				
+				return true
+				
+			end
+			
+		}
+		
+	end
+	
+	Main.Commands.Version = {
+		
+		Alias = { "version" },
+		
+		Description = "Prints the current version of the admin",
+		
+		Category = "Core",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			if Silent then return true, "V-Handle Version - " .. Main.Changelog[ 2 ].Version .. "\nSetup Version - " .. Main.Changelog[ 2 ].SetupVersion .. ( Main.Changelog[ 2 ].Timestamp and "\nLast Updated - " .. Main.Util.FormatTime( Main.Changelog[ 2 ].Timestamp ) or "" ) end
+			
+			Main.Util.SendMessage( Plr, "V-Handle Version - " .. Main.Changelog[ 2 ].Version .. "\nSetup Version - " .. Main.Changelog[ 2 ].SetupVersion .. ( Main.Changelog[ 2 ].Timestamp and "\nLast Updated - " .. Main.Util.FormatTime( Main.Changelog[ 2 ].Timestamp ) or "" ), "Info" )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.ChangeLog = {
+		
+		Alias = { "changelog", "changes" },
+		
+		Description = "Prints the latest changes to the admin",
+		
+		Category = "Core",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.String, Name = "version_or_'versions'" } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Changelog
+			
+			if Args[ 1 ] then
+				
+				if Args[ 1 ]:sub( 1, 1 ) == Main.TargetLib.ValidChar then Args[ 1 ] = "1" end
+				
+				if Args[ 1 ]:lower( ) == "versions" then
+					
+					local Versions = { }
+					
+					for a = 2, 11 do
+						
+						Versions[ #Versions + 1 ] = Main.Changelog[ a ].Version .. ( Main.Changelog[ a ].Timestamp and " - " .. Main.Util.FormatTime( Main.Changelog[ a ].Timestamp ) or "" )
+						
+					end
+					
+					if Silent then return true, "V-Handle Versions:\n" .. table.concat( Versions, "\n" ) end
+					
+					Main.Util.SendMessage( Plr, "V-Handle Versions:\n" .. table.concat( Versions, "\n" ), "Info" )
+					
+					return true
+					
+				end
+				
+				local Pattern = "%f[%d]" .. Args[ 1 ] .. "%f[%D]"
+				
+				for a = 2, #Main.Changelog do
+					
+					if Main.Changelog[ a ].Version == Args[ 1 ] then
+						
+						Changelog = Main.Changelog[ a ]
+						
+						break
+						
+					else
+						
+						if Main.Changelog[ a ].Version:find( Pattern ) then
+							
+							Changelog = Main.Changelog[ a ]
+							
+						end
+						
+					end
+					
+				end
+				
+			else
+				
+				Changelog = Main.Changelog[ 2 ]
+				
+			end
+			
+			if not Changelog then return false, "Invalid version" end
+			
+			if Silent then return true, "Version - " .. Changelog.Version .. "\nSetupVersion - " .. Changelog.SetupVersion .. ( Changelog.Timestamp and "\nLast Updated - " .. Main.Util.FormatTime( Changelog.Timestamp ) or "" ) .. "\nContributors - " .. table.concat( Changelog.Contributors, ", " ) .. ( Changelog.Additions and "\nAdditions:\n" .. table.concat( Changelog.Additions, "\n" ) or "" ) .. ( Changelog.Removals and "\nRemovals:\n" .. table.concat( Changelog.Removals, "\n" ) or "" ) .. ( Changelog.Changes and "\nChanges:\n" .. table.concat( Changelog.Changes, "\n" ) or "" ) end
+			
+			Main.Util.SendMessage( Plr, "Version - " .. Changelog.Version .. "\nSetupVersion - " .. Changelog.SetupVersion .. ( Changelog.Timestamp and "\nLast Updated - " .. Main.Util.FormatTime( Changelog.Timestamp ) or "" ) .. "\nContributors - " .. table.concat( Changelog.Contributors, ", " ) .. ( Changelog.Additions and "\nAdditions:\n" .. table.concat( Changelog.Additions, "\n" ) or "" ) .. ( Changelog.Removals and "\nRemovals:\n" .. table.concat( Changelog.Removals, "\n" ) or "" ) .. ( Changelog.Changes and "\nChanges:\n" .. table.concat( Changelog.Changes, "\n" ) or "" ), "Info" )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.TODO = {
+		
+		Alias = { "todo" },
+		
+		Description = "Prints the latest TODO list for the admin",
+		
+		Category = "Core",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Latest = Main.Changelog[ 1 ]
+			
+			if Silent then return true, "V-Handle TODO\n" .. Latest end
+			
+			Main.Util.SendMessage( Plr, "V-Handle TODO\n" .. Latest, "Info" )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.Console = {
+		
+		Alias = { "console" },
+		
+		Description = "Runs the proceeding commands as the console",
+		
+		Category = "Core",
+		
+		CanRun = "16015142",
+		
+		ArgTypes = { },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Console = setmetatable( { UserId = "Console", Name = "Console", Origin = Plr }, { __tostring = Main.ConsoleToString } )
+			
+			Main.RunCmdStacks( Console, NextCmds, Silent )
+			
+			for a = #NextCmds, 1, -1 do
+				
+				NextCmds[ a ] = nil
+				
+			end
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.UserPower = {
+		
+		Alias = { "power", "userpower" },
+		
+		Description = "Tells you your current user power",
+		
+		Category = "Core",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.UserId, Default = Main.TargetLib.Defaults.SelfId } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local UserPower = Main.GetUserPower( Args[ 1 ] )
+			
+			local String = Main.Util.Pluralise( Main.Util.UsernameFromID( Args[ 1 ] ) ) .. " user power is " .. Main.UserPowerName( UserPower ) .. ( Main.IsDebugger( Args[ 1 ] ) and " and they are a debugger!" or "" )
+			
+			if Silent then return true, String end
+			
+			Main.Util.SendMessage( Plr, String, "Info" )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.SetUserPower = {
+		
+		Alias = { "setpower", "sp", "setuserpower", "sup", { function ( self, Alias ) return Main.UserPower[ Alias ] ~= nil, { nil, Main.UserPower[ Alias ] } end, "any_power_name" } },
+		
+		Description = "Sets the specified players user power for the current server",
+		
+		Category = "Core",
+		
+		CanRun = "$admin",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.PowerNumber, Required = true, Default = function ( self, Strings, Plr, Last, Alias )
+			
+			if Strings[ 1 ] == Main.TargetLib.ValidChar then return Main.UserPower.admin end
+			
+			return Main.UserPower[ Alias ]
+			
+		end } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local UserPower = Main.GetUserPower( Plr.UserId )
+			
+			local Plrs, TargetPower = Args[ 1 ], Args[ 2 ]
+			
+			if TargetPower >= UserPower then return false, "Cannot target specified user power" end
+			
+			if TargetPower == Main.UserPower.owner or TargetPower == Main.UserPower.console then return false, "Cannot target specified user power" end
+			
+			local TargetPowerName = Main.UserPowerName( TargetPower )
+			
+			local Invalid = { }
+			
+			for a = 1, #Plrs do
+				
+				local PlrsPower = Main.GetUserPower( Plrs[ a ].UserId )
+				
+				if PlrsPower < UserPower and PlrsPower ~= TargetPower and Plr ~= Plrs[ a ] then
+					
+					Main.SetUserPower( Plrs[ a ].UserId, TargetPower )
+					
+					if not Silent then
+						
+						Main.Util.SendMessage( Plrs[ a ], "Your new user power is '" .. TargetPowerName .. "'!", "Info" )
+						
+					end
+					
+				else
+					
+					Invalid[ #Invalid + 1 ] = Plrs[ a ]
+					
+				end
+				
+			end
+			
+			if #Invalid == 0 then
+				
+				return true
+				
+			else
+				
+				local String = ""
+				
+				for a = 1, #Invalid do
+					
+					String = String .. Invalid[ a ].Name .. " can't be targeted by this command"
+					
+					if a ~= #Invalid then String = String .. "\n" end
+					
+				end
+				
+				return false, String
+				
+			end
+			
+		end
+		
+	}
+	
+	Main.Commands.PermUserPower = {
+		
+		Alias = { "permpower", "pp", "permuserpower", "pup", { function ( self, Alias, Plr )
+			
+			if Alias:sub( 1, 4 ) == "perm" then
+				
+				return Main.UserPower[ Alias:sub( 5 ) ] ~= nil, { nil, Main.UserPower[ Alias:sub( 5 ) ] }
+				
+			end
+			
+			if Alias:sub( 1, 4 ) == "p" then
+				
+				return Main.UserPower[ Alias:sub( 2 ) ] ~= nil, { nil, Main.UserPower[ Alias:sub( 2 ) ] }
+				
+			end
+			
+		end, "any_power_name" } },
+		
+		Description = "Sets the specified player user power permanently for all servers",
+		
+		Category = "Core",
+		
+		CanRun = "$superadmin",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.UserId, Required = true }, { Func = Main.TargetLib.ArgTypes.PowerNumber, Default = function ( self, Strings, Plr, Last, Alias )
+			
+			if Strings[ 1 ] == nil then print"ran" return end
+			
+			if Strings[ 1 ] == Main.TargetLib.ValidChar then return Main.UserPower.admin end
+			
+			return Main.UserPower[ Alias:sub( 5 ) ] or Main.UserPower[ Alias:sub( 2 ) ]
+			
+		end } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local UserPower = Main.GetUserPower( Plr.UserId )
+			
+			local Ids, TargetPower = { Args[ 1 ] }, Args[ 2 ]
+			
+			if TargetPower and TargetPower >= UserPower then return false, "Cannot target specified user power" end
+			
+			if TargetPower == Main.UserPower.owner or TargetPower == Main.UserPower.console then return false, "Cannot target specified user power" end
+			
+			local TargetPowerName = Main.UserPowerName( TargetPower )
+			
+			local Invalid = { }
+			
+			for a = 1, #Ids do
+				
+				local PlrsPower = Main.GetUserPower( Ids[ a ] )
+				
+				if PlrsPower < UserPower and PlrsPower ~= TargetPower and tostring( Plr.UserId ) ~= Ids[ a ] then
+					
+					Main.SetUserPower( Ids[ a ], TargetPower, true )
+					
+				else
+					
+					Invalid[ #Invalid + 1 ] = Ids[ a ]
+					
+				end
+				
+			end
+			
+			if #Invalid == 0 then
+				
+				return true
+				
+			else
+				
+				local String = ""
+				
+				for a = 1, #Invalid do
+					
+					String = String .. Main.Util.UsernameFromID( Invalid[ a ] ) .. " can't be targeted by this command"
+					
+					if a ~= #Invalid then String = String .. "\n" end
+					
+				end
+				
+				return false, String
+				
+			end
+			
+		end
+		
+	}
+	
+	Main.Commands.Kick = {
+		
+		Alias = { "kick" },
+		
+		Description = "Kicks the specified player",
+		
+		Category = "Core",
+		
+		CanRun = "$moderator",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Player, Required = true }, Main.TargetLib.ArgTypes.String },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local UserPower = Main.GetUserPower( Plr.UserId )
+			
+			local FilterResult = Args[ 2 ] and TextService:FilterStringAsync( Args[ 2 ], Plr.UserId )
+			
+			if Main.GetUserPower( Args[ 1 ].UserId ) <= UserPower and Plr ~= Args[ 1 ] then
+				
+				if Main.Config.AnnounceLeft then
+					
+					Main.AnnouncedLeft[ Args[ 1 ] ] = " has been kicked" .. ( Args[ 2 ] and ( " for " .. FilterResult:GetChatForUserAsync( Args[ 1 ].UserId ) ) or "" )
+					
+				end
+				
+				Args[ 1 ]:Kick( Args[ 2 ] and FilterResult:GetChatForUserAsync( Args[ 1 ].UserId ) or "You have been kicked by " .. Plr.Name )
+				
+			else
+				
+				return false, Args[ 1 ].Name .. " can't be targeted by this command"
+				
+			end
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.Ban = {
+		
+		Alias = { "ban" },
+		
+		Description = "Bans the specified player(s) from the current server",
+		
+		Category = "Core",
+		
+		NoTest = true,
+		
+		CanRun = "$moderator",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.UserId, Required = true }, Main.TargetLib.ArgTypes.String, Main.TargetLib.ArgTypes.Time },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local UserPower = Main.GetUserPower( Plr.UserId )
+			
+			local FilterResult = Args[ 2 ] and TextService:FilterStringAsync( Args[ 2 ], Plr.UserId )
+			
+			local Time = true
+			
+			if Args[ 3 ] then Time = os.time( ) + Args[ 3 ] end
+			
+			if Main.GetUserPower( Args[ 1 ] ) <= UserPower and Plr.UserId ~= Args[ 1 ] then
+				
+				Main.SetBan( Args[ 1 ], { Time = Time, Reason = Args[ 2 ], Banner = Plr.UserId } )
+				
+				local Banned = Players:GetPlayerByUserId( Args[ 1 ] )
+				
+				if Banned then
+					
+					if Main.Config.AnnounceLeft then
+						
+						Main.AnnouncedLeft[ Banned ] = " has been banned" .. ( Args[ 2 ] and ( " for " .. FilterResult:GetChatForUserAsync( Args[ 1 ] ) ) or "" )
+						
+					end
+					
+					Banned:Kick( "You have been banned by " .. Plr.Name .. ( Args[ 2 ] and ( " for " .. FilterResult:GetChatForUserAsync( Args[ 1 ] ) ) or "" ) .. " - You get unbanned in " .. Main.Util.TimeRemaining( Time ) )
+					
+				end
+				
+			else
+				
+				return false, Main.Util.UsernameFromID( Args[ 1 ] ) .. " can't be targeted by this command"
+				
+			end
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.PermBan = {
+		
+		Alias = { "permban" },
+		
+		Description = "Bans the specified player from all servers",
+		
+		Category = "Core",
+		
+		NoTest = true,
+		
+		CanRun = "$superadmin",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.UserId, Required = true }, Main.TargetLib.ArgTypes.String, Main.TargetLib.ArgTypes.Time },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local UserPower = Main.GetUserPower( Plr.UserId )
+			
+			local FilterResult = Args[ 2 ] and TextService:FilterStringAsync( Args[ 2 ], Plr.UserId )
+			
+			local Time = true
+			
+			if Args[ 3 ] then Time = os.time( ) + Args[ 3 ] end
+			
+			if Main.GetUserPower( Args[ 1 ] ) <= UserPower and Plr.UserId ~= Args[ 1 ] then
+				
+				Main.SetBan( Args[ 1 ], { Time = Time, Banner = Plr.UserId, Reason = Args[ 2 ] }, true )
+				
+				local Banned = Players:GetPlayerByUserId( Args[ 1 ] )
+				
+				if Banned then
+					
+					if Main.Config.AnnounceLeft then
+						
+						Main.AnnouncedLeft[ Banned ] = " has been banned" .. ( Args[ 2 ] and ( " for " .. FilterResult:GetChatForUserAsync( Args[ 1 ].UserId ) ) or "" )
+						
+					end
+					
+					Banned:Kick( "You have been banned by " .. Plr.Name .. ( Args[ 2 ] and ( " for " .. FilterResult:GetChatForUserAsync( Args[ 1 ].UserId ) ) or "" ) .. " - You get unbanned in " .. Main.Util.TimeRemaining( Time ) )
+					
+				end
+				
+			else
+				
+				return false, Main.Util.UsernameFromID( Args[ 1 ] ) .. " can't be targeted by this command"
+				
+			end
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.UnBan = {
+		
+		Alias = { "unban" },
+		
+		Description = "Unbans the specified player(s)",
+		
+		Category = "Core",
+		
+		NoTest = true,
+		
+		CanRun = "$moderator",
+		
+		ArgTypes = { { Func = function ( self, Strings, Plr )
+			
+			local String = table.remove( Strings, 1 )
+			
+			if String == Main.TargetLib.ValidChar then return nil, false end
+			
+			String = String:lower( )
+			
+			for a, b in pairs( Main.TempBans ) do
+				
+				if String == a or Main.Util.UsernameFromID( a ):lower( ) == String then return a end
+				
+			end
+			
+			return nil, false
+			
+		end, Required = true, Name = "player" } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Banned, BanType = Main.GetBanned( Args[ 1 ] )
+			
+			if BanType.Perm then
+				
+				if Main.GetUserPower( Plr.UserId ) < Main.UserPower.superadmin then return false, "Not enough user power to remove a permanent ban!" end
+				
+				Main.SetBan( Args[ 1 ], nil, true )
+				
+			else
+				
+				Main.SetBan( Args[ 1 ], nil )
+				
+			end
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.ArgTest = {
+		
+		Alias = { "argtest" },
+		
+		Description = "A command that tests of arg types",
+		
+		Category = "Debug",
+		
+		CanRun = "$admin, $debugger",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.ArgType, Required = true } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Results = { table.remove( Args, 1 )( { }, Args, Plr ) }
+			
+			if #Results == 1 and type( Results[ 1 ] ) == "table" then Results = Results[ 1 ] end
+			
+			for a = 1, Main.Util.TableHighestKey( Results ) do
+				
+				if Results[ a ] == nil then
+					
+					Results[ a ] = "nil"
+					
+				else
+					
+					Results[ a ] = tostring( Results[ a ] )
+					
+				end
+				
+			end
+			
+			if Silent then return true, table.concat( Results, " " ) end
+			
+			Main.Util.SendMessage( Plr, table.concat( Results, " " ), "Info" )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.Shutdown = {
+		
+		Alias = { "shutdown" },
+		
+		Description = "Shuts the server down",
+		
+		Category = "Core",
+		
+		NoTest = true,
+		
+		CanRun = "$admin, $debugger",
+		
+		ArgTypes = { { Func = function ( self, Strings, Plr )
+			
+			return table.remove( Strings, 1 ) == "confirm" or nil
+			
+		end, Required = true, Name = "'confirm'" } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Message = Instance.new( "Message" )
+			
+			Message.Text = "Game is shutting down..."
+			
+			Message.Parent = workspace
+			
+			Players.PlayerAdded:Connect( function ( Plr )
+				
+				Plr:Kick( )
+				
+			end )
+			
+			local Plrs = Players:GetPlayers( )
+			
+			for a = 1, #Plrs do
+				
+				Plrs[ a ]:Kick( "Server is shutting down!" )
+				
+			end
+			
+			return true
+			
+		end
+		
+	}
+	
+	local PlrLogs = ( _G.VH_Saved or { } ).PlrLogs or { }
+	
+	local ChangedEvents = { }
+	
+	local Plrs = Players:GetPlayers( )
+	
+	for a = 1, #Plrs do
+		
+		PlrLogs[ #PlrLogs + 1 ] = { os.time( ), Plrs[ a ].UserId, " - Joined" }
+		
+		ChangedEvents[ Plrs[ a ] ] = Plrs[ a ].Changed:Connect( function ( Property )
+			
+			pcall( function ( ) PlrLogs[ #PlrLogs + 1 ] =  { os.time( ), Plrs[ a ].UserId, " - " .. Property .. " changed to " .. tostring( Plrs[ a ][ Property ] ) } end )
+			
+		end )
+		
+	end
+	
+	Main.Events[ #Main.Events + 1 ] = Players.PlayerAdded:Connect( function ( Plr )
+		
+		PlrLogs[ #PlrLogs + 1 ] = { os.time( ), Plr.UserId, " - Joined" }
+		
+		ChangedEvents[ Plr ] = Plr.Changed:Connect( function ( Property )
+			
+			pcall( function ( ) PlrLogs[ #PlrLogs + 1 ] = { os.time( ), Plr.UserId, " - " .. Property .. " changed to " .. tostring( Plr[ Property ] ) } end )
+			
+		end )
+		
+	end )
+	
+	Main.Events[ #Main.Events + 1 ] = Players.PlayerRemoving:Connect( function ( Plr )
+		
+		PlrLogs[ #PlrLogs + 1 ] = { os.time( ), Plr.UserId, " - Left" }
+		
+		if ChangedEvents[ Plr ] then
+			
+			ChangedEvents[ Plr ]:Disconnect( )
+			
+			ChangedEvents[ Plr ] = nil
+			
+		end
+		
+	end )
+	
+	VH_Events.Destroyed.Event:Connect( function ( Update )
+		
+		for a, b in pairs( ChangedEvents ) do
+			
+			b:Disconnect( )
+			
+		end
+		
+		if not Update then return end
+		
+		_G.VH_Saved.PlrLogs = PlrLogs
+		
+	end )
+	
+	Main.Commands.PlayerLogs = {
+		
+		Alias = { "playerlogs", "plrlogs" },
+		
+		Description = "Displays a list of joins, player changes and disconnects",
+		
+		Category = "Core",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Str = "Player Logs:\n"
+			
+			for a = 1, #PlrLogs do
+				
+				Str = Str .. Main.Util.TimeSince( PlrLogs[ a ][ 1 ] ) .. " - " .. Main.Util.UsernameFromID( PlrLogs[ a ][ 2 ] ) .. ":" .. PlrLogs[ a ][ 2 ] .. ( PlrLogs[ a ][ 3 ]  or "" ) .. "\n"
+				
+			end
+			
+			if #PlrLogs == 0 then
+				
+				Str = "No player log entries exist"
+				
+			else
+				
+				Str = string.sub( Str, 1, Str:len( ) - 1 )
+				
+			end
+			
+			Util_Events_Folder.Print:FireClient( Plr, Str )
+			
+			if Silent then return true, "Check your client log ( F9 )" end
+			
+			Main.Util.SendMessage( Plr, "Check your client log ( F9 )", "Info" )
+			
+			return true
+			
+		end
+		
+	}
+	
+	local ChatLogs = ( _G.VH_Saved or { } ).ChatLogs or { }
+	
+	local ChattedEvents = { }
+	
+	local Plrs = Players:GetPlayers( )
+	
+	for a = 1, #Plrs do
+		
+		ChatLogs[ #ChatLogs + 1 ] = { os.time( ), Plrs[ a ].UserId, " - Joined" }
+		
+		ChattedEvents[ Plrs[ a ] ] = Plrs[ a ].Chatted:Connect( function ( Msg, Target )
+			
+			ChatLogs[ #ChatLogs + 1 ] = { os.time( ), Plrs[ a ].UserId, ": " .. Msg .. ( Target and " @ " .. Target.Name or "" ) }
+			
+		end )
+		
+	end
+	
+	Main.Events[ #Main.Events + 1 ] = Players.PlayerAdded:Connect( function ( Plr )
+		
+		ChatLogs[ #ChatLogs + 1 ] = { os.time( ), Plr.UserId, " - Joined" }
+		
+		ChattedEvents[ Plr ] = Plr.Chatted:Connect( function ( Msg, Target )
+			
+			ChatLogs[ #ChatLogs + 1 ] = { os.time( ), Plr.UserId, ": " .. Msg .. ( Target and " @ " .. Target.Name or "" ) }
+			
+		end )
+		
+	end )
+	
+	Main.Events[ #Main.Events + 1 ] = Players.PlayerRemoving:Connect( function ( Plr )
+		
+		ChatLogs[ #ChatLogs + 1 ] = { os.time( ), Plr.UserId, " - Left" }
+		
+		if ChattedEvents[ Plr ] then
+			
+			ChattedEvents[ Plr ]:Disconnect( )
+			
+			ChattedEvents[ Plr ] = nil
+			
+		end
+		
+	end )
+	
+	VH_Events.Destroyed.Event:Connect( function ( Update )
+		
+		for a, b in pairs( ChattedEvents ) do
+			
+			b:Disconnect( )
+			
+		end
+		
+		if not Update then return end
+		
+		_G.VH_Saved.ChatLogs = ChatLogs
+		
+	end )
+	
+	Main.Commands.ChatLogs = {
+		
+		Alias = { "chatlogs" },
+		
+		Description = "Displays the chat history for the server",
+		
+		Category = "Core",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Str = "Chat Logs:\n"
+			
+			for a = 1, #ChatLogs do
+				
+				Str = Str .. Main.Util.TimeSince( ChatLogs[ a ][ 1 ] ) .. " - " .. Main.Util.UsernameFromID( ChatLogs[ a ][ 2 ] ) .. ":" .. ChatLogs[ a ][ 2 ] .. ( ChatLogs[ a ][ 3 ]  or "" ) .. "\n"
+				
+			end
+			
+			if #ChatLogs == 0 then
+				
+				Str = "No chat log entries exist"
+				
+			else
+				
+				Str = string.sub( Str, 1, Str:len( ) - 1 )
+				
+			end
+			
+			Util_Events_Folder.Print:FireClient( Plr, Str )
+			
+			if Silent then return true, "Check your client log ( F9 )" end
+			
+			Main.Util.SendMessage( Plr, "Check your client log ( F9 )", "Info" )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.CleanUp = {
+		
+		Alias = { "cleanup", "clean" },
+		
+		Description = "Removes any objects the admin has created",
+		
+		Category = "Core",
+		
+		CanRun = "$moderator, $debugger",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			for a, b in pairs( Main.Objs ) do
+				
+				b:Destroy( )
+				
+			end
+			
+			local Objs = workspace:GetChildren( )
+			
+			for a = 1, #Objs do
+				
+				if Objs[ a ]:IsA( "Hat" ) or Objs[ a ]:IsA( "Tool" ) or Objs[ a ]:IsA( "HopperBin" ) then
+					
+					Objs[ a ]:Destroy( )
+					
+				end
+				
+			end
+			
+			ModFolder.Cleanup:FireAllClients( )
+			
+			if Silent then return true, "Cleanup complete!" end
+			
+			Main.Util.SendMessage( Plr, "Cleanup complete!", "Info" )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.Log = {
+		
+		Alias = { "log" },
+		
+		Description = "Logs whatever arguments are passed",
+		
+		Category = "Core",
+		
+		CanRun = "$moderator",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.Errors = {
+		
+		Alias = { "errors" },
+		
+		Description = "Lists all the errors the admin has encountered",
+		
+		Category = "Debug",
+		
+		CanRun = "$admin, $debugger",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			if #Main.Errors == 0 then Util_Events_Folder.Print:FireClient( Plr, "No errors have been encountered!" ) return true end
+			
+			local Str = ""
+			
+			for a = 1, #Main.Errors do
+				
+				Str = Main.Errors[ a ][ 1 ] .. " - " .. Main.Errors[ a ][ 2 ] .. "\n"
+				
+			end
+			
+			Util_Events_Folder.Print:FireClient( Plr, Str:sub( 1, Str:len( ) - 1 ) )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.TestError = {
+		
+		Alias = { "testerror" },
+		
+		Description = "Causes an error for testing purposes",
+		
+		Category = "Debug",
+		
+		CanRun = "$admin, $debugger",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			print( ( nil )( ) )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.TestCmd = {
+		
+		Alias = { "testcmd" },
+		
+		Description = "Runs a command with the supplied arguments and returns the time it takes to run",
+		
+		Category = "Debug",
+		
+		NoTest = true,
+		
+		NoRepeat = true,
+		
+		CanRun = "$admin, $debugger",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.String, Name = "Command", Required = true } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Timer = tick( )
+			
+			local Ran, Msg, Errored = Main.ParseCmdStacks( Plr, Args[ 1 ] .. "/?/?/?/?/?/?", nil, true )
+			
+			Timer = tick( ) - Timer
+			
+			if Errored then
+				
+				Main.Util.SendMessage( Plr, "Errored - " .. Timer * 1000 .. "ms" .. ( Msg and " - " .. Msg or "" ), BrickColor.Red( ).Color )
+			
+			elseif Ran == true then
+				
+				Main.Util.SendMessage( Plr, "Passed - " .. Timer * 1000 .. "ms" .. ( Msg and " - " .. Msg or "" ), BrickColor.Green( ).Color )
+				
+			else
+				
+				Main.Util.SendMessage( Plr, "Failed - " .. Timer * 1000 .. "ms" .. ( Msg and " - " .. Msg or "" ), BrickColor.Yellow( ).Color )
+				
+			end
+			
+			return true
+			
+		end
+		
+	}
+	
+	local TestResults = { { }, { } }
+	
+	local Testing
+	
+	Main.Commands.TestCmds = {
+		
+		Alias = { "testcmds" },
+		
+		Description = "Runs every command once with the arguments supplied",
+		
+		Category = "Debug",
+		
+		NoTest = true,
+		
+		NoRepeat = true,
+		
+		CanRun = "$admin, $debugger",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			if Testing then return false, "Test in progress by " .. Testing end
+			
+			Testing = ( Plr and Plr.Name or "Console" )
+			
+			local Cmds = { }
+			
+			for a, b in pairs( Main.Commands ) do
+				
+				if not b.NoTest then
+					
+					Cmds[ #Cmds + 1 ] = type( b.Alias[ 1 ] ) == "string" and b.Alias[ 1 ] or b.Alias[ 1 ][ 2 ]
+					
+				end
+				
+			end
+			
+			table.sort( Cmds )
+			
+			TestResults = { { }, { }, { } }
+			
+			-- Special loop code because loop must be ran before endloop and with commands after
+			
+			for a = 1, #Cmds do
+				
+				Main.Util.SendMessage( Plr, "Testing command " .. Cmds[ a ] .. " - " .. a .. " / " .. #Cmds, BrickColor.Blue( ).Color )
+				
+				local Timer, Ran, Msg, Errored = tick( )
+				
+				Ran, Msg, Errored = Main.ParseCmdStacks( Plr, Cmds[ a ] .. "/?/?/?/?/?/?/?", nil, true )
+				
+				Timer = tick( ) - Timer
+				
+				if Errored then
+					
+					Main.Util.SendMessage( Plr, "Errored - " .. Timer * 1000 .. "ms" .. ( Msg and " - " .. Msg or "" ), BrickColor.Red( ).Color )
+					
+					TestResults[ 3 ][ #TestResults[ 3 ] + 1 ] = { Cmds[ a ], Timer, Msg }
+				
+				elseif Ran == true then
+					
+					Main.Util.SendMessage( Plr, "Passed - " .. Timer * 1000 .. "ms" .. ( Msg and " - " .. Msg or "" ), BrickColor.Green( ).Color )
+					
+					TestResults[ 1 ][ #TestResults[ 1 ] + 1 ] = { Cmds[ a ], Timer, Msg }
+					
+				else
+					
+					Main.Util.SendMessage( Plr, "Failed - " .. Timer * 1000 .. "ms" .. ( Msg and " - " .. Msg or "" ), BrickColor.Yellow( ).Color )
+					
+					TestResults[ 2 ][ #TestResults[ 2 ] + 1 ] = { Cmds[ a ], Timer, Msg }
+					
+				end
+				
+				wait( )
+				
+			end
+			
+			if #TestResults[ 1 ] == 0 then 
+				
+				Main.Util.SendMessage( Plr, "None passed", BrickColor.Red( ).Color )
+				
+			else
+				
+				Main.Util.SendMessage( Plr, #TestResults[ 1 ] .. " passed", BrickColor.Green( ).Color )
+				
+			end
+			
+			if #TestResults[ 2 ] == 0 then 
+				
+				Main.Util.SendMessage( Plr, "None couldn't run", BrickColor.Yellow( ).Color )
+				
+			else
+				
+				Main.Util.SendMessage( Plr, #TestResults[ 2 ] .. " couldn't run", BrickColor.Yellow( ).Color )
+				
+			end
+			
+			if #TestResults[ 3 ] == 0 then 
+				
+				Main.Util.SendMessage( Plr, "None errored", BrickColor.Green( ).Color )
+				
+			else
+				
+				Main.Util.SendMessage( Plr, #TestResults[ 3 ] .. " errored", BrickColor.Red( ).Color )
+				
+			end
+			
+			Testing = nil
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.TestResults = {
+		
+		Alias = { "testresults" },
+		
+		Description = "Shows the results of the last test ran",
+		
+		Category = "Debug",
+		
+		NoTest = true,
+		
+		NoRepeat = true,
+		
+		CanRun = "$admin, $debugger",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			if Testing then return false, "Test in progress by " .. Testing end
+			
+			if #TestResults[ 1 ] == 0 and #TestResults[ 2 ] == 0 then return false, "No results found, try running 'testcmds'" end
+			
+			Plr = type( Plr ) == "table" and Plr.Origin or Plr
+			
+			if Plr.UserId == "Console" then
+				
+				local SortMode = 1 -- 0 = Name 1 = Time
+				
+				local Pass, Fail, Errored = TestResults[ 1 ], TestResults[ 2 ], TestResults[ 3 ]
+				
+				table.sort( Pass, function ( a, b )
+					
+					if SortMode == 0 then
+						
+						return a[ 1 ] < b[ 1]
+						
+					else
+						
+						return a[ 2 ] > b[ 2 ]
+						
+					end
+					
+				end )
+				
+				table.sort( Fail, function ( a, b )
+					
+					if SortMode == 0 then
+						
+						return a[ 1 ] < b[ 1]
+						
+					elseif SortMode == 1 then
+						
+						return a[ 2 ] > b[ 2 ]
+						
+					end
+					
+				end )
+				
+				table.sort( Errored, function ( a, b )
+					
+					if SortMode == 0 then
+						
+						return a[ 1 ] < b[ 1]
+						
+					elseif SortMode == 1 then
+						
+						return a[ 2 ] > b[ 2 ]
+						
+					end
+					
+				end )
+				
+				if #Pass == 0 then 
+					
+					print( "None passed" )
+					
+				else
+					
+					print( #Pass .. " passed" )
+					
+				end
+				
+				if #Fail == 0 then 
+					
+					print( "None couldn't run" )
+					
+				else
+					
+					print( #Fail .. " couldn't run" )
+					
+				end
+				
+				if #Errored == 0 then 
+					
+					print( "None errored" )
+					
+				else
+					
+					print( #Errored .. " errored" )
+					
+				end
+				
+				if #Pass ~= 0 then 
+					
+					print( "Passes:" )
+					
+					for a = 1, #Pass do
+						
+						print( Pass[ a ][ 1 ] .. ( Pass[ a ][ 3 ] and ( " - " .. Pass[ a ][ 3 ] ) or "" ) .. " - " .. ( Pass[ a ][ 2 ] * 1000 ) .. "ms" )
+						
+					end
+					
+				end
+				
+				if #Fail ~= 0 then 
+					
+					print( "Fails:" )
+					
+					for a = 1, #Fail do
+						
+						print( Fail[ a ][ 1 ] .. ( Fail[ a ][ 3 ] and ( " - " .. Fail[ a ][ 3 ] ) or "" ) .. " - " .. ( Fail[ a ][ 2 ] * 1000 ) .. "ms"  )
+						
+					end
+					
+				end
+				
+				if #Errored ~= 0 then 
+					
+					print( "Errors:" )
+					
+					for a = 1, #Errored do
+						
+						print( Errored[ a ][ 1 ] .. ( Errored[ a ][ 3 ] and ( " - " .. Errored[ a ][ 3 ] ) or "" ) .. " - " .. ( Errored[ a ][ 2 ] * 1000 ) .. "ms"  )
+						
+					end
+					
+				end
+				
+			else
+				
+				ModFolder.TestResults:FireClient( Plr, TestResults )
+				
+			end
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.KeyBind = {
+		
+		Alias = { "keybind", "bind" },
+		
+		Description = "Binds any proceeding commands to the specified key",
+		
+		Category = "Core",
+		
+		CanRun = "!$console",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Key, Required = true } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			ModFolder.Bind:FireClient( Plr, Args[ 1 ], NextCmds )
+			
+			for a = #NextCmds, 1, -1 do
+				
+				NextCmds[ a ] = nil
+				
+			end
+			
+			return true, false
+			
+		end
+		
+	}
+	
+	Main.Commands.UnBind = {
+		
+		Alias = { "unbind" },
+		
+		Description = "Unbinds the specified key",
+		
+		Category = "Core",
+		
+		CanRun = "!$console",
+		
+		ArgTypes = { { Func = function ( self, Strings, Plr )
+			
+			local String = table.remove( Strings, 1 )
+			
+			return Main.TargetLib.IsWildcard( String:lower( ) ) ~= nil or Main.TargetLib.ArgTypes.Key( self, { String }, Plr )
+			
+		end, Required = true, Name = "key_or_wildcard" } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			ModFolder.Bind:FireClient( Plr, Args[ 1 ] )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.Repeat = {
+		
+		Alias = { "repeat", "^" },
+		
+		Description = "Repeats the last command ran",
+		
+		Category = "Core",
+		
+		NoRepeat = true,
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Last = Main.CmdHistory[ Plr.UserId ]
+			print(Last)
+			if Last then
+				
+				Main.ParseCmdStacks( Plr, Last, nil, true )
+				
+				return true
+				
+			else
+				
+				return false, "No command to repeat!"
+				
+			end
+			
+		end
+		
+	}
+	
+	Main.Commands.Loop = {
+		
+		Alias = { "loop" },
+		
+		Description = "Repeats any commands that proceed it an infinite amount of times OR until it has ran [repitions] times\nKey must be unique so that the loop can be ended via endloop/<key>\nExample: loop/uniquestring/5|kill/all|wait/5",
+		
+		Category = "Core",
+		
+		NoTest = true,
+		
+		CanRun = "$admin, $debugger",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.String, Required = true }, { Func = Main.TargetLib.ArgTypes.Number, Default = 0 } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			if #NextCmds == 0 then return false, "No commands to loop ( try loop/test:kill/me )" end
+			
+			local Key = Args[ 1 ]:lower( )
+			
+			if Main.Loops[ Key ] then return false, "Loop already exists" end
+			
+			local Reps = Args[ 2 ]
+			
+			local Speed = Reps ~= 0
+			
+			local Cur = ( Main.Loops[ Key ] or 0 ) + 1
+			
+			Main.Loops[ Key ] = Cur
+			
+			for b = 1, Reps, ( Speed and 1 or -0 ) do
+				
+				wait( )
+				
+				for a = 1, #NextCmds do
+					
+					if Main.Loops[ Key ] ~= Cur then return true, true end
+					
+					local Args = Main.Util.Split( NextCmds[ a ], "/" )
+					
+					local Cmd = Args[ 1 ]:lower( )
+					
+					table.remove( Args, 1 )
+					
+					if Cmd ~= "" then
+						
+						Main.RunCommand( Plr, Cmd, Args, NextCmds, true )
+						
+					end
+					
+				end
+				
+			end
+			
+			return true, true
+			
+		end
+		
+	}
+	
+	Main.Commands.EndLoop = {
+		
+		Alias = { "endloop" },
+		
+		Description = "Ends a loop with the specified key",
+		
+		Category = "Core",
+		
+		NoTest = true,
+		
+		CanRun = "$admin, $debugger",
+		
+		ArgTypes = { { Func = function ( self, Strings, Plr )
+			
+			local String = table.remove( Strings, 1 )
+			
+			if String == Main.TargetLib.ValidChar then
+				
+				local Key = Main.Util.TableFirstKey( Main.Loops )
+				
+				if Key then return Key end
+				
+				return nil, false
+				
+			end
+			
+			String = String:lower( )
+			
+			if String == "all" then return String end
+			
+			if Main.Loops[ String ] then return String end
+			
+			return nil, false
+			
+		end, Required = true, Name = "loop_key" } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			if Args[ 1 ] == "all" then
+				
+				Main.Loops = { }
+				
+				return true
+				
+			end
+			
+			Main.Loops[ Args[ 1 ] ] = nil
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.Loops = {
+		
+		Alias = { "loops" },
+		
+		Description = "Lists all of the loops currently running",
+		
+		Category = "Core",
+		
+		CanRun = "$moderator, $debugger",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Str = ""
+			
+			for a, b in pairs( Main.Loops ) do
+				
+				Str = Str .. a .. "\n"
+				
+			end
+			
+			if Str == "" then
+				
+				Str = "No loops running"
+				
+			else
+				
+				Str = "Loops:\n" .. string.sub( Str, 1, Str:len( ) - 1 )
+				
+			end
+			
+			Util_Events_Folder.Print:FireClient( Plr, Str )
+			
+			if Silent then return true, "Check your client log ( F9 )" end
+			
+			Main.Util.SendMessage( Plr, "Check your client log ( F9 )", "Info" )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.Bans = {
+		
+		Alias = { "bans", "banlist" },
+		
+		Description = "Lists all of the bans",
+		
+		Category = "Core",
+		
+		CanRun = "$moderator, $debugger",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Str = ""
+			
+			for a, b in pairs( Main.TempBans ) do
+				
+				if not b.Perm and ( b.Time == true or b.Time - os.time( ) > 0 ) then
+					
+					Str = Str .. Main.Util.UsernameFromID( a ) .. " - " .. ( b.Reason and TextService:FilterStringAsync( b.Reason, b.Banner ):GetChatForUserAsync( Plrs[ a ].UserId ) .. " - " or "" )  .. Main.Util.TimeRemaining( b.Time ) .. "\n"
+					
+				end
+				
+			end
+			
+			for a, b in pairs( Main.GetPermBans( ) ) do
+				
+				if b.Time == true or b.Time - os.time( ) > 0 then
+					
+					Str = Str .. "Perm - " .. Main.Util.UsernameFromID( a ) .. " - " .. ( b.Reason and TextService:FilterStringAsync( b.Reason, b.Banner ):GetChatForUserAsync( Plrs[ a ].UserId ) .. " - " or "" )  .. Main.Util.TimeRemaining( b.Time ) .. "\n"
+					
+				end
+				
+			end
+			
+			for a, b in pairs( Main.Config.Banned ) do
+				
+				Str = Str .. "Config - " .. Main.Util.UsernameFromID( a ) .. " - " .. ( type( b ) == "string" and b .. " - " or "" ) ..  "forever\n"
+				
+			end
+			
+			if Str == "" then
+				
+				Str = "No bans exist"
+				
+			else
+				
+				Str = "Bans:\n" .. string.sub( Str, 1, Str:len( ) - 1 )
+				
+			end
+			
+			Util_Events_Folder.Print:FireClient( Plr, Str )
+			
+			if Silent then return true, "Check your client log ( F9 )" end
+			
+			Main.Util.SendMessage( Plr, "Check your client log ( F9 )", "Info" )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.UserPowers = {
+		
+		Alias = { "powers", "powerlist", "userpowers", "userpowerlist", { function ( self, Alias )
+			
+			return Alias:sub( Alias:len( ) ) == "s" and Main.UserPower[ Alias:sub( 1, Alias:len( ) -1 ) ] ~= nil
+			
+		end, "any_power_name" } },
+		
+		Description = "Lists all of the user powers",
+		
+		Category = "Core",
+		
+		CanRun = "$moderator, $debugger",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Str = ""
+			
+			local PermPowers = Main.GetPermUserPower( )
+			
+			for a, b in pairs( Main.TempAdminPowers ) do
+				
+				if PermPowers[ a ] ~= b then
+					
+					Str = Str .. Main.Util.UsernameFromID( a ) .. " - " .. ( Main.UserPowerName( b ) or "nil" ) .. "\n"
+					
+				end
+				
+			end
+			
+			for a, b in pairs( PermPowers ) do
+				
+				Str = Str .. "Perm - " .. Main.Util.UsernameFromID( a ) .. " - " .. ( Main.UserPowerName( b ) or "nil" ) .. "\n"
+				
+			end
+			
+			for a, b in pairs( Main.Config.UserPowers ) do
+				
+				Str = Str .. "Config - " .. Main.Util.UsernameFromID( a ) .. " - " .. ( Main.UserPowerName( Main.UserPowerFromString( b ) ) or "nil" ) .. "\n"
+				
+			end
+			
+			if Str == "" then
+				
+				Str = "No user powers exist"
+				
+			else
+				
+				Str = "Powers:\n" .. string.sub( Str, 1, Str:len( ) - 1 )
+				
+			end
+			
+			Util_Events_Folder.Print:FireClient( Plr, Str )
+			
+			if Silent then return true, "Check your client log ( F9 )" end
+			
+			Main.Util.SendMessage( Plr, "Check your client log ( F9 )", "Info" )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.CmdLogs = {
+		
+		Alias = { "cmdlogs", "logs" },
+		
+		Description = "Displays the command log entries",
+		
+		Category = "Core",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Str = "Command Logs:\n"
+			
+			for a = 1, #Main.Log do
+				
+				local Args = ""
+				
+				if #Main.Log[ a ][ 4 ] > 0 then Args = "/" .. table.concat( Main.Log[ a ][ 4 ], "/" ) end
+				
+				Str = Str .. Main.Util.TimeSince( Main.Log[ a ][ 1 ] ) .. " - " .. Main.Util.UsernameFromID( Main.Log[ a ][ 2 ] ) .. ":" .. Main.Log[ a ][ 2 ] .. " ran " .. TextService:FilterStringAsync( Main.Log[ a ][ 3 ], Main.Log[ a ][ 2 ] ):GetChatForUserAsync( Plr.UserId ) .. Args .. "\n"
+				
+			end
+			
+			if #Main.Log == 0 then
+				
+				Str = "No log entries exist"
+				
+			else
+				
+				Str = string.sub( Str, 1, Str:len( ) - 1 )
+				
+			end
+			
+			Util_Events_Folder.Print:FireClient( Plr, Str )
+			
+			if Silent then return true, "Check your client log ( F9 )" end
+			
+			Main.Util.SendMessage( Plr, "Check your client log ( F9 )", "Info" )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.Wait = {
+		
+		Alias = { "wait", "delay" },
+		
+		Description = "Causes any commands after this one to be delayed, e.g. wait/5:kill/me",
+		
+		Category = "Core",
+		
+		CanRun = "$moderator, $debugger",
+		
+		ArgTypes = { Main.TargetLib.ArgTypes.Time },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			wait( Args[ 1 ] )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.Commands = {
+		
+		Alias = { "commands", "cmds" },
+		
+		Description = "Displays a list of commands with 15 per page",
+		
+		Category = "Core",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Number, Default = 1, Min = 1 }, { Func = Main.TargetLib.ArgTypes.String, Lower = true } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			Args[ 2 ] = Args[ 2 ] or ""
+			
+			local Page = Args[ 1 ] - 1
+			
+			local CmdNames = { }
+			
+			local UserPower, Debugger = ( Plr and Main.GetUserPower( Plr.UserId ) or Main.UserPower.console ), Main.IsDebugger( Plr.UserId )
+			
+			for a, b in pairs( Main.Commands ) do
+				
+				local Matches = false
+				
+				for c = 1, #b.Alias do
+					
+					if type( b.Alias[ c ] ) == "string" and b.Alias[ c ]:find( Args[ 2 ] ) then
+						
+						Matches = true
+						
+						break
+						
+					end
+					
+				end
+				
+				if a:lower( ):find( Args[ 2 ] ) then Matches = true end
+				
+				if Matches then
+					
+					if b.Commands then
+						
+						local CantRun
+						
+						for c = 1, #b.Commands do
+							
+							if b.Commands[ c ].CanRun and not Main.TargetLib.MatchesPlr( b.Commands[ c ].CanRun, Plr ) then
+								
+								CantRun = true
+								
+								break
+								
+							end
+							
+						end
+						
+						if not CantRun then
+							
+							CmdNames[ #CmdNames + 1 ] = a
+							
+						end
+						
+					elseif not b.CanRun or Main.TargetLib.MatchesPlr( b.CanRun, Plr ) then
+						
+						CmdNames[ #CmdNames + 1 ] = a
+						
+					end
+					
+				end
+				
+			end
+			
+			if #CmdNames == 0 then return false, "Argument 2 is incorrect" end
+			
+			table.sort( CmdNames )
+			
+			local Offset = 0
+			
+			local a, Name
+			
+			while true do
+				
+				a, Name = next( CmdNames, a )
+				
+				if not a then break end
+				
+				local CmdObj = Main.Commands[ Name ]
+				
+				if CmdObj.Commands then
+					
+					for b = 1, #CmdObj.Commands do
+						
+						local Found
+						
+						for c = 1, #CmdNames do
+							
+							if CmdNames[ c ] == CmdObj.Commands[ b ].Name then
+								
+								Found = true
+								
+								break
+								
+							end
+							
+						end
+						
+						if not Found then
+							
+							Offset = Offset + 1
+							
+							table.insert( CmdNames, a + Offset, CmdObj.Commands[ b ].Name )
+							
+						end
+						
+					end
+					
+				end
+				
+				for b, c in pairs( Main.Commands ) do
+					
+					if c.Commands then
+						
+						for d = 1, #c.Commands do
+							
+							if c.Commands[ d ].Name == CmdObj.Name then
+								
+								local Found
+								
+								for e = 1, #CmdNames do
+									
+									if CmdNames[ e ] == c.Name then
+										
+										Found = true
+										
+										break
+										
+									end
+									
+								end
+								
+								if not Found then
+									
+									Offset = Offset + 1
+									
+									table.insert( CmdNames, a + Offset, c.Name )
+									
+								end
+								
+							end
+							
+						end
+						
+					end
+					
+				end
+				
+			end
+			
+			local MaxPages = math.ceil( #CmdNames / 5 )
+			
+			Page = math.min( Page, MaxPages - 1 )
+			
+			local Str = ""
+			
+			for a = Page * 5 + 1, math.min( Page * 5 + 5, #CmdNames ) do
+				
+				local CmdObj = Main.Commands[ CmdNames[ a ] ]
+				
+				local CanRun
+				
+				if CmdObj.Commands then
+					
+					CanRun = "To run this you must be able to run: "
+					
+					for a = 1, #CmdObj.Commands do
+						
+						CanRun = CanRun .. ( a == 1 and "" or a == #CmdObj.Commands and " and " or ", " ) .. CmdObj.Commands[ a ].Name
+						
+					end
+					
+				else
+					
+					CanRun = "Can be run by" .. ( CmdObj.CanRun or "anyone" )
+					
+				end
+				
+				Str = Str .. CmdNames[ a ] .. " - " .. CanRun .. "\n"
+				
+			end
+			
+			if Silent then return true, Str end
+			
+			Main.Util.SendMessage( Plr, Str .. "Page " .. Page + 1 .. "/" .. MaxPages, "Info" )
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.Help = {
+		
+		Alias = { "help", "?" },
+		
+		Description = "Shows info on a command\nArguments with < > are required\nArguments with [ ] are optional are arguments with ... after them can be multiple targets\nE.g. [player...] would mean an optional argument that can take multiple players",
+		
+		Category = "Core",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.String, Name = "cmd_or_'target'_or_'setup'" }, Main.TargetLib.ArgTypes.String },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			if Silent then return true end
+			
+			if not Args[ 1 ] then
+				
+				Main.Util.SendMessage( Plr, "V-Handle admin commands\nThis is an admin command script created by Partixel\nSay 'cmds/' to see a list of commands\nSay 'help/CMD' to see help on a command\nSay 'help/setup' to see info on how to update the setup model\nSay 'help/target' to see info on how command targetting works", "Info" )
+				
+				return true
+				
+			elseif Args[ 1 ]:lower( ) == "setup" then
+				
+				Main.Util.SendMessage( Plr, "Automatic Plugin: Take Partixel's V-Handler Setup Updater ( ID: 736545282 )\nManual Command: In play solo run the command 'updateconfig/' and follow the instructions in the output\nManual: Insert the latest V-Handle Setup and copy your config settings into the config of the new setup model making sure to keep any new settings in it", "Info" )
+				
+				return true
+				
+			elseif Args[ 1 ]:lower( ) == "target" then
+				
+				if Args[ 2 ] then
+					
+					Args[ 2 ] = Args[ 2 ]:lower( )
+					
+					if Args[ 2 ] == "player" then
+						
+						Main.Util.SendMessage( Plr, "Proceed any of the following with '+' to target friends of the player;\nMe - Targets yourself e.g. 'kill/me'\nName/Partial name - Targets players with a matching name e.g. 'kill/player' or 'kill/play'\nUserId - Targets the player with matching userid e.g. 'kill/1234'", "Info" )
+						
+					elseif Args[ 2 ] == "group" then
+						
+						Main.Util.SendMessage( Plr, "When targetting players you can target players within groups via the following;\n^GroupId - Targets a group e.g. 'kill/^123'\n^GroupId>Rank - Targets a group and anyone at or higher then the rank e.g. 'kill/^123>254'\n^GroupId=Rank - Targets a group and anyone at the rank e.g. 'kill/^123=254'\n@GroupId - Targets any allies of a group e.g. 'kill/@123'\n#GroupId - Targets any enemies of a group e.g. 'kill/#123'", "Info" )
+						
+					elseif Args[ 2 ] == "userpower" then
+						
+						Main.Util.SendMessage( Plr, "When targetting players you can target players with certain user powers via the following;\n$Power - Targets all players with equal to or more then the specified user power e.g. 'kill/$admin'\nThis can also be used with 'debug' or 'debuggers', e.g. 'kill/$debuggers'\n*Plr*Dist - Targets any players near the target player, dist the distance from the player they must be ( defaults to 15 if none is specified ) e.g. 'kill/*me*10'\n\nYou can use '&' to target objects that match multiple different arguments e.g. 'kill/partixel&!me' will kill anyone with 'partixel' in their name as long as they arent the player running the command", "Info" )
+						
+					elseif Args[ 2 ] == "distance" then
+						
+						Main.Util.SendMessage( Plr, "*Plr*Dist - Targets any players near the target player, dist the distance from the player they must be ( defaults to 15 if none is specified ) e.g. 'kill/*me*10'", "Info" )
+						
+					elseif Args[ 2 ] == "string" then
+						
+						Main.Util.SendMessage( Plr, "When using the prefix ':' to run commands, e.g. ':kill me', strings must start and end with either \" or ', for example ':m hi there' will make a message 'hi' where as ':m \"hi there\"' will make a message 'hi there'\nThis isn't necessary when using the '/' seperators, e.g. 'kill/me'", "Info" )
+						
+					elseif Args[ 2 ] == "boolean" then
+						
+						Main.Util.SendMessage( Plr, "Any of the following can be used in place of 'true';\ntrue, t, yes, y, 1, on\nAny of the following can be used in place of 'false';\nfalse, f, no, n, 0, off", "Info" )
+					elseif Args[ 2 ] == "team" then
+						
+						Main.Util.SendMessage( Plr, "To target a team put % before one of the follow:\nMe - Targets your team e.g. 'kill/%me'\nBiggest - Targets the biggest team e.g. 'kill/%biggest'\nSmallest - Targets the smallest team e.g. 'kill/%smallest'\nRandom - Targets a random team e.g. 'kill/%random'\nName/Partial name - Targets the team with matching name e.g. 'kill/%red' or 'kill/%re'", "Info" )
+						
+					elseif Args[ 2 ] == "time" then
+						
+						Main.Util.SendMessage( Plr, "To target a specific amount of time you can use the following;\nNumber - Targets a second e.g. 'wait/5'\nM - Targets a minute e.g. 'wait/5m'\nH - Targets an hour e.g. 'wait/5h'\nD - Targets a day e.g. 'wait/5d'\nW - Targets a week e.g. 'wait/5w'", "Info" )
+						
+					elseif Args[ 2 ] == "multiples" then
+						
+						Main.Util.SendMessage( Plr, "When targetting multiple things at once, such as multiple players, you can use the following;\nAll or * can be used to target all possible targets\nRandom can be used to target a random possible target\n! can be used to invert a statement, such as 'kill/!me' will kill everyone that isnt you\n? can be used to match anything at any time\nFinally, you can use '&' to target objects that match multiple different arguments e.g. 'kill/partixel&!me' will kill anyone with 'partixel' in their name as long as they arent the player running the command", "Info" )
+						
+					end
+					
+					return true
+					
+				end
+				
+				Main.Util.SendMessage( Plr, "The following can be used in commands, e.g. kill/all, or even in the Config UserPowers and Banned,\ne.g. Config.UserPowers = { [ 'all' ] = 'admin' }\nAny of the following can be inverted using !, e.g. !me will target anyone that isn't you\n\nSay 'help/target/player' for info on targetting players\nSay 'help/target/boolean' for info on targetting booleans\nSay 'help/target/team' for info on targetting teams\nSay 'help/target/time' for info on targetting times\nSay 'help/target/group' for info on targetting players in groups\nSay 'help/target/userpower' for info on targetting players with user powers\nSay 'help/target/distance' for info on targetting players near other players\nSay 'help/target/multiples' for info on targetting multiple things at once, such as multiple players", "Info" )
+				
+				return true
+				
+			end
+			
+			local CmdObj = Main.GetCommandAndArgs( Args[ 1 ]:lower( ) )
+			
+			if Args[ 1 ] == Main.TargetLib.ValidChar then
+				
+				CmdObj = Main.Commands.Help
+				
+			end
+			
+			if CmdObj then
+				
+				local Config = ""
+				
+				if CmdObj.Config then
+					
+					Config = "\nConfigs - "
+					
+					for a, b in pairs( CmdObj.Config ) do
+						
+						Config = Config .. a .. ", "
+						
+					end
+					
+					Config = Config:sub( 1, Config:len( ) - 2 )
+					
+				end
+				
+				local Aliases = ""
+				
+				for a = 1, #CmdObj.Alias do
+					
+					if type( CmdObj.Alias[ a ] ) == "table" then
+												
+						for b = 3, #CmdObj.Alias[ a ] do
+							
+							Aliases = Aliases .. ( a == 1 and b == 3 and "" or a == #CmdObj.Alias and b == #CmdObj.Alias[ a ] and " and " or ", " ) .. CmdObj.Alias[ a ][ b ]
+							
+						end
+						
+					else
+						
+						Aliases = Aliases .. ( a == 1 and "" or a == #CmdObj.Alias and " and " or ", " ) .. CmdObj.Alias[ a ]
+						
+					end
+					
+				end
+				
+				local CanRun
+				
+				if CmdObj.Commands then
+					
+					CanRun = "\nCommand Alias of - "
+					
+					for a = 1, #CmdObj.Commands do
+						
+						CanRun = CanRun .. ( a == 1 and "" or a == #CmdObj.Commands and " and " or ", " ) .. CmdObj.Commands[ a ].Name
+						
+					end
+					
+					CanRun = CanRun .. "\nTo run this you must be able to run all of the above commands"
+					
+				else
+					
+					CanRun = "\nCan run - " .. ( CmdObj.CanRun or "anyone" )
+				end
+				
+				Main.Util.SendMessage( Plr, "Aliases - " .. Aliases .. "\nDescription - " .. CmdObj.Description .. "\nCategory - " .. CmdObj.Category .. "\nUsage - " .. ( type( CmdObj.Alias[ 1 ] ) == "table" and CmdObj.Alias[ 1 ][ 2 ] or CmdObj.Alias[ 1 ] ) .. Main.GetUsage( CmdObj ) .. CanRun .. Config, "Info" )
+				
+				return true
+				
+			end
+			
+			return false, "Argument 1 is incorrect"
+			
+		end
+		
+	}
+	
+end
