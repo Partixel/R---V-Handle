@@ -1,5 +1,5 @@
 local InsertService = game:GetService( "InsertService" )
-print"test"
+
 wait( 5 )
 
 repeat
