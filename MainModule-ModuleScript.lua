@@ -1,5 +1,5 @@
 ----==== Create variables ====----
--- test3
+
 local Main, Players, ReplicatedStorage, InsertService, StarterPlayerScripts, Chat, ServerStorage, RunService, TextService = { }, game:GetService( "Players" ), game:GetService( "ReplicatedStorage" ), game:GetService( "InsertService" ), game:GetService( "StarterPlayer" ):WaitForChild( "StarterPlayerScripts" ), game:GetService( "Chat" ), game:GetService( "ServerStorage" ), game:GetService( "RunService" ), game:GetService( "TextService" )
 
 local ChatModules = Chat:WaitForChild( "ChatModules", math.huge )
