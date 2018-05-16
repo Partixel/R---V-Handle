@@ -255,7 +255,7 @@ local function TableHasMatchingObj( Table, String, ExactOnly )
 			
 			Exact = true
 			
-		elseif not ExactOnly and not Exact and Name:sub( 1 ):lower( ) == String then
+		elseif not ExactOnly and not Exact and Name:sub( 1, String:len( ) ):lower( ) == String then
 			
 			Found[ #Found + 1 ] = Table[ a ]
 			
