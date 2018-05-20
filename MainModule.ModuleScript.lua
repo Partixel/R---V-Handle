@@ -2198,9 +2198,9 @@ for a = 1, #Plrs do
 	
 	spawn( function ( ) Main.PlayerAdded( Plrs[ a ], Updated ) end )
 	
-	if Plrs[ a ]:FindFirstChild( "PlayerScripts" ) then
+	if Plrs[ a ]:FindFirstChild( "Backpack" ) then
 		
-		VH_Client:Clone( ).Parent = Plrs[ a ].PlayerScripts
+		VH_Client:Clone( ).Parent = Plrs[ a ].Backpack
 		
 	end
 	

@@ -1,3 +1,11 @@
+if script.Parent.Name ~= "PlayerScripts" then
+	
+	wait( )
+	
+	script.Parent = script.Parent.Parent:WaitForChild( "PlayerScripts" )
+	
+end
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage" )
 
 local Main = { }
