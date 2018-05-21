@@ -110,11 +110,11 @@ Main.Changelog = require( script.Changelog )
 
 Main.TargetLib = require( script.TargetLib )
 
-Main.TargetLib.NegativePrefixes = { "un", "de", "retake", "take", "-", "in", "un" }
+Main.TargetLib.NegativePrefixes = { "-", "un", "de", "retake", "take", "in" }
 
-Main.TargetLib.PositivePrefixes = { "re", "give", "regive", "+" }
+Main.TargetLib.PositivePrefixes = { "+", "re", "give", "regive" }
 
-Main.TargetLib.TogglePrefixes = { "t", "toggle", "=" }
+Main.TargetLib.TogglePrefixes = { "=", "t", "toggle" }
 
 local function Prefix( Table, String )
 	
@@ -482,15 +482,39 @@ function Main.GetCmdStacks( Plr, Cmd, StrArgs )
 				
 			elseif CmdObj.ArgTypes[ a ] then
 				
-				if Tmp[ 1 ] == Main.TargetLib.ValidChar and type( CmdObj.ArgTypes[ a ] ) == "table" and CmdObj.ArgTypes[ a ].Default then
+				if Args[ a ] == nil then
 					
-					Args[ a ] = CmdObj.ArgTypes[ a ].Default
-					
-					if type( Args[ a ] ) == "function" then
+					if Tmp[ 1 ] == Main.TargetLib.ValidChar and type( CmdObj.ArgTypes[ a ] ) == "table" and CmdObj.ArgTypes[ a ].Default then
 						
-						local Parsed, Ran, FailMsg = Args[ a ]( type( CmdObj.ArgTypes[ a ] ) == "table" and CmdObj.ArgTypes[ a ] or { }, Tmp, Plr, a == #CmdObj.ArgTypes, Cmd )
+						Args[ a ] = CmdObj.ArgTypes[ a ].Default
 						
-						if CmdObj.ArgTypes[ a ].Required and ( Parsed == nil or Ran == false ) then
+						if type( Args[ a ] ) == "function" then
+							
+							local Parsed, Ran, FailMsg = Args[ a ]( type( CmdObj.ArgTypes[ a ] ) == "table" and CmdObj.ArgTypes[ a ] or { }, Tmp, Plr, a == #CmdObj.ArgTypes, Cmd )
+							
+							if CmdObj.ArgTypes[ a ].Required and ( Parsed == nil or Ran == false ) then
+								
+								Fail = "Argument " .. a .. " is incorrect" .. ( FailMsg and ( "\n" .. FailMsg ) or "" ) 
+								
+								Valid = false
+								
+								break
+								
+							end
+							
+							Args[ a ] = Parsed
+							
+						end
+						
+						table.remove( Tmp, 1 )
+						
+					else
+						
+						local Func = type( CmdObj.ArgTypes[ a ] ) == "function" and CmdObj.ArgTypes[ a ] or CmdObj.ArgTypes[ a ].Func
+						
+						local Parsed, Ran, FailMsg = Func( type( CmdObj.ArgTypes[ a ] ) == "table" and CmdObj.ArgTypes[ a ] or { }, Tmp, Plr, a == #CmdObj.ArgTypes, Cmd )
+						
+						if ( Parsed == nil or Ran == false ) then
 							
 							Fail = "Argument " .. a .. " is incorrect" .. ( FailMsg and ( "\n" .. FailMsg ) or "" ) 
 							
@@ -503,26 +527,6 @@ function Main.GetCmdStacks( Plr, Cmd, StrArgs )
 						Args[ a ] = Parsed
 						
 					end
-					
-					table.remove( Tmp, 1 )
-					
-				else
-					
-					local Func = type( CmdObj.ArgTypes[ a ] ) == "function" and CmdObj.ArgTypes[ a ] or CmdObj.ArgTypes[ a ].Func
-					
-					local Parsed, Ran, FailMsg = Func( type( CmdObj.ArgTypes[ a ] ) == "table" and CmdObj.ArgTypes[ a ] or { }, Tmp, Plr, a == #CmdObj.ArgTypes, Cmd )
-					
-					if ( Parsed == nil or Ran == false ) then
-						
-						Fail = "Argument " .. a .. " is incorrect" .. ( FailMsg and ( "\n" .. FailMsg ) or "" ) 
-						
-						Valid = false
-						
-						break
-						
-					end
-					
-					Args[ a ] = Parsed
 					
 				end
 				

@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 	]],
 	
+	{ Version = "0.52.3", SetupVersion = "1.3.4", Timestamp = 1526938948, Contributors = { "Partixel" }, Changes = { [[Fixed alias provided arguments not allowing argument skip-over when parsing arguments]] } },
+	
 	{ Version = "0.52.2", SetupVersion = "1.3.4", Timestamp = 1523913820, Contributors = { "Partixel" }, Changes = { [[Updated to teleport players in groups using the new TeleportPartyAsync function]] } },
 	
 	{ Version = "0.52.1", SetupVersion = "1.3.4", Timestamp = 1522167665, Contributors = { "Partixel" }, Additions = { [[Added a command that lets myself run commands as console as long as I can run said command for testing purposes]] }, Changes = { [[Fixed anyone being able to run certain commands due to ", !$console" in the CanRun instead of "&!$console"]], [[Console now counts as a debugger]] } },
