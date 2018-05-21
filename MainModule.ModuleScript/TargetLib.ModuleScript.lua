@@ -1134,17 +1134,27 @@ Module.AddArgAsset( "Sound", 3, 130775431 )
 
 Module.AddArgAsset( "Place", 9, 64542766 )
 
-Module.MaxToggleKey = 0
-
 Module.Defaults.Toggle = function ( self, Strings, Plr )
 	
-	if not self.ToggleKey then self.ToggleKey = Module.MaxToggleKey + 1 Module.MaxToggleKey = self.ToggleKey end
+	local CurToggle
 	
-	Module.Toggles[ Plr ] = Module.Toggles[ Plr ] or { }
+	if self.ToggleValue then
+		
+		CurToggle = not self.ToggleValue( )
+		
+	else
+		
+		if not self.ToggleKey then self.ToggleKey = { } end
+		
+		Module.Toggles[ Plr ] = Module.Toggles[ Plr ] or { }
+		
+		CurToggle = not Module.Toggles[ Plr ][ self.ToggleKey ]
+		
+		Module.Toggles[ Plr ][ self.ToggleKey ] = CurToggle
+		
+	end
 	
-	Module.Toggles[ Plr ][ self.ToggleKey ] = not Module.Toggles[ Plr ][ self.ToggleKey ]
-	
-	return Module.Toggles[ Plr ][ self.ToggleKey ]
+	return CurToggle
 	
 end
 

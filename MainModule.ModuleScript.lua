@@ -138,9 +138,7 @@ local function ToggleFunc( Positive, Arg, Aliases, self, Cmd, Plr )
 		
 		if not self.ArgTypes[ Arg ].ToggleKey then
 			
-			Main.TargetLib.MaxToggleKey = Main.TargetLib.MaxToggleKey + 1
-			
-			self.ArgTypes[ Arg ].ToggleKey = Main.TargetLib.MaxToggleKey
+			self.ArgTypes[ Arg ].ToggleKey = { }
 			
 		end
 		
