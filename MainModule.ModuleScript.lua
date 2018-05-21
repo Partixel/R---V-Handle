@@ -432,9 +432,9 @@ function Main.GetCmdStacks( Plr, Cmd, StrArgs )
 		
 		for a = 1, ArgCount do
 			
-			if Tmp[ 1 ] == nil or Tmp[ 1 ] == "" or not CmdObj.ArgTypes[ a ] then
+			if Args[ a ] == nil then
 				
-				if Args[ a ] == nil then
+				if Tmp[ 1 ] == nil or Tmp[ 1 ] == "" or not CmdObj.ArgTypes[ a ] then
 					
 					if type( CmdObj.ArgTypes[ a ] ) == "table" then
 						
@@ -477,12 +477,8 @@ function Main.GetCmdStacks( Plr, Cmd, StrArgs )
 						Args[ a ] = table.remove( Tmp, 1 )
 						
 					end
-					
-				end
 				
-			elseif CmdObj.ArgTypes[ a ] then
-				
-				if Args[ a ] == nil then
+				elseif CmdObj.ArgTypes[ a ] then
 					
 					if Tmp[ 1 ] == Main.TargetLib.ValidChar and type( CmdObj.ArgTypes[ a ] ) == "table" and CmdObj.ArgTypes[ a ].Default then
 						
