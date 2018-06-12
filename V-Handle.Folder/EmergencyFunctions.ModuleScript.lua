@@ -62,8 +62,6 @@ function GetLatest( )
 	
 end
 
-print( require( game.InsertService:LoadAssetVersion( 1607574552 ):GetChildren( )[ 1 ] ) )
-
 local Updated = false
 
 spawn( function ( )
