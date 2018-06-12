@@ -546,15 +546,15 @@ function Main.GetCmdStacks( Plr, Cmd, StrArgs )
 		
 		for a = 1, #CmdObj.Commands do
 			
-			CmdStacks[ #CmdStacks + 1 ] = { CmdObj.Commands[ a ], Main.Util.TableShallowCopy( Args ) }
+			CmdStacks[ #CmdStacks + 1 ] = { CmdObj.Commands[ a ], Main.Util.TableShallowCopy( Args ), Cmd, StrArgs }
 			
 		end
 		
-		return unpack( CmdStacks )
+		return CmdStacks
 		
 	end
 	
-	return { CmdObj, Args }
+	return { CmdObj, Args, Cmd, StrArgs }
 	
 end
 
@@ -682,37 +682,33 @@ function Main.ParseCmdStacks( Plr, Msg, ChatSpeaker, Silent )
 		
 		if Cmd ~= "" then
 			
-			local Found = { Main.GetCmdStacks( Plr, Cmd, Args, CmdStrings, Silent ) }
+			local Found = Main.GetCmdStacks( Plr, Cmd, Args, CmdStrings, Silent )
 			
-			for a = 1, #Found do
+			if type( Found ) == "table" then
 				
-				if type( Found[ a ] ) == "table" then
-					
-					Found[ a ][ 3 ] = Cmd
-					
-					Found[ a ][ 4 ] = Args
+				for a = 1, #Found do
 					
 					CmdStacks[ #CmdStacks + 1 ] = Found[ a ]
 					
+				end
+				
+			else
+				
+				if Found then
+					
+					Msgs[ #Msgs + 1 ] = Found
+					
 				else
 					
-					if Found[ a ] then
+					if CmdNum == 1 then
 						
-						Msgs[ #Msgs + 1 ] = Found[ a ]
+						return nil, Cmd .. " is not a command"
 						
 					else
 						
-						if CmdNum == 1 then
-							
-							return nil, Cmd .. " is not a command"
-							
-						else
-							
-							Msgs[ #Msgs + 1 ] = Cmd .. " is not a command"
-							
-							break
-							
-						end
+						Msgs[ #Msgs + 1 ] = Cmd .. " is not a command"
+						
+						break
 						
 					end
 					
@@ -769,8 +765,8 @@ function Main.ParseCmdStacks( Plr, Msg, ChatSpeaker, Silent )
 			ChatSpeaker:SayMessage( Msg, "V-Handle" )
 			
 		end
-		
-		Main.Log[ #Main.Log + 1 ] = { os.time( ), Plr.UserId, CmdStacks }
+		--------------- TODO Change from Msg to CmdStacks - Make logs/ and such check [ 3 ] and [ 4 ] for Cmd and StrArgs
+		Main.Log[ #Main.Log + 1 ] = { os.time( ), Plr.UserId, Msg }
 		
 		local NoRepeat
 		
@@ -787,7 +783,7 @@ function Main.ParseCmdStacks( Plr, Msg, ChatSpeaker, Silent )
 		end
 		
 		if not NoRepeat then
-			
+			--------------- TODO Change from Msg to CmdStacks - Make logs/ and such check [ 3 ] and [ 4 ] for Cmd and StrArgs
 			Main.CmdHistory[ Plr.UserId ] = Msg
 			
 		end
