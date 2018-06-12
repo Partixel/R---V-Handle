@@ -1762,11 +1762,7 @@ return function ( Main, ModFolder, VH_Events )
 			
 			for a = 1, #Main.Log do
 				
-				local Args = ""
-				
-				if #Main.Log[ a ][ 4 ] > 0 then Args = "/" .. table.concat( Main.Log[ a ][ 4 ], "/" ) end
-				
-				Str = Str .. Main.Util.TimeSince( Main.Log[ a ][ 1 ] ) .. " - " .. Main.Util.UsernameFromID( Main.Log[ a ][ 2 ] ) .. ":" .. Main.Log[ a ][ 2 ] .. " ran " .. TextService:FilterStringAsync( Main.Log[ a ][ 3 ], Main.Log[ a ][ 2 ] ):GetChatForUserAsync( Plr.UserId ) .. Args .. "\n"
+				Str = Str .. Main.Util.TimeSince( Main.Log[ a ][ 1 ] ) .. " - " .. Main.Util.UsernameFromID( Main.Log[ a ][ 2 ] ) .. ":" .. Main.Log[ a ][ 2 ] .. " ran " .. TextService:FilterStringAsync( Main.Log[ a ][ 3 ], Main.Log[ a ][ 2 ] ):GetChatForUserAsync( Plr.UserId ) .. "\n"
 				
 			end
 			
