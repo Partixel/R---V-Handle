@@ -554,7 +554,7 @@ function Main.GetCmdStacks( Plr, Cmd, StrArgs )
 		
 	end
 	
-	return { CmdObj, Args, Cmd, StrArgs }
+	return { { CmdObj, Args, Cmd, StrArgs } }
 	
 end
 
