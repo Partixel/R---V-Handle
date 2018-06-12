@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 	]],
 	
+	{ Version = "0.53.1", SetupVersion = "1.3.5", Timestamp = 1528840601, Contributors = { "Partixel" }, Changes = { [[Fixed/optimised CmdStacks slightly]], [[Fixed logs/ command]], [[Fixed EmergencyFunctions error]], [[Update to the latest version of my ToString function]] } },
+	
 	{ Version = "0.53.0", SetupVersion = "1.3.4", Timestamp = 1526940258, Contributors = { "Partixel" }, Additions = { [[Added an option for toggleable argtypes to specify the current ToggleValue]] }, Changes = { [[Optimised memory usage slightly]] } },
 	
 	{ Version = "0.52.3", SetupVersion = "1.3.4", Timestamp = 1526938948, Contributors = { "Partixel" }, Changes = { [[Fixed alias provided arguments not allowing argument skip-over when parsing arguments]] } },
