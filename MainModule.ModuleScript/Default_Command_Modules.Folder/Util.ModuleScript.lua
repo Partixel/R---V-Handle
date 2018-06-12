@@ -233,19 +233,11 @@ return function ( Main, ModFolder, VH_Events )
 			
 			Obj = Obj:gsub( "\\", "\\\\" )
 			
-			local Start, End
+			Obj = Obj:gsub( "\n", "\\n" )
 			
-			if Obj:find( "\n" ) then
-				
-				Start, End = "[[", "]]"
-				
-				if Obj:find( "%[%[" ) or Obj:find( "%]%]" ) then
-					
-					Obj = Obj:gsub( "%[%[", "\\%[\\%[" ):gsub( "%]%]", "\\%]\\%]" ) 
-					
-				end
-				
-			elseif Obj:find( '"' ) then
+			local Start, End 
+			
+			if Obj:find( '"' ) then
 				
 				if Obj:find( "'" ) then
 					
@@ -279,7 +271,7 @@ return function ( Main, ModFolder, VH_Events )
 			
 			local Str = tostring( Obj )
 			
-			if Str:len( ) ~= Str:match( "%d+" ):len( ) then
+			if Str:len( ) ~= Str:match( "[%d%.]+" ):len( ) then
 				
 				if tonumber( Str ) then
 					
@@ -335,7 +327,7 @@ return function ( Main, ModFolder, VH_Events )
 					
 				elseif WaitedFor[ Par ] then
 					
-					Str = "." .. Par.Name .. Str
+					Str = "[" .. Options.Space .. Module.ToString( Par.Name, nil, Options, 0, Cyclic, Key, CyclicObjs, WaitedFor ) .. Options.Space .. "]" .. Str
 					
 				else
 					
@@ -370,6 +362,38 @@ return function ( Main, ModFolder, VH_Events )
 		elseif Type == "Color3" then
 			
 			return Name .. Type .. ".fromRGB(" .. Options.Space .. math.floor( Obj.r * 255 + 0.5 ) .. "," .. Options.Space .. math.floor( Obj.g * 255 + 0.5 ) .. "," .. Options.Space .. math.floor( Obj.b * 255 + 0.5 ) .. Options.Space .. ")"
+			
+		elseif Type == "NumberRange" then
+			
+			return Name .. Type .. ".new(" .. Options.Space .. Obj.Min .. "," .. Options.Space .. Obj.Max .. Options.Space .. ")"
+			
+		elseif Type == "ColorSequence" then
+			
+			local Str = Name .. Type .. ".new(" .. Options.Space .. "{"
+			
+			for a = 1, #Obj.Keypoints do
+				
+				Str = Str .. Options.Space .. typeof( Obj.Keypoints[ a ] ) .. ".new(" .. Options.Space .. Obj.Keypoints[ a ].Time .. "," .. Options.Space .. ToString( Obj.Keypoints[ a ].Value, nil, Options, 0, Cyclic, Key, CyclicObjs, WaitedFor ) .. Options.Space .. ")" .. ( a ~= #Obj.Keypoints and "," or "" )
+				
+			end
+			
+			return Str .. Options.Space .. "}" .. Options.Space .. ")"
+			
+		elseif Type == "NumberSequence" then
+			
+			local Str = Name .. Type .. ".new(" .. Options.Space .. "{"
+			
+			for a = 1, #Obj.Keypoints do
+				
+				Str = Str .. Options.Space .. typeof( Obj.Keypoints[ a ] ) .. ".new(" .. Options.Space .. Obj.Keypoints[ a ].Time .. "," .. Options.Space .. Obj.Keypoints[ a ].Value .. Options.Space .. "," .. Options.Space .. Obj.Keypoints[ a ].Envelope .. Options.Space .. ")" .. ( a ~= #Obj.Keypoints and "," or "" )
+				
+			end
+			
+			return Str .. Options.Space .. "}" .. Options.Space .. ")"
+			
+		elseif Type == "UDim2" then
+			
+			return Name .. Type .. ".new(" .. Options.Space .. Obj.X.Scale .. "," .. Options.Space .. Obj.X.Offset .. "," .. Options.Space .. Obj.Y.Scale .. "," .. Options.Space .. Obj.Y.Offset .. Options.Space .. ")"
 			
 		else
 			
