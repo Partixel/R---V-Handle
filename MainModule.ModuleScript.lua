@@ -1978,17 +1978,25 @@ local function RequireModule( Mod, Required, LoopReq )
 			
 			for a = 1, #Required do
 				
-				if not Required[ a ].Value then
+				local ReqMod = script.Default_Command_Modules:FindFirstChild( Required[ a ].Name ) or VH_Command_Modules:FindFirstChild( Required[ a ].Name )
+				
+				local Start = tick( )
+				
+				while not ReqMod and wait( ) do
 					
-					Loading[ Mod ] = false
-					
-					warn( Required[ a ]:GetFullName( ) .. " is an empty require" )
-					
-					return false
+					if Start and tick( ) - Start > 5 then
+						
+						Start = nil
+						
+						warn( Mod.Name .. " requires a module that took too long to be found - " .. Required[ a ]:GetFullName( ) )
+						
+						return false
+						
+					end
 					
 				end
 				
-				if LoopReq[ Required[ a ].Value ] then
+				if LoopReq[ ReqMod ] then
 					
 					Loading[ Mod ] = false
 					
@@ -1996,23 +2004,23 @@ local function RequireModule( Mod, Required, LoopReq )
 					
 				end
 				
-				local Start = tick( )
+				Start = tick( )
 				
-				while Loading[ Required[ a ].Value ] and wait( ) do
+				while Loading[ ReqMod ] and wait( ) do
 					
 					if Start and tick( ) - Start > 5 then
 						
 						Start = nil
 						
-						warn( Required[ a ].Value.Name .. " is taking a long time to be required" )
+						warn( Required[ a ].Name .. " is taking a long time to be required" )
 						
 					end
 					
 				end
 				
-				if Loading[ Required[ a ].Value ] == false then
+				if Loading[ ReqMod ] == false then
 					
-					warn( Mod.Name .. " failed to load due to an error loading " .. Required[ a ].Value.Name )
+					warn( Mod.Name .. " failed to load due to an error loading " .. Required[ a ].Name )
 					
 					Loading[ Mod ] = false
 					
@@ -2020,9 +2028,9 @@ local function RequireModule( Mod, Required, LoopReq )
 					
 				end
 				
-				if not Loaded[ Required[ a ].Value ] then
+				if not Loaded[ ReqMod ] then
 					
-					local Ran, Loop = RequireModule( Required[ a ].Value, true, LoopReq )
+					local Ran, Loop = RequireModule( ReqMod, true, LoopReq )
 					
 					if Ran == false then
 						
@@ -2030,7 +2038,7 @@ local function RequireModule( Mod, Required, LoopReq )
 							
 							Loading[ Mod ] = false
 							
-							warn( "Required loop - " .. Mod.Name .. " and " .. Required[ a ].Value.Name )
+							warn( "Required loop - " .. Mod.Name .. " and " .. Required[ a ].Name )
 							
 						end
 						
