@@ -899,6 +899,84 @@ return function ( Main, ModFolder, VH_Events )
 		
 	}
 	
+	local TeamOverride = setmetatable( { }, { __mode = "k" } )
+	
+	local TeamLocked = ( _G.VH_Saved or { } ).TeamLocked or setmetatable( { }, { __mode = "k" } )
+	
+	VH_Events.Destroyed.Event:Connect( function ( Update )
+		
+		if not Update then
+			
+			for a, b in pairs( TeamLocked ) do
+				
+				b:Disconnect( )
+				
+				TeamLocked[ a ] = nil
+				
+			end
+			
+			return
+			
+		end
+		
+		_G.VH_Saved.TeamLocked = TeamLocked
+		
+	end )
+	
+	Main.Commands.LockTeam = {
+		
+		Alias = { Main.TargetLib.AliasTypes.Toggle( 2, "lockteam", "lteam" ) },
+		
+		Description = "(Un)Locks the specified player(s) team unless set by admin",
+		
+		Category = "Players",
+		
+		CanRun = "$moderator",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.Boolean, Default = Main.TargetLib.Defaults.Toggle } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			for a = 1, #Args[ 1 ] do
+				
+				if TeamLocked[ Args[ 1 ][ a ] ] then
+					
+					TeamLocked[ Args[ 1 ][ a ] ]:Disconnect( )
+					
+					TeamLocked[ Args[ 1 ][ a ] ] = nil
+					
+				end
+				
+				if Args[ 2 ] then
+					
+					local OriginalTeam = Args[ 1 ][ a ].Team
+					
+					TeamLocked[ Args[ 1 ][ a ] ] = Args[ 1 ][ a ]:GetPropertyChangedSignal( "Team" ):Connect( function ( )
+						
+						if TeamOverride[ Args[ 1 ][ a ] ] then
+							
+							OriginalTeam = Args[ 1 ][ a ].Team
+							
+							TeamOverride[ Args[ 1 ][ a ] ] = nil
+							
+						else
+							
+							Args[ 1 ][ a ].Team = OriginalTeam
+							
+						end
+						
+					end )
+					
+				end
+				
+			end
+			
+			return true
+			
+		end
+		
+	}
+	
 	Main.Commands.Team = {
 		
 		Alias = { "team", "setteam" },
@@ -914,6 +992,12 @@ return function ( Main, ModFolder, VH_Events )
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
 			for a = 1, #Args[ 1 ] do
+				
+				if TeamLocked[ Args[ 1 ][ a ] ] then
+					
+					TeamOverride[ Args[ 1 ][ a ] ] = true
+					
+				end
 				
 				Args[ 1 ][ a ].TeamColor = Args[ 2 ].TeamColor
 				
@@ -949,6 +1033,12 @@ return function ( Main, ModFolder, VH_Events )
 				
 				local Chosen = math.random( 1, #Plrs )
 				
+				if TeamLocked[ Plrs[ Chosen ] ] then
+					
+					TeamOverride[ Plrs[ Chosen ] ] = true
+					
+				end
+				
 				Plrs[ Chosen ].TeamColor = Teams[ Cur ].TeamColor
 				
 				table.remove( Plrs, Chosen )
@@ -982,6 +1072,12 @@ return function ( Main, ModFolder, VH_Events )
 			local Teams = Args[ 2 ] or Teams:GetTeams( )
 			
 			for a = 1, #Args[ 1 ] do
+				
+				if TeamLocked[ Args[ 1 ][ a ] ] then
+					
+					TeamOverride[ Args[ 1 ][ a ] ] = true
+					
+				end
 				
 				Args[ 1 ][ a ].TeamColor = Teams[ math.random( #Teams ) ].TeamColor
 				
