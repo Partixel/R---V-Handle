@@ -1382,7 +1382,7 @@ return function ( Main, ModFolder, VH_Events )
 		CanRun = "!$console",
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
-			print( Plr )
+			
 			ModFolder.Ping:FireClient( Plr, tick( ) )
 			
 			return true
