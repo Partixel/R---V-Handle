@@ -1500,33 +1500,71 @@ return function ( Main, ModFolder, VH_Events )
 			
 			local Cur = ( Main.Loops[ Key ] or 0 ) + 1
 			
-			Main.Loops[ Key ] = Cur
+			local WaitCmd, HasWait = Main.Commands.Wait
 			
-			for b = 1, Reps, ( Speed and 1 or -0 ) do
+			local Cmd = ""
+			
+			local Num = #NextCmds
+			
+			for a = 1, Num do
 				
-				wait( )
+				Cmd = Cmd .. NextCmds[ a ][ 3 ] .. "/" .. table.concat( NextCmds[ a ][ 4 ], "/" ) .. ( a == Num and "" or "|" )
 				
-				for a = 1, #NextCmds do
+				if not HasWait then
 					
-					if Main.Loops[ Key ] ~= Cur then return true, true end
-					
-					local Args = Main.Util.Split( NextCmds[ a ], "/" )
-					
-					local Cmd = Args[ 1 ]:lower( )
-					
-					table.remove( Args, 1 )
-					
-					if Cmd ~= "" then
+					for b = 1, #WaitCmd.Alias do
 						
-						Main.RunCommand( Plr, Cmd, Args, NextCmds, true )
-						
+						if WaitCmd.Alias[ b ] == NextCmds[ a ][ 3 ]:lower( ) then
+							
+							HasWait = true
+							
+							break
+							
+						end
+					
 					end
 					
 				end
 				
+				NextCmds[ a ] = nil
+				
 			end
 			
-			return true, true
+			WaitCmd = nil
+			
+			Main.Loops[ Key ] = Cur
+			
+			for b = 1, Reps, ( Speed and 1 or -0 ) do
+				
+				if not HasWait then
+					
+					wait( )
+					
+				end
+				
+				if Main.Loops[ Key ] ~= Cur then
+					
+					for a = 1, #NextCmds do
+						
+						NextCmds[ a ] = nil
+						
+					end
+					
+					return true
+					
+				end
+				
+				Main.ParseCmdStacks( Plr, Cmd, nil, true )
+				
+			end
+			
+			for a = 1, #NextCmds do
+				
+				NextCmds[ a ] = nil
+				
+			end
+			
+			return true
 			
 		end
 		
