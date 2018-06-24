@@ -1860,8 +1860,7 @@ local function Metatable( self, Key, Value )
 	for a = 1, #Value.Alias do
 		
 		if type( Value.Alias[ a ] ) == "table" then
-			--TODO
-			--MAKE ERROR
+			--TODO MAKE ERROR
 			if AliasCache[ Value.Alias[ a ][ 1 ] ] then warn( Key .. ": Alias " .. Value.Alias[ a ][ 2 ] .. " is already used" ) end
 			
 			AliasFunctions[ Value.Alias[ a ][ 1 ] ] = Value
@@ -1869,8 +1868,7 @@ local function Metatable( self, Key, Value )
 			AliasCache[ Value.Alias[ a ][ 1 ] ] = Value
 			
 		else
-			--TODO
-			--MAKE ERROR
+			--TODO MAKE ERROR
 			if AliasCache[ Value.Alias[ a ] ] then warn( Key .. ": Alias " .. Value.Alias[ a ] .. " is already used" ) end
 			
 			AliasCache[ Value.Alias[ a ] ] = Value
