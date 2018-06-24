@@ -1394,15 +1394,21 @@ return function ( Main, ModFolder, VH_Events )
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			ModFolder.Bind:FireClient( Plr, Args[ 1 ], NextCmds )
+			local Cmd = ""
 			
-			for a = #NextCmds, 1, -1 do
+			local Num = #NextCmds
+			
+			for a = 1, Num do
+				
+				Cmd = Cmd .. NextCmds[ a ][ 3 ] .. "/" .. table.concat( NextCmds[ a ][ 4 ], "/" ) .. ( a == Num and "" or "|" )
 				
 				NextCmds[ a ] = nil
 				
 			end
 			
-			return true, false
+			ModFolder.Bind:FireClient( Plr, Args[ 1 ], Cmd )
+			
+			return true
 			
 		end
 		
