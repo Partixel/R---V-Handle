@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 	]],
 	
+	{ Version = "0.54.1", SetupVersion = "1.3.5", Timestamp = 1529864454, Contributors = { "Partixel" }, Changes = { [[Removed a debug print]], [[Fixed the message returned by cmds/ command]], [[Fixed the bind/ command]], [[Fixed the loop/ command]] } },
+	
 	{ Version = "0.54.0", SetupVersion = "1.3.5", Timestamp = 1529861434, Contributors = { "Partixel" }, Additions = { [[Added '(un)lockteam/player/bool' commamnd]] }, Changes = { [[Required Command Modules now work by Name instead of the ObjectValues Value]], [[Removed a debug print from ping]] } },
 	
 	{ Version = "0.53.1", SetupVersion = "1.3.5", Timestamp = 1528840601, Contributors = { "Partixel" }, Changes = { [[Fixed/optimised CmdStacks slightly]], [[Fixed logs/ command]], [[Fixed EmergencyFunctions error]], [[Update to the latest version of my ToString function]] } },
