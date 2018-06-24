@@ -1449,7 +1449,7 @@ return function ( Main, ModFolder, VH_Events )
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
 			local Last = Main.CmdHistory[ Plr.UserId ]
-			print(Last)
+			
 			if Last then
 				
 				Main.ParseCmdStacks( Plr, Last, nil, true )
@@ -1992,7 +1992,7 @@ return function ( Main, ModFolder, VH_Events )
 					
 				else
 					
-					CanRun = "Can be run by" .. ( CmdObj.CanRun or "anyone" )
+					CanRun = "Can be run by " .. ( CmdObj.CanRun or "anyone" )
 					
 				end
 				
