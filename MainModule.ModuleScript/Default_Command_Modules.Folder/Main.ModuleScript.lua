@@ -189,6 +189,7 @@ return function ( Main, ModFolder, VH_Events )
 		end
 		
 	}
+	
 	Main.Commands.PlayerPoints = {
 		
 		Alias = { "playerpoints", "getpp" },
@@ -390,6 +391,92 @@ return function ( Main, ModFolder, VH_Events )
 				if Plrs[ a ].Character and Plrs[ a ].Character:FindFirstChild( "Humanoid" ) then
 					
 					Plrs[ a ].Character.Humanoid.Health = Plrs[ a ].Character.Humanoid.MaxHealth
+					
+				end
+				
+			end
+			
+			return true
+			
+		end
+		
+	}
+	
+	local Blind = ( _G.VH_Saved or { } ).Blind or setmetatable( { }, { __mode = "k" } )
+	
+	VH_Events.Destroyed.Event:Connect( function ( Update )
+		
+		if not Update then
+			
+			for a, b in pairs( Blind ) do
+				
+				b:Destroy( )
+				
+			end
+			
+			return
+			
+		end
+		
+		_G.VH_Saved.Blind = Blind
+		
+	end )
+	
+	Main.Commands.Blind = {
+		
+		Alias = { Main.TargetLib.AliasTypes.Toggle( 2, "blind" ) },
+		
+		Description = "Makes the specified player(s) (un)blind",
+		
+		Category = "Characters",
+		
+		CanRun = "$moderator",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.Boolean, Default = Main.TargetLib.Defaults.Toggle } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local GUI = Instance.new( "ScreenGui" )
+			
+			GUI.Name = "VH_Blind"
+			
+			GUI.ResetOnSpawn = false
+			
+			local Frame = Instance.new( "Frame", GUI )
+			
+			Frame.Size = UDim2.new( 10, 0, 10, 0 )
+			
+			Frame.Position = UDim2.new( -5, 0, -5, 0 )
+			
+			Frame.BackgroundColor3 = Color3.new( 0, 0, 0 )
+			
+			Frame.ZIndex = -10
+			
+			for a = 1, #Args[ 1 ] do
+				
+				local PlayerGui = Args[ 1 ][ a ]:FindFirstChildOfClass( "PlayerGui" )
+				
+				if PlayerGui then
+					
+					if Args[ 2 ] then
+						
+						if not Blind[ Args[ 1 ][ a ] ] then
+							
+							local Clone = GUI:Clone( )
+							
+							Clone.Parent = PlayerGui
+							
+							Blind[ Args[ 1 ][ a ] ] = Clone
+							
+						end
+						
+					else
+						
+						Blind[ Args[ 1 ][ a ] ]:Destroy( )
+						
+						Blind[ Args[ 1 ][ a ] ] = nil
+						
+					end
 					
 				end
 				
