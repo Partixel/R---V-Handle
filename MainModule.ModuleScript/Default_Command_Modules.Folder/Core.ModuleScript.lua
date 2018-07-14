@@ -1680,23 +1680,29 @@ return function ( Main, ModFolder, VH_Events )
 			
 			local Str = ""
 			
+			local PermBans = { }
+			
 			for a, b in pairs( Main.TempBans ) do
 				
-				if not b.Perm and ( b.Time == true or b.Time - os.time( ) > 0 ) then
+				if b.Time == true or b.Time - os.time( ) > 0 then
 					
-					Str = Str .. Main.Util.UsernameFromID( a ) .. " - " .. ( b.Reason and TextService:FilterStringAsync( b.Reason, b.Banner ):GetChatForUserAsync( Plrs[ a ].UserId ) .. " - " or "" )  .. Main.Util.TimeRemaining( b.Time ) .. "\n"
+					if b.Perm then
+						
+						PermBans[ a ] = b
+						
+					else
+						
+						Str = Str .. Main.Util.UsernameFromID( a ) .. " - " .. ( b.Reason and TextService:FilterStringAsync( b.Reason, b.Banner ):GetChatForUserAsync( Plr.UserId ) .. " - " or "" )  .. Main.Util.TimeRemaining( b.Time ) .. "\n"
+						
+					end
 					
 				end
 				
 			end
 			
-			for a, b in pairs( Main.GetPermBans( ) ) do
+			for a, b in pairs( PermBans ) do
 				
-				if b.Time == true or b.Time - os.time( ) > 0 then
-					
-					Str = Str .. "Perm - " .. Main.Util.UsernameFromID( a ) .. " - " .. ( b.Reason and TextService:FilterStringAsync( b.Reason, b.Banner ):GetChatForUserAsync( Plrs[ a ].UserId ) .. " - " or "" )  .. Main.Util.TimeRemaining( b.Time ) .. "\n"
-					
-				end
+				Str = Str .. "Perm - " .. Main.Util.UsernameFromID( a ) .. " - " .. ( b.Reason and TextService:FilterStringAsync( b.Reason, b.Banner ):GetChatForUserAsync( Plr.UserId ) .. " - " or "" )  .. Main.Util.TimeRemaining( b.Time ) .. "\n"
 				
 			end
 			

@@ -1245,24 +1245,6 @@ function Main.GetBanned( UserId )
 	
 end
 
-function Main.GetPermBans( )
-	
-	local Bans = { }
-	
-	for a, b in pairs( Main.TempBans ) do
-		
-		if b.Perm and b.Time == true or b.Time - os.time( ) > 0 then
-			
-			Bans[ a ] = b
-			
-		end
-		
-	end
-	
-	return Bans
-	
-end
-
 function Main.SetBan( UserId, BanInfo, Perm )
 	
 	if Perm then
