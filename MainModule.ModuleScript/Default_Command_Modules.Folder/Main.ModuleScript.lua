@@ -1282,7 +1282,9 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-			return Found, "Argument 2 is incorrect"
+			if Found then return true end
+			
+			return false, "Argument 2 is incorrect"
 			
 		end
 		
@@ -1328,7 +1330,9 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-			return Found, "Argument 2 is incorrect"
+			if Found then return true end
+			
+			return false, "Argument 2 is incorrect"
 			
 		end
 		
@@ -1353,6 +1357,8 @@ return function ( Main, ModFolder, VH_Events )
 		end
 		
 		_G.VH_Saved.Locked = Locked
+		
+		return true
 		
 	end )
 	
