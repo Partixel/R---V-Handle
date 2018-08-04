@@ -543,9 +543,7 @@ function Module.FindGroup( self, String, Plr )
 	
 	if not GroupId then return { } end
 	
-	Type = Type == "=" and 1 or Type == "<" and 2 or nil
-	
-	return { GroupId }, Rank or 1
+	return { GroupId }, Rank or 1, Type == "=" and 1 or Type == "<" and 2 or nil
 	
 end
 
