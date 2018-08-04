@@ -864,7 +864,7 @@ function Main.PlayerAdded( Plr, JustUpdated )
 		
 	end
 	
-	for a, b in pairs( Main.Config.Banned ) do
+	for a, b in pairs( Main.Config.Banned or { } ) do
 		
 		if type( a ) == "string" and Main.TargetLib.MatchesPlr( a, Plr ) then
 			
@@ -894,7 +894,7 @@ function Main.PlayerAdded( Plr, JustUpdated )
 		
 		local Override = 0
 		
-		for a, b in pairs( Main.Config.UserPowers ) do
+		for a, b in pairs( Main.Config.UserPowers or { } ) do
 			
 			local a, Count = a:gsub( "%-", "" )
 			
