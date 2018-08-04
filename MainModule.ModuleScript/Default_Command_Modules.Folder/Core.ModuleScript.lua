@@ -448,6 +448,14 @@ return function ( Main, ModFolder, VH_Events )
 					
 					Main.SetUserPower( Ids[ a ], TargetPower, true )
 					
+					local TPlr = Players:GetPlayerByUserId( Ids[ a ] )
+					
+					if TPlr and not Silent then
+						
+						Main.Util.SendMessage( TPlr, "Your new user power is '" .. TargetPowerName .. "'!", "Info" )
+						
+					end
+					
 				else
 					
 					Invalid[ #Invalid + 1 ] = Ids[ a ]
