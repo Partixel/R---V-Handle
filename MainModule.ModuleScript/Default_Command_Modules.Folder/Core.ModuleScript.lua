@@ -1706,7 +1706,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-			for a, b in pairs( Main.Config.Banned ) do
+			for a, b in pairs( Main.Config.Banned or { } ) do
 				
 				Str = Str .. "Config - " .. Main.Util.UsernameFromID( a ) .. " - " .. ( type( b ) == "string" and b .. " - " or "" ) ..  "forever\n"
 				
@@ -1770,7 +1770,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-			for a, b in pairs( Main.Config.UserPowers ) do
+			for a, b in pairs( Main.Config.UserPowers or { } ) do
 				
 				Str = Str .. "Config - " .. Main.Util.UsernameFromID( a ) .. " - " .. ( Main.UserPowerName( Main.UserPowerFromString( b ) ) or "nil" ) .. "\n"
 				
