@@ -570,7 +570,7 @@ function Main.RunCmdStacks( Plr, CmdStacks, Silent )
 		
 		local Success, Ran, RanMsg = pcall( CmdStack[ 1 ].Callback, CmdStack[ 1 ], Plr, CmdStack[ 3 ], CmdStack[ 2 ], CmdStacks, Silent )
 		
-		if not Main then return false end
+		if not Main then return Success and Ran end
 		
 		script.CommandRan:Fire( Plr, CmdStack[ 3 ], { Fill( CmdStack[ 2 ] ) }, CmdStack[ 4 ], CmdStacks, Silent )
 		
