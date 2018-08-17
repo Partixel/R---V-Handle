@@ -1797,24 +1797,6 @@ local function Metatable( self, Key, Value )
 						
 					end
 					
-					local Opts = ""
-					
-					for a, b in pairs( Value.ArgTypes[ a ] ) do
-						
-						if a ~= "Name" and a ~= "Required" and a ~= "Default" and a ~= "Func" and b then
-							
-							Opts = Opts .. a .. "=" .. tostring( b ) .. ", "
-							
-						end
-						
-					end
-					
-					if Opts ~= "" then
-						
-						Suffix = "(" .. Opts:sub( 1, Opts:len( ) - 2 ) .. ")" .. Suffix
-						
-					end
-					
 					if Value.ArgTypes[ a ].Name then
 						
 						Str = Str .. Prefix .. Value.ArgTypes[ a ].Name .. Suffix
