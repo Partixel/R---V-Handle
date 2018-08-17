@@ -272,7 +272,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 		CanRun = "$moderator&!$console",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Player, Default = function ( ) return end } },
+		ArgTypes = { Main.TargetLib.ArgTypes.Player },
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			

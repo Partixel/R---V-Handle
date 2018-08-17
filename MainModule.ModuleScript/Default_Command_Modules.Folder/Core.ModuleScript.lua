@@ -268,8 +268,6 @@ return function ( Main, ModFolder, VH_Events )
 		
 		CanRun = "16015142",
 		
-		ArgTypes = { },
-		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
 			local Console = setmetatable( { UserId = "Console", Name = "Console", Origin = Plr }, { __tostring = Main.ConsoleToString } )
