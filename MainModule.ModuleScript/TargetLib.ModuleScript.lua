@@ -659,11 +659,11 @@ function Module.FindPlrsNearPlr( self, String, Plr )
 	
 	Target = Module.FindPlayers( self, Target or "", Plr )[ 1 ]
 
-	if not Target or not Target.Character or not Target.Character:FindFirstChild( "Torso" ) then return end
+	if not Target or not Target.Character or not Target.Character.PrimaryPart then return end
 	
 	Type = Type == "=" and 1 or Type == "<" and 2 or nil
 	
-	Target = Target.Character.Torso.Position
+	Target = Target.Character.PrimaryPart.Position
 	
 	Dist = tonumber( Dist or "15" )
 	
@@ -673,7 +673,7 @@ function Module.FindPlrsNearPlr( self, String, Plr )
 	
 	for a = 1, #Plrs do
 		
-		if Plrs[ a ] ~= Plr and Plrs[ a ].Character and Plrs[ a ].Character:FindFirstChild( "Torso" ) then
+		if Plrs[ a ] ~= Plr and Plrs[ a ].Character and Plrs[ a ].Character.PrimaryPart then
 			
 			if ( Type == 1 and math.floor( Plrs[ a ]:DistanceFromCharacter( Target ) + 0.5 ) == math.floor( Dist + 0.5 ) ) or ( Type == 2 and Plrs[ a ]:DistanceFromCharacter( Target ) <= Dist ) or ( Type == nil and Plrs[ a ]:DistanceFromCharacter( Target ) >= Dist )  then
 				

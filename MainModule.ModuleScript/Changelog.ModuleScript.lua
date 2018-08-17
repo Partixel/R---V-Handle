@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 	]],
 	
+	{ Version = "0.55.3", SetupVersion = "1.3.5", Timestamp = 1534012661, Contributors = { "Partixel" }, Changes = { [[Fixed some R15 issues]] } },
+	
 	{ Version = "0.55.2", SetupVersion = "1.3.5", Timestamp = 1533328365, Contributors = { "Partixel" }, Changes = { [[Fixed "permuserpower/" not informing the target of their power change]], [[Fixed "update/" appearing twice in chat when ran]], [[Fixed ^Group=Rank not targetting only that rank]] } },
 	
 	{ Version = "0.55.1", SetupVersion = "1.3.5", Timestamp = 1532295423, Contributors = { "Partixel" }, Changes = { [[Fixed "stats/" and "resetstats/" commands running but with a chat warning]] } },
