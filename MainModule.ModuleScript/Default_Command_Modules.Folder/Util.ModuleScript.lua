@@ -243,9 +243,17 @@ return function ( Main, ModFolder, VH_Events )
 					
 					if Obj:find( "%[%[" ) or Obj:find( "%]%]" ) then
 						
-						Start, End = '"', '"'
-						
-						Obj = Obj:gsub( '"', '\\"' )
+						if Obj:find( "%[%=%=%[" ) or Obj:find( "%]%=%=%]" ) then
+							
+							Start, End = '"', '"'
+							
+							Obj = Obj:gsub( '"', '\\"' )
+							
+						else
+							
+							Start, End = "[==[", "]==]"
+							
+						end
 						
 					else
 						
