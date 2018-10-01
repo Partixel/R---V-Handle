@@ -1,6 +1,6 @@
 ----==== Create variables ====----
 
-local Main, Players, ReplicatedStorage, InsertService, StarterPlayerScripts, Chat, ServerStorage, RunService, TextService = { }, game:GetService( "Players" ), game:GetService( "ReplicatedStorage" ), game:GetService( "InsertService" ), game:GetService( "StarterPlayer" ):WaitForChild( "StarterPlayerScripts" ), game:GetService( "Chat" ), game:GetService( "ServerStorage" ), game:GetService( "RunService" ), game:GetService( "TextService" )
+local Main, Players, ReplicatedStorage, InsertService, StarterGui, Chat, ServerStorage, RunService, TextService = { }, game:GetService( "Players" ), game:GetService( "ReplicatedStorage" ), game:GetService( "InsertService" ), game:GetService( "StarterGui" ), game:GetService( "Chat" ), game:GetService( "ServerStorage" ), game:GetService( "RunService" ), game:GetService( "TextService" )
 
 local ChatModules = Chat:WaitForChild( "ChatModules", math.huge )
 
@@ -60,7 +60,7 @@ for a = 1, #Objs do
 	
 end
 
-Objs = StarterPlayerScripts:GetChildren( )
+Objs = StarterGui:GetChildren( )
 
 for a = 1, #Objs do
 	
@@ -1065,9 +1065,9 @@ function Main.Destroy( Update )
 	
 	VH_Command_Clients:Destroy( )
 	
-	if game:GetService( "StarterPlayer" ).StarterPlayerScripts:FindFirstChild( "VH_Client" ) then
+	if StarterGui:FindFirstChild( "VH_Client" ) then
 		
-		game:GetService( "StarterPlayer" ).StarterPlayerScripts.VH_Client:Destroy( )
+		StarterGui.VH_Client:Destroy( )
 		
 	end
 	
@@ -2154,7 +2154,7 @@ Main.Events[ #Main.Events + 1 ] = Players.PlayerAdded:Connect( Main.PlayerAdded 
 
 local VH_Client = script.VH_Client
 
-VH_Client.Parent = game:GetService( "StarterPlayer" ):WaitForChild( "StarterPlayerScripts" )
+VH_Client.Parent = StarterGui
 
 local Plrs = Players:GetPlayers( )
 
@@ -2162,9 +2162,9 @@ for a = 1, #Plrs do
 	
 	spawn( function ( ) Main.PlayerAdded( Plrs[ a ], Updated ) end )
 	
-	if Plrs[ a ]:FindFirstChild( "Backpack" ) then
+	if Plrs[ a ]:FindFirstChild( "PlayerGui" ) and Plrs[ a ].Character and not Plrs[ a ].PlayerGui:FindFirstChild( "VH_Client" ) then
 		
-		VH_Client:Clone( ).Parent = Plrs[ a ].Backpack
+		VH_Client:Clone( ).Parent = Plrs[ a ].PlayerGui
 		
 	end
 	
