@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 	]],
 	
+	{ Version = "0.55.5", SetupVersion = "1.3.5", Timestamp = 1538429036, Contributors = { "Partixel" }, Changes = { [[Updated the ToString function to handle \[\[ and \]\] in strings more eloquently]], [[Fixed accurate play solo issues]] } },
+	
 	{ Version = "0.55.4", SetupVersion = "1.3.5", Timestamp = 1534539373, Contributors = { "Partixel" }, Changes = { [[Fixed irrelevant information showing when using the help command]] } },
 	
 	{ Version = "0.55.3", SetupVersion = "1.3.5", Timestamp = 1534012661, Contributors = { "Partixel" }, Changes = { [[Fixed some R15 issues]] } },
