@@ -856,7 +856,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			else
 				
-				Str = string.sub( Str, 1, Str:len( ) - 1 )
+				Str = Str:sub( 1, -2 )
 				
 			end
 			
@@ -954,7 +954,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			else
 				
-				Str = string.sub( Str, 1, Str:len( ) - 1 )
+				Str = Str:sub( 1, -2 )
 				
 			end
 			
@@ -1052,7 +1052,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-			Util_Events_Folder.Print:FireClient( Plr, Str:sub( 1, Str:len( ) - 1 ) )
+			Util_Events_Folder.Print:FireClient( Plr, Str:sub( 1, -2 ) )
 			
 			return true
 			
@@ -1656,7 +1656,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			else
 				
-				Str = "Loops:\n" .. string.sub( Str, 1, Str:len( ) - 1 )
+				Str = "Loops:\n" .. string.sub( Str, 1, -2 )
 				
 			end
 			
@@ -1724,7 +1724,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			else
 				
-				Str = "Bans:\n" .. string.sub( Str, 1, Str:len( ) - 1 )
+				Str = "Bans:\n" .. string.sub( Str, 1, -2 )
 				
 			end
 			
@@ -1744,7 +1744,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 		Alias = { "powers", "powerlist", "userpowers", "userpowerlist", { function ( self, Alias )
 			
-			return Alias:sub( Alias:len( ) ) == "s" and Main.UserPower[ Alias:sub( 1, Alias:len( ) -1 ) ] ~= nil
+			return Alias:sub( -1 ) == "s" and Main.UserPower[ Alias:sub( 1, -2 ) ] ~= nil
 			
 		end, "any_power_name" } },
 		
@@ -1788,7 +1788,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			else
 				
-				Str = "Powers:\n" .. string.sub( Str, 1, Str:len( ) - 1 )
+				Str = "Powers:\n" .. Str:sub( 1, -2 )
 				
 			end
 			
@@ -1828,7 +1828,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			else
 				
-				Str = string.sub( Str, 1, Str:len( ) - 1 )
+				Str = Str:sub( 1, -2 )
 				
 			end
 			
@@ -2167,7 +2167,7 @@ return function ( Main, ModFolder, VH_Events )
 						
 					end
 					
-					Config = Config:sub( 1, Config:len( ) - 2 )
+					Config = Config:sub( 1, -3 )
 					
 				end
 				

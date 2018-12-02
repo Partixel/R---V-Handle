@@ -555,7 +555,7 @@ return function ( Main, ModFolder, VH_Events )
 			
 			Count = Count or 0
 			
-			Str = Str:sub( 1, Str:len( ) - math.ceil( Count / 2 ) )
+			Str = Str:sub( 1, -math.ceil( Count / 2 ) - 1 )
 			
 			if Count % 2 ~= 0 then
 				
@@ -717,7 +717,7 @@ return function ( Main, ModFolder, VH_Events )
 	
 	function Module.Pluralise( String )
 		
-		if String:sub( String:len( ) ) == "s" then
+		if String:sub( -1 ) == "s" then
 			
 			return String .. "es"
 			

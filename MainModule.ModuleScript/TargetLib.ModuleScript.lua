@@ -137,7 +137,7 @@ function Module.AddArgMultiple( Type )
 		
 		local String = table.remove( Strings, 1 )
 		
-		while String:sub( String:len( ) ) == "," and Strings[ 1 ] do
+		while String:sub( -1 ) == "," and Strings[ 1 ] do
 			
 			String = String .. table.remove( Strings, 1 )
 			
@@ -917,9 +917,9 @@ Module.ArgTypes.String = function ( self, Strings, Plr, LastArg )
 				
 			end
 			
-			if String:sub( String:len( ) ) == Start then
+			if String:sub( -1 ) == Start then
 				
-				String = String:sub( 1, String:len( ) - 1 )
+				String = String:sub( 1, -2 )
 				
 				break
 				

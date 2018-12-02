@@ -200,7 +200,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-			String = String:sub( 1, String:len( ) - 1 )
+			String = String:sub( 1, -2 )
 			
 			if Silent then return true, String end
 			
@@ -688,9 +688,9 @@ return function ( Main, ModFolder, VH_Events )
 			
 			if String == Main.TargetLib.ValidChar then return { true, 0.75 } end
 			
-			if String:sub( String:len( ) ) == "%" and tonumber( String:sub( 1,String:len( ) - 1 ) ) then
+			if String:sub( -1 ) == "%" and tonumber( String:sub( 1, -2 ) ) then
 				
-				return { false, tonumber( String:sub( 1, String:len( ) - 1 ) ) / 100 }
+				return { false, tonumber( String:sub( 1, -2 ) ) / 100 }
 				
 			elseif tonumber( String ) then
 				
