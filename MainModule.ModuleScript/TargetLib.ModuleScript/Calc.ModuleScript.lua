@@ -124,22 +124,10 @@ local tonumber = function ( String )
 end
 -- The following are ran in order, such that * runs before /
 local Operators = {
-	-- Replaces any strings that match a user variable or math variable
-	{ "%w+", "(%w+)(.?)", function ( LocalVars, LocalFuncs, Var, Next )
-		
-		if Next == "(" then return end
-		
-		if LocalVars[ Var ] or type( math[ Var ] ) == "number" then
-			
-			return ( LocalVars[ Var ] or math[ Var ] ) .. Next
-			
-		end
-		
-	end },
 	-- Calculates brackets and user/math/pre-made functions
 	{ "%w*%b()", "(%w*)(%b())", function ( LocalVars, LocalFuncs, Func, Args )
 		
-		Args = Args:sub( 2, Args:len( ) -1 )
+		Args = Args:sub( 2, -2 )
 		-- If Func is "", it's just a bracket to calculate
 		if Func == "" then
 			
@@ -268,11 +256,11 @@ function Calculate( Formula, Recursion, LocalVars, LocalFuncs )
 		-- Check if the user is defining any variables or functions
 		if Formula:find("%;") then
 			-- Split the string into variables/functions and the actual expression
-			local LastSplit, Length = Formula:reverse( ):find( ";" ), Formula:len( )
+            local LastSplit = Formula:reverse( ):find( ";" )
 			
 			local Locals
 			
-			Formula, Locals = Formula:sub( Length - LastSplit + 2 ), Split( Formula:sub( 1, Length - LastSplit ), "%;" )
+            Formula, Locals = Formula:sub( -LastSplit + 1 ), Split( Formula:sub( 1, -LastSplit - 1 ), "%;" )
 			-- Iterates through the user defined variables / functions and interpret them
 			for a = 1, #Locals do
 				
@@ -284,7 +272,7 @@ function Calculate( Formula, Recursion, LocalVars, LocalFuncs )
 				
 				if FuncName then
 					
-					Args = Split( Args:sub( 2, Args:len( ) - 1 ), "%," )
+					Args = Split( Args:sub( 2, -2 ), "%," )
 					
 					LocalFuncs[ FuncName ] = { Value, unpack( Args ) }
 					
@@ -299,6 +287,16 @@ function Calculate( Formula, Recursion, LocalVars, LocalFuncs )
 		end
 		
 	end
+	-- Replaces any characters that match a user variable or math variable
+	Formula = Formula:gsub( "(%w+)(.?)", function ( Var, Next )
+		
+		if Next ~= "(" and ( LocalVars[ Var ] or type( math[ Var ] ) == "number" ) then
+			
+			return ( LocalVars[ Var ] or math[ Var ] ) .. Next
+			
+		end
+		
+	end )
 	-- Handles operators
 	for a = 1, #Operators do
 		
