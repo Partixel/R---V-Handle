@@ -18,6 +18,28 @@ return function ( Main, ModFolder, VH_Events )
 		
 	end )
 	
+	Main.Commands.Calculate = {
+		
+		Alias = { "calculate", "calc" },
+		
+		Description = "Calculates out the given equation",
+		
+		Category = "Math",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Number, Required = true }},
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			if Silent then return true, Args[ 1 ] end
+			
+			Main.Util.SendMessage( Plr, Args[ 1 ], "Info" )
+			
+			return true
+			
+		end
+		
+	}
+	
 	Main.Commands.Give = {
 		
 		Alias = { "give", "givetool" },
