@@ -71,7 +71,7 @@ local BoolEquivs = { { "true", "1", "y", "yes", "t", "on" }, { "false", "0", "n"
 
 local TimeEquivs = { [ "s" ] = 1, [ "m" ] = 60, [ "h" ] = 60 * 60, [ "d" ] = 60 * 60 * 24, [ "w" ] = 60 * 60 * 24 * 7, [ "mo" ] = 60 * 60 * 24 * 30, [ "y" ] = 60 * 60 * 24 * 365.25 }
 
-local Calc = require( script.Calc )
+local Calc = require( 2621701837 )
 
 Module.Events = { }
 
