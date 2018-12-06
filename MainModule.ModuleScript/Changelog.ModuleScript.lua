@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 	]],
 	
+	{ Version = "0.56.2", SetupVersion = "1.3.5", Timestamp = 1538429036, Contributors = { "Partixel" }, Changes = { [[Changed some busy waits to lazy waits, slight optimisation]] } },
+	
 	{ Version = "0.56.1", SetupVersion = "1.3.5", Timestamp = 1538429036, Contributors = { "Partixel" }, Changes = { [[Calc module now uses an external module]] } },
 	
 	{ Version = "0.56.0", SetupVersion = "1.3.5", Timestamp = 1538429036, Contributors = { "Partixel" }, Additions = { [[Added "calc/number" command to calculate out expressins]] }, Changes = { [[Several optimisations overall]], [[Bug fixes to the calc module]] } },

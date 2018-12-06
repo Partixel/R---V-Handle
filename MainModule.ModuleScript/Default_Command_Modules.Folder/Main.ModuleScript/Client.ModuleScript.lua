@@ -80,7 +80,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 		SpectateEvent = Plr:GetPropertyChangedSignal( "Character" ):Connect( function ( )
 			
-			repeat wait( ) until Plr.Character ~= Char
+			while Plr.Character ~= Char do Plr.Changed:Wait( ) end 
 			
 			Char = Plr.Character
 			

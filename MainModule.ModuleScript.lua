@@ -1087,7 +1087,17 @@ function Main.Destroy( Update )
 	
 end
 
-spawn( function ( ) while wait( ) and script and script.Parent do end if Main then Main.Destroy( ) end end )
+spawn( function ( )
+	
+	while script.Parent do
+		
+		script.AncestryChanged:Wait( )
+		
+	end
+	
+	if Main then Main.Destroy( ) end
+	
+end )
 
 ----==== Update Setup ====----
 
