@@ -6,7 +6,9 @@ script.Parent.Position = UDim2.new( 0.7, -2, 1, 0 )
 
 game["Script Context"].Error:Connect( function ( Message, Stack, Source )
 	
-	script.Parent.Text.Text = ( pcall( function ( ) return Source:GetFullName( ) end ) or ( Source and tostring( Source ) or "Something" ) ) .. " is creating errors (F9)"
+	local Ran, FullName = pcall( function ( ) return Source:GetFullName( ) end )
+	
+	script.Parent.Text.Text = Ran and FullName or ( Source and tostring( Source ) or "Something" ) .. " is creating errors (F9)"
 	
 	local localCur = Cur + 1
 	
