@@ -2166,6 +2166,12 @@ local VH_Client = script.VH_Client
 
 VH_Client.Parent = StarterGui
 
+if RunService:IsStudio( ) and #Players:GetPlayers( ) == 0 then
+	
+	Players.PlayerAdded:Wait( )
+	
+end
+
 local Plrs = Players:GetPlayers( )
 
 for a = 1, #Plrs do
