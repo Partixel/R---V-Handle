@@ -1,3 +1,19 @@
+local Kids = script.Parent:GetChildren( )
+
+for a = 1, #Kids do
+	
+	if Kids[ a ] ~= script and Kids[ a ].Name == script.Name then
+		
+		wait( )
+		
+		script:Destroy( )
+		
+		return
+		
+	end
+	
+end
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage" )
 
 local Main = { }

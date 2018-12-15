@@ -2178,7 +2178,7 @@ for a = 1, #Plrs do
 	
 	spawn( function ( ) Main.PlayerAdded( Plrs[ a ], Updated ) end )
 	
-	if Plrs[ a ]:FindFirstChild( "PlayerGui" ) and Plrs[ a ].Character and not Plrs[ a ].PlayerGui:FindFirstChild( "VH_Client" ) then
+	if Plrs[ a ]:FindFirstChild( "PlayerGui" ) and not Plrs[ a ].PlayerGui:FindFirstChild( "VH_Client" ) then
 		
 		VH_Client:Clone( ).Parent = Plrs[ a ].PlayerGui
 		
@@ -2222,6 +2222,18 @@ if game:GetService( "StarterGui" ):FindFirstChild( "ErrorNotification" ) then
 	
 end
 
-script.ErrorNotification.Parent = game:GetService( "StarterGui" )
+local ErrorNotification = script.ErrorNotification
+
+ErrorNotification.Parent = game:GetService( "StarterGui" )
+
+for a = 1, #Plrs do
+	
+	if Plrs[ a ]:FindFirstChild( "PlayerGui" ) and not Plrs[ a ].PlayerGui:FindFirstChild( "ErrorNotification" ) then
+		
+		ErrorNotification:Clone( ).Parent = Plrs[ a ].PlayerGui
+		
+	end
+	
+end
 
 return Main

@@ -1,3 +1,19 @@
+local Kids = script.Parent.Parent.Parent:GetChildren( )
+
+for a = 1, #Kids do
+	
+	if Kids[ a ] ~= script.Parent.Parent and Kids[ a ].Name == script.Parent.Parent.Name then
+		
+		wait( )
+		
+		script.Parent.Parent:Destroy( )
+		
+		return
+		
+	end
+	
+end
+
 local Cur = 0
 
 local RS
