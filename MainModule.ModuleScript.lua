@@ -632,6 +632,8 @@ function Main.RunCmdStacks( Plr, CmdStacks, Silent )
 	
 end
 
+local SpaceCmds = { }
+
 function Main.ParseCmdStacks( Plr, Msg, ChatSpeaker, Silent )
 	
 	Plr = Plr or Main.Console
@@ -679,6 +681,52 @@ function Main.ParseCmdStacks( Plr, Msg, ChatSpeaker, Silent )
 		end
 		
 		local Cmd = table.remove( Args, 1 ):lower( )
+		
+		if ArgSplit == " " then
+			
+			for a = 1, # SpaceCmds do
+				
+				if Cmd == SpaceCmds[ a ]:sub( 1, #Cmd ) then
+					
+					local Str = Cmd
+					
+					for b = 1, #Args do
+						
+						Str = Str .. " " .. Args[ b ]
+						
+						if Str == SpaceCmds[ a ] then
+							
+							Str = b
+							
+							break
+							
+						elseif Str ~= SpaceCmds[ a ]:sub( 1, #Str ) then
+							
+							break
+							
+						end
+						
+					end
+					
+					if type( Str ) == "number" then
+						
+						Cmd = SpaceCmds[ a ]
+						
+						for b = 1, Str do
+							
+							table.remove( Args, 1 )
+							
+						end
+						
+						break
+						
+					end
+					
+				end
+				
+			end
+			
+		end
 		
 		if Cmd ~= "" then
 			
@@ -1824,6 +1872,16 @@ local function Metatable( self, Key, Value )
 				Str = Str .. Prefix .. Type .. Suffix
 				
 			until true
+			
+		end
+		
+	end
+	
+	for a = 1, #Value.Alias do
+		
+		if type( Value.Alias[ a ] ) == "string" and Value.Alias[ a ]:find( " " ) then
+			
+			SpaceCmds[ #SpaceCmds + 1 ] = Value.Alias[ a ]
 			
 		end
 		
