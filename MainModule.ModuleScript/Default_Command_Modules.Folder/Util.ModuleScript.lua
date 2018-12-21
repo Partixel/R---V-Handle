@@ -279,7 +279,7 @@ return function ( Main, ModFolder, VH_Events )
 			
 			local Str = tostring( Obj )
 			
-			if Str:len( ) ~= Str:match( "[%d%.]+" ):len( ) then
+			if #Str ~= #Str:match( "[%d%.]+" ) then
 				
 				if tonumber( Str ) then
 					
@@ -381,7 +381,7 @@ return function ( Main, ModFolder, VH_Events )
 			
 			for a = 1, #Obj.Keypoints do
 				
-				Str = Str .. Options.Space .. typeof( Obj.Keypoints[ a ] ) .. ".new(" .. Options.Space .. Obj.Keypoints[ a ].Time .. "," .. Options.Space .. ToString( Obj.Keypoints[ a ].Value, nil, Options, 0, Cyclic, Key, CyclicObjs, WaitedFor ) .. Options.Space .. ")" .. ( a ~= #Obj.Keypoints and "," or "" )
+				Str = Str .. Options.Space .. typeof( Obj.Keypoints[ a ] ) .. ".new(" .. Options.Space .. Obj.Keypoints[ a ].Time .. "," .. Options.Space .. Module.ToString( Obj.Keypoints[ a ].Value, nil, Options, 0, Cyclic, Key, CyclicObjs, WaitedFor ) .. Options.Space .. ")" .. ( a ~= #Obj.Keypoints and "," or "" )
 				
 			end
 			
@@ -727,17 +727,15 @@ return function ( Main, ModFolder, VH_Events )
 		
 	end
 	
-	local sub = string.sub
-	
 	function Module.utf8safeoffset( Str, Pos )
 		
-		return Pos == 0 and 1 or utf8.offset( Str, Pos ) or Str:len( ) + 1
+		return Pos == 0 and 1 or utf8.offset( Str, Pos ) or #Str + 1
 		
 	end
 	
 	function Module.utf8sub( Str, Start, End )
 		
-		return sub( Str, Module.utf8safeoffset( Str, Start ), End and Module.utf8safeoffset( Str, End + 1 ) - 1 or nil )
+		return Str:sub( Module.utf8safeoffset( Str, Start ), End and Module.utf8safeoffset( Str, End + 1 ) - 1 or nil )
 		
 	end
 	

@@ -1212,7 +1212,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			local Time = Args[ 2 ] or ( Args[ 1 ]:len( ) / 15 + 2 )
+			local Time = Args[ 2 ] or ( #Args[ 1 ] / 15 + 2 )
 			
 			if Time < 0 then return true end
 			
@@ -1244,7 +1244,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			local Time = Args[ 2 ] or ( Args[ 1 ]:len( ) / 15 + 2 )
+			local Time = Args[ 2 ] or ( #Args[ 1 ] / 15 + 2 )
 			
 			if Time < 0 then return true end
 			
@@ -1290,7 +1290,7 @@ return function ( Main, ModFolder, VH_Events )
 					
 					for a = 1, #Stats do
 						
-						if Stats[ a ].Name:lower( ):sub( 1, Args[ 2 ]:len( ) ) == Args[ 2 ]:lower( ) then
+						if Stats[ a ].Name:lower( ):sub( 1, #Args[ 2 ] ) == Args[ 2 ]:lower( ) then
 							
 							Stats[ a ].Value = Args[ 3 ]
 							

@@ -152,7 +152,7 @@ local function ToggleFunc( Positive, Arg, Aliases, self, Cmd, Plr )
 		
 		local Alias = Aliases[ a ]
 		
-		if Cmd:sub( Cmd:len( ) - Alias:len( ) ) then
+		if Cmd:sub( #Cmd - #Alias ) then
 			
 			if Cmd == Alias then
 				
@@ -168,9 +168,9 @@ local function ToggleFunc( Positive, Arg, Aliases, self, Cmd, Plr )
 				
 			end
 			
-			if Cmd:sub( Cmd:len( ) - Alias:len( ) + 1 ) == Alias then
+			if Cmd:sub( #Cmd - #Alias + 1 ) == Alias then
 				
-				local Prefix = Cmd:sub( 1, Cmd:len( ) - Alias:len( ) )
+				local Prefix = Cmd:sub( 1, #Cmd - #Alias )
 				
 				for a = 1, #Main.TargetLib.NegativePrefixes do
 					
@@ -662,13 +662,13 @@ function Main.ParseCmdStacks( Plr, Msg, ChatSpeaker, Silent )
 		
 		if Prefix ~= "" then
 			
-			if Args[ 1 ]:sub( 1, Prefix:len( ) ) ~= Prefix then
+			if Args[ 1 ]:sub( 1, #Prefix ) ~= Prefix then
 				
 				return nil, "Not a command"
 				
 			end
 			
-			Args[ 1 ] = Args[ 1 ]:sub( Prefix:len( ) + 1 )
+			Args[ 1 ] = Args[ 1 ]:sub( #Prefix + 1 )
 			
 		end
 		

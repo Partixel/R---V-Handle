@@ -255,7 +255,7 @@ local function TableHasMatchingObj( Table, String, ExactOnly )
 			
 			Exact = true
 			
-		elseif not ExactOnly and not Exact and Name:sub( 1, String:len( ) ):lower( ) == String then
+		elseif not ExactOnly and not Exact and Name:sub( 1, #String ):lower( ) == String then
 			
 			Found[ #Found + 1 ] = Table[ a ]
 			
@@ -369,9 +369,9 @@ function Module.MultipleOf( self, String, Plr, Funcs, Base, BaseChar, ExactOnly 
 		
 		local String = Strings[ a ]:match( '^%s*(.*%S)' ) or ""
 		
-		if String:len( ) > 0 and String:sub( 1, BaseChar:len( ) ) == BaseChar:lower( ) then
+		if #String > 0 and String:sub( 1, #BaseChar ) == BaseChar:lower( ) then
 			
-			String = String:sub( BaseChar:len( ) + 1 )
+			String = String:sub( #BaseChar + 1 )
 			
 			local Invert = false
 			
@@ -930,13 +930,13 @@ Module.ArgTypes.String = function ( self, Strings, Plr, LastArg )
 	
 	if String == Module.ValidChar then String = String end
 	
-	if self.Min and String:len( ) < self.Min then
+	if self.Min and #String < self.Min then
 		
 		return nil, false
 		
 	end
 	
-	if self.Max and String:len( ) > self.Max then
+	if self.Max and #String > self.Max then
 		
 		return nil, false
 		
@@ -1052,7 +1052,7 @@ Module.ArgTypes.Time = function ( self, Strings, Plr )
 	
 	for a = 1, #Nums do
 		
-		local Found = String:find( "%D" ) or String:len( ) + 1
+		local Found = String:find( "%D" ) or #String + 1
 		
 		local Num, Type = String:sub( 1, Found - 1 ), TimeEquivs[ String:sub( Found ) ] or 1
 		

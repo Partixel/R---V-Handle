@@ -1656,7 +1656,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			else
 				
-				Str = "Loops:\n" .. string.sub( Str, 1, -2 )
+				Str = "Loops:\n" .. Str:sub( 1, -2 )
 				
 			end
 			
@@ -1724,7 +1724,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			else
 				
-				Str = "Bans:\n" .. string.sub( Str, 1, -2 )
+				Str = "Bans:\n" .. Str:sub( 1, -2 )
 				
 			end
 			
