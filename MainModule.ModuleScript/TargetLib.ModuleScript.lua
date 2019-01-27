@@ -966,9 +966,7 @@ Module.ArgTypes.Number = function ( self, Strings, Plr )
 	
 	local Ran, Num = pcall( Calc, String )
 	
-	if not Ran then return nil, false, "Invalid formula" end
-	
-	_, Num = pcall( tonumber, Num )
+	if not Ran then return nil, false, Num:sub( -Num:reverse( ):find( ":" ) + 2 ) end
 	
 	if Num then
 		

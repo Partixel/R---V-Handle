@@ -43,6 +43,10 @@ return {
 		fix/plr ( Arms / legs / camera )
 	]],
 	
+	{ Version = "0.56.4", SetupVersion = "1.3.5", Timestamp = 1548592169, Contributors = { "Partixel" }, Changes = { [[Updated to the latest version of the StringCalculator module again]] } },
+	
+	{ Version = "0.56.3", SetupVersion = "1.3.5", Timestamp = 1548527285, Contributors = { "Partixel" }, Changes = { [[Updated to the latest version of the StringCalculator module]] } },
+	
 	{ Version = "0.56.2", SetupVersion = "1.3.5", Timestamp = 1544139780, Contributors = { "Partixel" }, Changes = { [[Changed some busy waits to lazy waits, slight optimisation]] } },
 	
 	{ Version = "0.56.1", SetupVersion = "1.3.5", Timestamp = 1543880666, Contributors = { "Partixel" }, Changes = { [[Calc module now uses an external module]] } },
