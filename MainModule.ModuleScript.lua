@@ -132,7 +132,7 @@ end
 
 Main.TargetLib.AliasTypes = { }
 
-local function ToggleFunc( Positive, Arg, Aliases, self, Cmd, Plr )
+local function ToggleFunc( Positive, Arg, Aliases, Pos, self, Cmd, Plr )
 	
 	if Plr then
 		
@@ -152,69 +152,87 @@ local function ToggleFunc( Positive, Arg, Aliases, self, Cmd, Plr )
 		
 		local Alias = Aliases[ a ]
 		
-		if Cmd:sub( #Cmd - #Alias ) then
+		if Cmd == Alias then
 			
-			if Cmd == Alias then
+			if Plr then
 				
-				if Plr then
-					
-					Main.TargetLib.Toggles[ Plr ][ self.ArgTypes[ Arg ].ToggleKey ] = Positive
-					
-				end
-				
-				Args[ Arg ] = Positive
-				
-				return true, Args
+				Main.TargetLib.Toggles[ Plr ][ self.ArgTypes[ Arg ].ToggleKey ] = Positive
 				
 			end
 			
-			if Cmd:sub( #Cmd - #Alias + 1 ) == Alias then
+			Args[ Arg ] = Positive
+			
+			return true, Args
+			
+		end
+		
+		local Prefix
+		
+		if Pos then
+			
+			local PrefixEnd = Cmd:sub( 1, Pos - 1 ) == Alias:sub( 1, Pos - 1 ) and Cmd:sub( Pos ):find( Alias:sub( Pos ) )
+			
+			if PrefixEnd then
 				
-				local Prefix = Cmd:sub( 1, #Cmd - #Alias )
+				PrefixEnd = PrefixEnd + Pos - 2
 				
-				for a = 1, #Main.TargetLib.NegativePrefixes do
+				if Cmd:sub( PrefixEnd + 1 ) == Alias:sub( Pos ) then
 					
-					if Prefix == Main.TargetLib.NegativePrefixes[ a ] then
-						
-						if Plr then
-							
-							Main.TargetLib.Toggles[ Plr ][ self.ArgTypes[ Arg ].ToggleKey ] = not Positive
-							
-						end
-						
-						Args[ Arg ] = not Positive
-						
-						return true, Args
-						
-					end
+					Prefix = Cmd:sub( Pos, PrefixEnd )
 					
 				end
 				
-				for a = 1, #Main.TargetLib.PositivePrefixes do
+			end
+			
+		elseif Cmd:sub( #Cmd - #Alias + 1 ) == Alias then
+			
+			Cmd:sub( 1, #Cmd - #Alias )
+			
+		end
+		
+		if Prefix then
+			
+			for a = 1, #Main.TargetLib.NegativePrefixes do
+				
+				if Prefix == Main.TargetLib.NegativePrefixes[ a ] then
 					
-					if Prefix == Main.TargetLib.PositivePrefixes[ a ] then
+					if Plr then
 						
-						if Plr then
-							
-							Main.TargetLib.Toggles[ Plr ][ self.ArgTypes[ Arg ].ToggleKey ] = Positive
-							
-						end
-						
-						Args[ Arg ] = Positive
-						
-						return true, Args
+						Main.TargetLib.Toggles[ Plr ][ self.ArgTypes[ Arg ].ToggleKey ] = not Positive
 						
 					end
+					
+					Args[ Arg ] = not Positive
+					
+					return true, Args
 					
 				end
 				
-				for a = 1, #Main.TargetLib.TogglePrefixes do
+			end
+			
+			for a = 1, #Main.TargetLib.PositivePrefixes do
+				
+				if Prefix == Main.TargetLib.PositivePrefixes[ a ] then
 					
-					if Prefix == Main.TargetLib.TogglePrefixes[ a ] then
+					if Plr then
 						
-						return true
+						Main.TargetLib.Toggles[ Plr ][ self.ArgTypes[ Arg ].ToggleKey ] = Positive
 						
 					end
+					
+					Args[ Arg ] = Positive
+					
+					return true, Args
+					
+				end
+				
+			end
+			
+			for a = 1, #Main.TargetLib.TogglePrefixes do
+				
+				if Prefix == Main.TargetLib.TogglePrefixes[ a ] then
+					
+					return true
 					
 				end
 				
@@ -226,19 +244,35 @@ local function ToggleFunc( Positive, Arg, Aliases, self, Cmd, Plr )
 	
 end
 
-Main.TargetLib.AliasTypes.Toggle = function ( Arg, ... )
+Main.TargetLib.AliasTypes.Toggle = function ( Arg, Pos, ... )
 	
 	local Aliases = { ... }
 	
-	return { function ( ... ) return ToggleFunc( true, Arg, Aliases, ... ) end, "+" .. Aliases[ 1 ], Prefix( Aliases, "(=,+,-)" ) }
+	if type( Pos ) == "string" then
+		
+		Aliases[ #Aliases + 1 ] = Pos
+		
+		Pos = nil
+		
+	end
+	
+	return { function ( ... ) return ToggleFunc( true, Arg, Aliases, Pos, ... ) end, "+" .. Aliases[ 1 ], Prefix( Aliases, "(=,+,-)" ) }
 	
 end
 
-Main.TargetLib.AliasTypes.InvertedToggle = function ( Arg, ... )
+Main.TargetLib.AliasTypes.InvertedToggle = function ( Arg, Pos, ... )
 	
 	local Aliases = { ... }
 	
-	return { function ( ... ) return ToggleFunc( false, Arg, Aliases, ... ) end, "+" .. Aliases[ 1 ], Prefix( Aliases, "(=,+,-)" ) }
+	if type( Pos ) == "string" then
+		
+		Aliases[ #Aliases + 1 ] = Pos
+		
+		Pos = nil
+		
+	end
+	
+	return { function ( ... ) return ToggleFunc( false, Arg, Aliases, Pos, ... ) end, "+" .. Aliases[ 1 ], Prefix( Aliases, "(=,+,-)" ) }
 	
 end
 
