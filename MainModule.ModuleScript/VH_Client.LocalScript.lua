@@ -1,3 +1,11 @@
+if script.Parent.Name ~= "PlayerScripts" then
+	
+	wait( )
+	
+	script.Parent = game.Players.LocalPlayer.PlayerScripts
+	
+end
+
 local Kids = script.Parent:GetChildren( )
 
 for a = 1, #Kids do

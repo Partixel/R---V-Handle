@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 	]],
 	
+	{ Version = "0.58.1", SetupVersion = "1.3.5", Timestamp = 1549490845, Contributors = { "Partixel" }, Changes = { [[Fixed VH_Client being recreated every time the player spawns]] } },
+	
 	{ Version = "0.58.0", SetupVersion = "1.3.5", Timestamp = 1549187483, Contributors = { "Partixel" }, Additions = { [[Added "/shrug", "/tableflip" and "/unflip" ¯\\_(ツ)_/¯]] } },
 	
 	{ Version = "0.57.0", SetupVersion = "1.3.5", Timestamp = 1548697989, Contributors = { "Partixel" }, Additions = { [[Toggle arguments can now specify the position of the prefix in the alias, e.g. "forceunofficial/" instead of "unforceofficial/"]] } },

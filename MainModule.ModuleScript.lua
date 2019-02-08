@@ -1,6 +1,6 @@
 ----==== Create variables ====----
 
-local Main, Players, ReplicatedStorage, InsertService, StarterGui, Chat, ServerStorage, RunService, TextService = { }, game:GetService( "Players" ), game:GetService( "ReplicatedStorage" ), game:GetService( "InsertService" ), game:GetService( "StarterGui" ), game:GetService( "Chat" ), game:GetService( "ServerStorage" ), game:GetService( "RunService" ), game:GetService( "TextService" )
+local Main, Players, ReplicatedStorage, InsertService, StarterGui, Chat, ServerStorage, RunService, TextService, StarterPlayerScripts = { }, game:GetService( "Players" ), game:GetService( "ReplicatedStorage" ), game:GetService( "InsertService" ), game:GetService( "StarterGui" ), game:GetService( "Chat" ), game:GetService( "ServerStorage" ), game:GetService( "RunService" ), game:GetService( "TextService" ), game:GetService( "StarterPlayer" ):WaitForChild( "StarterPlayerScripts" )
 
 local ChatModules = Chat:WaitForChild( "ChatModules", math.huge )
 
@@ -60,7 +60,7 @@ for a = 1, #Objs do
 	
 end
 
-Objs = StarterGui:GetChildren( )
+Objs = StarterPlayerScripts:GetChildren( )
 
 for a = 1, #Objs do
 	
@@ -1147,9 +1147,9 @@ function Main.Destroy( Update )
 	
 	VH_Command_Clients:Destroy( )
 	
-	if StarterGui:FindFirstChild( "VH_Client" ) then
+	if StarterPlayerScripts:FindFirstChild( "VH_Client" ) then
 		
-		StarterGui.VH_Client:Destroy( )
+		StarterPlayerScripts.VH_Client:Destroy( )
 		
 	end
 	
@@ -2256,7 +2256,7 @@ Main.Events[ #Main.Events + 1 ] = Players.PlayerAdded:Connect( Main.PlayerAdded 
 
 local VH_Client = script.VH_Client
 
-VH_Client.Parent = StarterGui
+VH_Client.Parent = StarterPlayerScripts
 
 if RunService:IsStudio( ) and #Players:GetPlayers( ) == 0 then
 	
@@ -2270,7 +2270,7 @@ for a = 1, #Plrs do
 	
 	spawn( function ( ) Main.PlayerAdded( Plrs[ a ], Updated ) end )
 	
-	if Plrs[ a ]:FindFirstChild( "PlayerGui" ) and not Plrs[ a ].PlayerGui:FindFirstChild( "VH_Client" ) then
+	if Plrs[ a ]:FindFirstChild( "PlayerGui" ) then
 		
 		VH_Client:Clone( ).Parent = Plrs[ a ].PlayerGui
 		
