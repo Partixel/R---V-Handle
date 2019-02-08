@@ -62,6 +62,36 @@ return function ( ChatService )
 		
 	end )
 	
+	ChatService:RegisterProcessCommandsFunction( "VHEmotes", function ( SpeakerName, Message, Channel )
+		
+		local SpeakerObj = ChatService:GetSpeaker( SpeakerName )
+		
+		if not SpeakerObj then return false end
+		
+		if Message == "/shrug" then
+			
+			SpeakerObj:SayMessage( "¯\\_(ツ)_/¯", Channel )
+			
+			return true
+			
+		elseif Message == "/tableflip" then
+			
+			SpeakerObj:SayMessage( "(╯°□°）╯︵ ┻━┻", Channel )
+			
+			return true
+			
+		elseif Message == "/unflip" then
+			
+			SpeakerObj:SayMessage( "┬─┬ ノ( ゜-゜ノ)", Channel )
+			
+			return true
+			
+		end
+		
+		return false
+		
+	end )
+	
 	ChatService:RegisterProcessCommandsFunction( "VH_Command_Processor", function ( SpeakerName, Message, Channel )
 		
 		local SpeakerObj = ChatService:GetSpeaker( SpeakerName )

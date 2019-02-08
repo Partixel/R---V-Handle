@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 	]],
 	
+	{ Version = "0.58.0", SetupVersion = "1.3.5", Timestamp = 1549187483, Contributors = { "Partixel" }, Additions = { [[Added "/shrug", "/tableflip" and "/unflip" ¯\\_(ツ)_/¯]] } },
+	
 	{ Version = "0.57.0", SetupVersion = "1.3.5", Timestamp = 1548697989, Contributors = { "Partixel" }, Additions = { [[Toggle arguments can now specify the position of the prefix in the alias, e.g. "forceunofficial/" instead of "unforceofficial/"]] } },
 	
 	{ Version = "0.56.4", SetupVersion = "1.3.5", Timestamp = 1548592169, Contributors = { "Partixel" }, Changes = { [[Updated to the latest version of the StringCalculator module again]] } },
