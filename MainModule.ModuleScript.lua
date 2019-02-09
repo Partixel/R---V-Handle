@@ -968,6 +968,24 @@ function Main.PlayerAdded( Plr, JustUpdated )
 		
 	end
 	
+	if Main.Config.ReservedFor and  #Players:GetPlayers( ) > Players.MaxPlayers - ( Main.Config.ReservedSlots or 1 ) and not Main.TargetLib.MatchesPlr( Main.Config.ReservedFor, Plr ) then
+		
+		if Main.Config.AnnounceJoin then
+			
+			Main.AnnounceJoin[ Plr ] = Main.AnnounceJoin[ Plr ] or { }
+			
+			Main.AnnounceJoin[ Plr ][ #Main.AnnounceJoin[ Plr ] + 1 ] = "max players reached"
+			
+			Main.AnnouncedLeft[ Plr ] = false
+			
+		end
+		
+		Plr:Kick( "The server is full, the remaining spaces are reserved" )
+		
+		return
+		
+	end
+	
 	if RunService:IsStudio( ) then
 		
 		Main.SetUserPower( Plr.UserId, Main.UserPower.owner )
