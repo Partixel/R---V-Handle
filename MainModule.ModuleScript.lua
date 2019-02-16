@@ -1048,12 +1048,6 @@ function Main.PlayerAdded( Plr, JustUpdated )
 			
 		end
 		
-		if Main.Config.ReservedFor and Players.MaxPlayers - Players.PreferredPlayers < Main.Config.ReservedFor then
-			
-			Main.Util.SendMessage( Plr, "You must set at least " .. Main.Config.ReservedFor .. " slots as reserved in the place settings for V-Handles reserved slots to work correctly", "Error" )
-			
-		end
-		
 		if Main.Changelog[ 2 ].SetupVersion ~= _G.VHSetupVersion then
 			
 			Main.Util.SendMessage( Plr, "A new version of the setup model is available, run help/setup for more information. Make sure the V-Handle Setup Updater plugin is updated.", "Warning" )
