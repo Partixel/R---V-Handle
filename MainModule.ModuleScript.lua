@@ -1429,9 +1429,9 @@ spawn( function ( )
 			
 			a = tonumber( a )
 			
-			if Players:GetPlayerByUserId( a ) then
+			if Main.GetUserPower( a ) ~= b and Players:GetPlayerByUserId( a ) then
 				
-				Main.Util.SendMessage( Players:GetPlayerByUserId( a ), "Your new user is '" .. Main.UserPowerName( b ) .. "'!", "Info" )
+				Main.Util.SendMessage( Players:GetPlayerByUserId( a ), "Your new user power is '" .. Main.UserPowerName( b ) .. "'!", "Info" )
 				
 			end
 			
