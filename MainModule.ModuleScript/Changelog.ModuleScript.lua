@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 	]],
 	
+	{ Version = "0.59.2", SetupVersion = "1.3.5", Timestamp = 1550343570, Contributors = { "Partixel" }, Changes = { [[Add an error when ReservedSlots is incorrectly setup]] } },
+	
 	{ Version = "0.59.1", SetupVersion = "1.3.5", Timestamp = 1550335748, Contributors = { "Partixel" }, Changes = { [[Using the new string.split function instead of the lua version]] } },
 	
 	{ Version = "0.59.0", SetupVersion = "1.3.5", Timestamp = 1549641991, Contributors = { "Partixel" }, Additions = { [[Added ReserveFor and ReserveSlots config optiosn that allows you to kick anyone that doesnt match the passed string ( uses plr targeting ) from the server once there's only ReserveSlots or 1 spaces left in the server]] } },
