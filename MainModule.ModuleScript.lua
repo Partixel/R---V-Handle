@@ -1519,11 +1519,11 @@ local Debuggers = {
 	
 	[ 45858958 ] = true, -- CodeNil
 	
-	[ 2906531 ] = true, -- Igoing2win
-	
 	[ 22808842 ] = true, -- Nikolai
 	
 	[ 4354334 ] = true, -- Antonio
+	
+	[ 7731089 ] = true, -- Pk
 	
 	[ 14827891 ] = true -- Nawmis
 	
