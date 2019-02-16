@@ -177,30 +177,6 @@ local function TableHasValue( Table, Obj )
 	
 end
 
-local function Split( String, Pattern )
-	
-	local Result = { }
-	
-	local From = 1
-	
-	local delim_from, delim_to = String:find( Pattern, From )
-	
-	while delim_from do
-		
-		Result[ #Result + 1 ] = String:sub( From , delim_from - 1 )
-		
-		From = delim_to + 1
-		
-		delim_from, delim_to = String:find( Pattern, From )
-		
-	end
-	
-	Result[ #Result + 1 ] = String:sub( From )
-	
-	return Result
-	
-end
-
 local function TableShallowCopy( Table )
 	
 	local Copy = { }
@@ -309,7 +285,7 @@ function Module.MultipleOf( self, String, Plr, Funcs, Base, BaseChar, ExactOnly 
 	
 	if Multiple then
 		
-		local Strings = Split( String, "%&" )
+		local Strings = string.split( String, "&" )
 		
 		local Matches, Valid = { }, { }
 		
@@ -361,7 +337,7 @@ function Module.MultipleOf( self, String, Plr, Funcs, Base, BaseChar, ExactOnly 
 	
 	String = String:lower( )
 	
-	local Strings = Split( String:lower( ), "%," )
+	local Strings = string.split( String:lower( ), "," )
 	
 	local TotalMatches = { }
 	
@@ -1044,7 +1020,7 @@ Module.ArgTypes.Time = function ( self, Strings, Plr )
 	
 	String = String:lower( )
 	
-	local Nums = Split( String, ":" )
+	local Nums = string.split( String, ":" )
 	
 	local ToNums = { }
 	

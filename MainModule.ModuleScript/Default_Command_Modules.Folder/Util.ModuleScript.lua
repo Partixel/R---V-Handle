@@ -263,30 +263,6 @@ return function ( Main, ModFolder, VH_Events )
 		
 	end
 	
-	function Module.Split( String, Pattern )
-		
-		local Result = { }
-		
-		local From = 1
-		
-		local delim_from, delim_to = String:find( Pattern, From  )
-		
-		while delim_from do
-			
-			Result[ #Result + 1 ] = String:sub( From, delim_from - 1 )
-			
-			From  = delim_to + 1
-			
-			delim_from, delim_to = String:find( Pattern, From  )
-			
-		end
-		
-		Result[ #Result + 1 ] = String:sub( From )
-		
-		return Result
-		
-	end
-	
 	Module.LastPos = ( _G.VH_Saved or { } ).PlrLogs or setmetatable( { }, { __mode = 'k' })
 	
 	function Module.Teleport( Player, Target )

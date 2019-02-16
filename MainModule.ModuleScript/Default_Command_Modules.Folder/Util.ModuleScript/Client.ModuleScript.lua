@@ -2,35 +2,11 @@ return function ( Main, ModFolder, VH_Events )
 	
 	local StarterGui = game:GetService( "StarterGui" )
 	
-	function Split( String, Pattern )
-		
-		local Result = { }
-		
-		local From = 1
-		
-		local delim_from, delim_to = String:find( Pattern, From  )
-		
-		while delim_from do
-			
-			table.insert( Result, String:sub( From , delim_from - 1 ) )
-			
-			From  = delim_to + 1
-			
-			delim_from, delim_to = String:find( Pattern, From  )
-			
-		end
-		
-		table.insert( Result, String:sub( From  ) )
-		
-		return Result
-		
-	end
-	
 	ModFolder:WaitForChild( "SystemMessage" ).OnClientEvent:Connect( function ( Options )
 		
 		local Text = Options.Text
 		
-		Text = Split( Text, "%\n" )
+		Text = string.split( Text, "\n" )
 		
 		wait( )
 		
@@ -46,7 +22,7 @@ return function ( Main, ModFolder, VH_Events )
 	
 	ModFolder:WaitForChild( "Print" ).OnClientEvent:Connect( function ( Msg, Warn )
 		
-		Msg = Split( Msg, "%\n" )
+		Msg = string.split( Msg, "\n" )
 		
 		for a = 1, #Msg do
 			

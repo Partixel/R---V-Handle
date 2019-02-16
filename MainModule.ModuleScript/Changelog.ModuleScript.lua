@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 	]],
 	
+	{ Version = "0.59.1", SetupVersion = "1.3.5", Timestamp = 1550335748, Contributors = { "Partixel" }, Changes = { [[Using the new string.split function instead of the lua version]] } },
+	
 	{ Version = "0.59.0", SetupVersion = "1.3.5", Timestamp = 1549641991, Contributors = { "Partixel" }, Additions = { [[Added ReserveFor and ReserveSlots config optiosn that allows you to kick anyone that doesnt match the passed string ( uses plr targeting ) from the server once there's only ReserveSlots or 1 spaces left in the server]] } },
 	
 	{ Version = "0.58.1", SetupVersion = "1.3.5", Timestamp = 1549490845, Contributors = { "Partixel" }, Changes = { [[Fixed VH_Client being recreated every time the player spawns]] } },
