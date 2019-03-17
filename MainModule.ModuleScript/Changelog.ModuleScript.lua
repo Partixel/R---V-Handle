@@ -41,7 +41,9 @@ return {
 		Lock + iteratively
 		Invisible / Cloak iteratively and save old
 		fix/plr ( Arms / legs / camera )
-	]],
+]],
+
+	{ Version = "0.60.2", SetupVersion = "1.3.5", Timestamp = 1552859244, Contributors = { "Partixel" }, Changes = { [["Commands" command now works via "cmds/page" or "cmds/cmdname/page" instead of "cmds/page/cmdname"]], [[Fixed spectate commands freecam]] } },
 	
 	{ Version = "0.60.1", SetupVersion = "1.3.5", Timestamp = 1552852494, Contributors = { "Partixel" }, Changes = { [[Players that can access the server logs in the F9 console now get owner userpower as they can run code from the console anyway]], [[Optimised the process that sets players userpower as they join]] } },
 	
