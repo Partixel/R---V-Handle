@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 	]],
 	
+	{ Version = "0.59.3", SetupVersion = "1.3.5", Timestamp = 1550510935, Contributors = { "Partixel" }, Changes = { [[Fixed a bug that caused toggle aliases to not work unless they specified a position for the prefix]] } },
+	
 	{ Version = "0.59.2", SetupVersion = "1.3.5", Timestamp = 1550343570, Contributors = { "Partixel" }, Changes = { [[Fixed an error causing players to get sent two messages when permanent user powers were loaded from datastore]] } },
 	
 	{ Version = "0.59.1", SetupVersion = "1.3.5", Timestamp = 1550335748, Contributors = { "Partixel" }, Changes = { [[Using the new string.split function instead of the lua version]] } },

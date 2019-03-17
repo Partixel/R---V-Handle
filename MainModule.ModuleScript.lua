@@ -186,7 +186,7 @@ local function ToggleFunc( Positive, Arg, Aliases, Pos, self, Cmd, Plr )
 			
 		elseif Cmd:sub( #Cmd - #Alias + 1 ) == Alias then
 			
-			Cmd:sub( 1, #Cmd - #Alias )
+			Prefix = Cmd:sub( 1, #Cmd - #Alias )
 			
 		end
 		
@@ -250,7 +250,7 @@ Main.TargetLib.AliasTypes.Toggle = function ( Arg, Pos, ... )
 	
 	if type( Pos ) == "string" then
 		
-		Aliases[ #Aliases + 1 ] = Pos
+		table.insert( Aliases, 1, Pos )
 		
 		Pos = nil
 		
@@ -266,7 +266,7 @@ Main.TargetLib.AliasTypes.InvertedToggle = function ( Arg, Pos, ... )
 	
 	if type( Pos ) == "string" then
 		
-		Aliases[ #Aliases + 1 ] = Pos
+		table.insert( Aliases, 1, Pos )
 		
 		Pos = nil
 		
