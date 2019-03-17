@@ -336,7 +336,7 @@ Main.AnnounceJoin = { }
 
 Main.AnnouncedLeft = { }
 
-Main.CommandRan = script.CommandRan.Event
+Main.CommandRan = Instance.new( "BindableEvent" )
 
 ----==== Main ====----
 
