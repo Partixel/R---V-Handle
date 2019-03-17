@@ -1874,13 +1874,21 @@ return function ( Main, ModFolder, VH_Events )
 		
 		Category = "Core",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Number, Default = 1, Min = 1 }, { Func = Main.TargetLib.ArgTypes.String, Lower = true } },
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.String, Lower = true, Default = "" }, { Func = Main.TargetLib.ArgTypes.Number, Min = 1 } },
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			Args[ 2 ] = Args[ 2 ] or ""
+			if not Args[ 2 ] and tonumber( Args[ 1 ] ) then
+				
+				Args[ 2 ] = tonumber( Args[ 1 ] )
+				
+				Args[ 1 ] = ""
+				
+			end
 			
-			local Page = Args[ 1 ] - 1
+			Args[ 2 ] = Args[ 2 ] or 1
+			
+			local Page = Args[ 2 ] - 1
 			
 			local CmdNames = { }
 			
@@ -1892,7 +1900,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 				for c = 1, #b.Alias do
 					
-					if type( b.Alias[ c ] ) == "string" and b.Alias[ c ]:find( Args[ 2 ] ) then
+					if type( b.Alias[ c ] ) == "string" and b.Alias[ c ]:find( Args[ 1 ] ) then
 						
 						Matches = true
 						
@@ -1902,7 +1910,7 @@ return function ( Main, ModFolder, VH_Events )
 					
 				end
 				
-				if a:lower( ):find( Args[ 2 ] ) then Matches = true end
+				if a:lower( ):find( Args[ 1 ] ) then Matches = true end
 				
 				if Matches then
 					
@@ -1938,7 +1946,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-			if #CmdNames == 0 then return false, "Argument 2 is incorrect" end
+			if #CmdNames == 0 then return false, "Argument 1 does not match any commands" end
 			
 			table.sort( CmdNames )
 			

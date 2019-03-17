@@ -1,6 +1,6 @@
+local StarterGui = game:GetService( "StarterGui" )
+
 return function ( Main, ModFolder, VH_Events )
-	
-	local StarterGui = game:GetService( "StarterGui" )
 	
 	ModFolder:WaitForChild( "SystemMessage" ).OnClientEvent:Connect( function ( Options )
 		
