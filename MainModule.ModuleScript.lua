@@ -338,6 +338,8 @@ Main.AnnouncedLeft = { }
 
 Main.CommandRan = Instance.new( "BindableEvent" )
 
+Main.ModuleLoaded = Instance.new( "BindableEvent" )
+
 ----==== Main ====----
 
 script.Name = "VH_Main"
@@ -1401,6 +1403,8 @@ Main.Events[ #Main.Events + 1 ] = DataStore:OnUpdate( "AdminPowers", function ( 
 			
 			if Players:GetPlayerByUserId( a ) then
 				
+				while not Main.Util do Main.ModuleLoaded:Wait( ) end
+				
 				Main.Util.SendMessage( Players:GetPlayerByUserId( a ), "Your new user power is '" .. Main.UserPowerName( b ) .. "'!", "Info" )
 				
 			end
@@ -1410,8 +1414,6 @@ Main.Events[ #Main.Events + 1 ] = DataStore:OnUpdate( "AdminPowers", function ( 
 	end
 	
 end )
-
-
 
 spawn( function ( )
 	
@@ -1425,8 +1427,14 @@ spawn( function ( )
 			
 			if Main.GetUserPower( a ) ~= b and Players:GetPlayerByUserId( a ) then
 				
-				Main.Util.SendMessage( Players:GetPlayerByUserId( a ), "Your new user power is '" .. Main.UserPowerName( b ) .. "'!", "Info" )
-				
+				spawn( function ( )
+					
+					while not Main.Util do wait( ) end
+					
+					Main.Util.SendMessage( Players:GetPlayerByUserId( a ), "Your new user power is '" .. Main.UserPowerName( b ) .. "'!", "Info" )
+					
+				end )
+								
 			end
 			
 		end
@@ -2197,6 +2205,8 @@ local function RequireModule( Mod, Required, LoopReq )
 		Loading[ Mod ] = nil
 		
 		Loaded[ Mod ] = true
+		
+		Main.ModuleLoaded:Fire( Mod )
 		
 	end
 	
