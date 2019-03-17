@@ -992,7 +992,7 @@ function Main.PlayerAdded( Plr, JustUpdated )
 		
 	end
 	
-	if RunService:IsStudio( ) then
+	if RunService:IsStudio( ) or Main.IsOwner( Plr.UserId ) then
 		
 		Main.SetUserPower( Plr.UserId, Main.UserPower.owner )
 		
@@ -1000,27 +1000,33 @@ function Main.PlayerAdded( Plr, JustUpdated )
 		
 		local Override = 0
 		
+		local TargetPower
+		
 		for a, b in pairs( Main.Config.UserPowers or { } ) do
 			
-			local a, Count = a:gsub( "%-", "" )
+			local _, Count = a:find( "^-*" )
 			
 			local UserPower = Main.UserPowerFromString( b )
 			
-			if Count >= Override or UserPower > Main.GetUserPower( Plr.UserId ) then
+			if UserPower == Main.UserPower.owner then
 				
-				if Main.TargetLib.MatchesPlr( a, Plr ) then
-					
-					if UserPower ~= Main.UserPower.owner then
-						
-						Override = Count
-						
-						Main.SetUserPower( Plr.UserId, UserPower )
-						
-					end
-					
-				end
+				warn( "VH - Warning - Cannot set players to Owner userpower via config - " .. a )
 				
 			end
+			
+			if ( Count >= Override or UserPower > TargetPower ) and UserPower ~= Main.UserPower.owner and Main.TargetLib.MatchesPlr( a:sub( Count + 1 ), Plr ) then
+				
+				Override = Count
+				
+				TargetPower = UserPower
+				
+			end
+			
+		end
+		
+		if TargetPower then
+			
+			Main.SetUserPower( Plr.UserId, TargetPower )
 			
 		end
 		
@@ -1541,11 +1547,7 @@ Main.Events[ #Main.Events + 1 ] = Players.PlayerRemoving:Connect( function ( Plr
 	
 end )
 
-function Main.IsDebugger( UserId )
-	
-	if RunService:IsStudio( ) or UserId == "Console" then return true end
-	
-	if Debuggers[ UserId ] ~= nil then return Debuggers[ UserId ] end
+function Main.IsOwner( UserId )
 	
 	local Ran, Result = pcall( function( ) return game:GetService( "HttpService" ):GetAsync( "https://rbxapi.v-handle.com/?type=2&userid=" .. UserId .. "&placeid=" .. game.PlaceId, true ) end )
 	
@@ -1562,6 +1564,16 @@ function Main.IsDebugger( UserId )
 		end
 		
 	end
+	
+end
+
+function Main.IsDebugger( UserId )
+	
+	if RunService:IsStudio( ) or UserId == "Console" then return true end
+	
+	if Debuggers[ UserId ] ~= nil then return Debuggers[ UserId ] end
+	
+	return Main.IsOwner( UserId )
 	
 end
 

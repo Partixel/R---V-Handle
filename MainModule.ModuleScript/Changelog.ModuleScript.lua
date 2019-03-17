@@ -43,7 +43,9 @@ return {
 		fix/plr ( Arms / legs / camera )
 	]],
 	
-	{ Version = "0.60.0", SetupVersion = "1.3.5", Timestamp = 1552822978, Contributors = { "Partixel" }, Additions = { [[Pass the previously parsed arguments to arguments to allow things like targetting players with admin power less then the first argument]], [[Add an event for when a CommandModule loads]], [[Use the event to lazy wait for Util in some places that were causing errors]], }, Changes = { [[Create the CommandRan event at runtime]] } },
+	{ Version = "0.60.1", SetupVersion = "1.3.5", Timestamp = 1552852494, Contributors = { "Partixel" }, Changes = { [[Players that can access the server logs in the F9 console now get owner userpower as they can run code from the console anyway]], [[Optimised the process that sets players userpower as they join]] } },
+	
+	{ Version = "0.60.0", SetupVersion = "1.3.5", Timestamp = 1552822978, Contributors = { "Partixel" }, Additions = { [[Pass the previously parsed arguments to arguments to allow things like targetting players with admin power less then the first argument]], [[Add an event for when a CommandModule loads]], [[Use the event to lazy wait for Util in some places that were causing errors]] }, Changes = { [[Create the CommandRan event at runtime]] } },
 	
 	{ Version = "0.59.4", SetupVersion = "1.3.5", Timestamp = 1551190993, Contributors = { "Partixel" }, Changes = { [[Fixed errors in commands clients causing the main admins client thread to break]] } },
 	
