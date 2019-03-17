@@ -608,7 +608,7 @@ function Main.RunCmdStacks( Plr, CmdStacks, Silent )
 		
 		if not Main then return Success and Ran end
 		
-		script.CommandRan:Fire( Plr, CmdStack[ 3 ], { Fill( CmdStack[ 2 ] ) }, CmdStack[ 4 ], CmdStacks, Silent )
+		Main.CommandRan:Fire( Plr, CmdStack[ 3 ], { Fill( CmdStack[ 2 ] ) }, CmdStack[ 4 ], CmdStacks, Silent )
 		
 		if not Success then
 			
