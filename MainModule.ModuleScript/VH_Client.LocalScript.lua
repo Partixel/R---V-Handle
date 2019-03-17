@@ -102,7 +102,13 @@ _G.VH_Client = Main
 
 local function RequireModule( Mod )
 	
-	require( Mod )( Main, ReplicatedStorage:FindFirstChild( Mod.Name:sub( 1, -8 ) ), VH_Events )
+	local Ran, Error = pcall( function ( ) require( Mod )( Main, ReplicatedStorage:FindFirstChild( Mod.Name:sub( 1, -8 ) ), VH_Events ) end )
+	
+	if not Ran then
+		
+		warn( Mod.Name .. " errored when required:\n" .. Error )
+		
+	end
 	
 end
 
