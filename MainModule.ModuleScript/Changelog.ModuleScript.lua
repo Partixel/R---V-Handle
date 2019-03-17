@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 	]],
 	
+	{ Version = "0.60.0", SetupVersion = "1.3.5", Timestamp = 1552822978, Contributors = { "Partixel" }, Additions = { [[Pass the previously parsed arguments to arguments to allow things like targetting players with admin power less then the first argument]], [[Add an event for when a CommandModule loads]], [[Use the event to lazy wait for Util in some places that were causing errors]], }, Changes = { [[Create the CommandRan event at runtime]] } },
+	
 	{ Version = "0.59.4", SetupVersion = "1.3.5", Timestamp = 1551190993, Contributors = { "Partixel" }, Changes = { [[Fixed errors in commands clients causing the main admins client thread to break]] } },
 	
 	{ Version = "0.59.3", SetupVersion = "1.3.5", Timestamp = 1550510935, Contributors = { "Partixel" }, Changes = { [[Fixed a bug that caused toggle aliases to not work unless they specified a position for the prefix]] } },

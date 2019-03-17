@@ -474,11 +474,11 @@ function Main.GetCmdStacks( Plr, Cmd, StrArgs )
 						
 						if CmdObj.ArgTypes[ a ].Default and not CmdObj.ArgTypes[ a ].ManualRequired then
 							
-							Args[ a ] = CmdObj.ArgTypes[ a ].Default
+							local Arg = CmdObj.ArgTypes[ a ].Default
 							
-							if type( Args[ a ] ) == "function" then
+							if type( Arg ) == "function" then
 								
-								local Parsed, Ran, FailMsg = Args[ a ]( type( CmdObj.ArgTypes[ a ] ) == "table" and CmdObj.ArgTypes[ a ] or { }, Tmp, Plr, a == #CmdObj.ArgTypes, Cmd )
+								local Parsed, Ran, FailMsg = Arg( type( CmdObj.ArgTypes[ a ] ) == "table" and CmdObj.ArgTypes[ a ] or { }, Tmp, Plr, a == #CmdObj.ArgTypes, Cmd )
 								
 								if CmdObj.ArgTypes[ a ].Required and ( Parsed == nil or Ran == false ) then
 									
@@ -490,9 +490,11 @@ function Main.GetCmdStacks( Plr, Cmd, StrArgs )
 									
 								end
 								
-								Args[ a ] = Parsed
+								Arg = Parsed
 								
 							end
+							
+							Args[ a ] = Arg
 							
 						elseif CmdObj.ArgTypes[ a ].Required then
 							
@@ -516,11 +518,11 @@ function Main.GetCmdStacks( Plr, Cmd, StrArgs )
 					
 					if Tmp[ 1 ] == Main.TargetLib.ValidChar and type( CmdObj.ArgTypes[ a ] ) == "table" and CmdObj.ArgTypes[ a ].Default then
 						
-						Args[ a ] = CmdObj.ArgTypes[ a ].Default
+						local Arg = CmdObj.ArgTypes[ a ].Default
 						
-						if type( Args[ a ] ) == "function" then
+						if type( Arg ) == "function" then
 							
-							local Parsed, Ran, FailMsg = Args[ a ]( type( CmdObj.ArgTypes[ a ] ) == "table" and CmdObj.ArgTypes[ a ] or { }, Tmp, Plr, a == #CmdObj.ArgTypes, Cmd )
+							local Parsed, Ran, FailMsg = Arg( type( CmdObj.ArgTypes[ a ] ) == "table" and CmdObj.ArgTypes[ a ] or { }, Tmp, Plr, a == #CmdObj.ArgTypes, Cmd, Args )
 							
 							if CmdObj.ArgTypes[ a ].Required and ( Parsed == nil or Ran == false ) then
 								
@@ -532,9 +534,11 @@ function Main.GetCmdStacks( Plr, Cmd, StrArgs )
 								
 							end
 							
-							Args[ a ] = Parsed
+							Arg = Parsed
 							
 						end
+						
+						Args[ a ] = Arg
 						
 						table.remove( Tmp, 1 )
 						
@@ -542,7 +546,7 @@ function Main.GetCmdStacks( Plr, Cmd, StrArgs )
 						
 						local Func = type( CmdObj.ArgTypes[ a ] ) == "function" and CmdObj.ArgTypes[ a ] or CmdObj.ArgTypes[ a ].Func
 						
-						local Parsed, Ran, FailMsg = Func( type( CmdObj.ArgTypes[ a ] ) == "table" and CmdObj.ArgTypes[ a ] or { }, Tmp, Plr, a == #CmdObj.ArgTypes, Cmd )
+						local Parsed, Ran, FailMsg = Func( type( CmdObj.ArgTypes[ a ] ) == "table" and CmdObj.ArgTypes[ a ] or { }, Tmp, Plr, a == #CmdObj.ArgTypes, Cmd, Args )
 						
 						if ( Parsed == nil or Ran == false ) then
 							
