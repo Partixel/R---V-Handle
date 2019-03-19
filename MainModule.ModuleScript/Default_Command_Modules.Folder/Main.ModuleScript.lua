@@ -1503,6 +1503,36 @@ return function ( Main, ModFolder, VH_Events )
 		end
 		
 	}
+	
+	Main.Commands.PingOf = {
+		
+		Alias = { "pingof" },
+		
+		Description = "Returns the specified players ping",
+		
+		Category = "Debug",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Msg = "The ping of the specified players are:"
+			
+			for a = 1, #Args[ 1 ] do
+				
+				local Tick = tick( )
+				
+				ModFolder.Ping:InvokeClient( Args[ 1 ][ a ] )
+				
+				Tick = tick( ) - Tick
+				
+				Tick = math.floor( Tick * 100000 + 0.5 ) / 100
+				
+				Msg = Msg .. "\n" .. Args[ 1 ][ a ].Name .. " - " .. Tick .. "ms"
+				
+			end
+			
+			Main.Util.SendMessage( Plr, Msg, "Info" )
 			
 			return true
 			
