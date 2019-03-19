@@ -2,16 +2,6 @@ return function ( Main, ModFolder, VH_Events )
 	
 	local Teams, Players, TeleportService, PointsService, Lighting = game:GetService( "Teams" ), game:GetService( "Players" ), game:GetService( "TeleportService" ), game:GetService( "PointsService" ), game:GetService( "Lighting" )
 	
-	ModFolder.Ping.OnServerEvent:Connect( function( Plr, Tick )
-		
-		Tick = tick( ) - Tick
-		
-		Tick = math.floor( Tick * 100000 + 0.5 ) / 100
-		
-		Main.Util.SendMessage( Plr, "Your ping is ~" .. Tick .. "ms", "Info" )
-		
-	end )
-	
 	ModFolder.Spectate.OnServerEvent:Connect( function ( Plr )
 		
 		Plr:LoadCharacter( )
@@ -1498,7 +1488,21 @@ return function ( Main, ModFolder, VH_Events )
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			ModFolder.Ping:FireClient( Plr, tick( ) )
+			local Tick = tick( )
+			
+			ModFolder.Ping:InvokeClient( Plr )
+			
+			Tick = tick( ) - Tick
+			
+			Tick = math.floor( Tick * 100000 + 0.5 ) / 100
+			
+			Main.Util.SendMessage( Plr, "Your ping is ~" .. Tick .. "ms", "Info" )
+			
+			return true
+			
+		end
+		
+	}
 			
 			return true
 			

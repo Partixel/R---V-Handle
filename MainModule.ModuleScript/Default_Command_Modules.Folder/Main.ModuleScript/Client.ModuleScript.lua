@@ -400,13 +400,11 @@ end
 
 return function ( Main, ModFolder, VH_Events )
 	
-	local Ping = ModFolder:WaitForChild( "Ping" )
-	
-	Ping.OnClientEvent:Connect( function ( Tick )
+	ModFolder:WaitForChild( "Ping" ).OnClientInvoke = function ( )
 		
-		Ping:FireServer( Tick )
+		return
 		
-	end )
+	end
 	
 	local Spectate = ModFolder:WaitForChild( "Spectate" )
 	
