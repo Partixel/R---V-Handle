@@ -317,37 +317,9 @@ local PlayerState = {} do
 	local cameraFocus
 	local cameraCFrame
 	local cameraFieldOfView
-	local screenGuis = {}
-	local coreGuis = {
-		Backpack = true,
-		Chat = true,
-		Health = true,
-		PlayerList = true,
-	}
-	local setCores = {
-		BadgesNotificationsActive = true,
-		PointsNotificationsActive = true,
-	}
 
 	-- Save state and set up for freecam
 	function PlayerState.Push()
-		for name in pairs(coreGuis) do
-			coreGuis[name] = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType[name])
-			StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType[name], false)
-		end
-		for name in pairs(setCores) do
-			setCores[name] = StarterGui:GetCore(name)
-			StarterGui:SetCore(name, false)
-		end
-		local playergui = LocalPlayer:FindFirstChildOfClass("PlayerGui")
-		if playergui then
-			for _, gui in pairs(playergui:GetChildren()) do
-				if gui:IsA("ScreenGui") and gui.Enabled then
-					screenGuis[#screenGuis + 1] = gui
-					gui.Enabled = false
-				end
-			end
-		end
 
 		cameraFieldOfView = Camera.FieldOfView
 		Camera.FieldOfView = 70
@@ -367,17 +339,6 @@ local PlayerState = {} do
 
 	-- Restore state
 	function PlayerState.Pop()
-		for name, isEnabled in pairs(coreGuis) do
-			StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType[name], isEnabled)
-		end
-		for name, isEnabled in pairs(setCores) do
-			StarterGui:SetCore(name, isEnabled)
-		end
-		for _, gui in pairs(screenGuis) do
-			if gui.Parent then
-				gui.Enabled = true
-			end
-		end
 
 		Camera.FieldOfView = cameraFieldOfView
 		cameraFieldOfView = nil
@@ -637,7 +598,7 @@ return function ( Main, ModFolder, VH_Events )
 	
 	function ChangeSpec( Am )
 		
-		CurSpec = CurSpec + Am
+		CurSpec = CurSpec + ( Am or 0 )
 			
 		local Plrs = Players:GetPlayers( )
 		
@@ -655,7 +616,7 @@ return function ( Main, ModFolder, VH_Events )
 			
 			if #Plrs == 1 then return end
 			
-			CurSpec = CurSpec + Am
+			CurSpec = CurSpec + ( Am or 1 )
 			
 			if CurSpec > #Plrs then
 				
@@ -713,9 +674,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 		if Input.KeyCode == Enum.KeyCode.Space then
 			
-			local Plr = Players:GetPlayers( )[ CurSpec ]
-			
-			if Plr then
+			if SpectateEvent then
 				
 				if SpectateEvent ~= true then
 					
@@ -723,13 +682,21 @@ return function ( Main, ModFolder, VH_Events )
 					
 				else
 					
-					Spec( Plr )
+					ChangeSpec( 0 )
+					
+					local Plr = Players:GetPlayers( )[ CurSpec ]
+					
+					if Plr and Plr ~= Players.LocalPlayer then
+						
+						Spec( Plr )
+						
+					end
 					
 				end
 				
 			end
 			
-		elseif Input.KeyCode == Enum.KeyCode.Q then
+		elseif Input.KeyCode == Enum.KeyCode.Minus then
 			
 			ChangeSpec( -1 )
 			
@@ -737,19 +704,19 @@ return function ( Main, ModFolder, VH_Events )
 			
 			if Plr then
 				
-				if SpectateEvent ~= true then
+				if SpectateEvent == true or Plr == Players.LocalPlayer then
 					
-					Spec( Plr )
+					FreeCam( ( Plr.Character and Plr.Character:FindFirstChild( "Head" ) or { } ).CFrame )
 					
 				else
 					
-					FreeCam( ( Plr.Character and Plr.Character:FindFirstChild( "Head" ) or { } ).CFrame )
+					Spec( Plr )
 					
 				end
 				
 			end
 			
-		elseif Input.KeyCode == Enum.KeyCode.E then
+		elseif Input.KeyCode == Enum.KeyCode.Equals then
 			
 			ChangeSpec( 1 )
 			
@@ -757,13 +724,13 @@ return function ( Main, ModFolder, VH_Events )
 			
 			if Plr then
 				
-				if SpectateEvent ~= true then
+				if SpectateEvent == true or Plr == Players.LocalPlayer then
 					
-					Spec( Plr )
+					FreeCam( ( Plr.Character and Plr.Character:FindFirstChild( "Head" ) or { } ).CFrame )
 					
 				else
 					
-					FreeCam( ( Plr.Character and Plr.Character:FindFirstChild( "Head" ) or { } ).CFrame )
+					Spec( Plr )
 					
 				end
 				
