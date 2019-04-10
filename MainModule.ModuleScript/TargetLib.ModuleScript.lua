@@ -69,7 +69,7 @@ local ValidToolLocations = { game:GetService( "Lighting" ), game:GetService( "Se
 
 local BoolEquivs = { { "true", "1", "y", "yes", "t", "on" }, { "false", "0", "n", "no", "f", "off" } }
 
-local TimeEquivs = { [ "s" ] = 1, [ "m" ] = 60, [ "h" ] = 60 * 60, [ "d" ] = 60 * 60 * 24, [ "w" ] = 60 * 60 * 24 * 7, [ "mo" ] = 60 * 60 * 24 * 30, [ "y" ] = 60 * 60 * 24 * 365.25 }
+local TimeEquivs = { [ "s" ] = 1, [ "m" ] = 60, [ "mi" ] = 60, [ "h" ] = 60 * 60, [ "d" ] = 60 * 60 * 24, [ "w" ] = 60 * 60 * 24 * 7, [ "mo" ] = 60 * 60 * 24 * 30, [ "y" ] = 60 * 60 * 24 * 365.25 }
 
 local Calc = require( 2621701837 )
 
@@ -1018,41 +1018,47 @@ Module.ArgTypes.Time = function ( self, Strings, Plr )
 	
 	if String == Module.ValidChar then return 5 end
 	
-	String = String:lower( )
+	String = String:lower( ):gsub( " ", "" )
 	
 	local Nums = string.split( String, ":" )
 	
-	local ToNums = { }
-	
-	for a = 1, #Nums do
-		
-		local Found = String:find( "%D" ) or #String + 1
-		
-		local Num, Type = String:sub( 1, Found - 1 ), TimeEquivs[ String:sub( Found ) ] or 1
-		
-		local Ran, Num = pcall( Calc, String )
-		
-		if not Ran then return nil, false end
-		
-		_, Num = pcall( tonumber, Num )
-		
-		if not Num then return nil, false end
-		
-		Nums[ a ] = Num
-		
-	end
-	
 	if #Nums == 1 then
 		
-		return Nums[ 1 ]
+		local Time = 0
 		
-	elseif #Nums == 2 then
+		for a, b in string.gmatch( Nums[ 1 ], "([%d%.]+)(%D*)" ) do
+			
+			local Ran, Num = pcall( Calc, a )
+			
+			if not Ran then return nil, false, Num:sub( -Num:reverse( ):find( ":" ) + 2 ) end
+			
+			Time = Time + Num * ( TimeEquivs[ b ] or 1 )
+			
+		end
 		
-		return Nums[ 1 ] * 60 * 60 + Nums[ 2 ] * 60
+		return Time
 		
-	elseif #Nums == 3 then
+	else
 		
-		return Nums[ 1 ] * 60 * 60 + Nums[ 2 ] * 60 + Nums[ 3 ]
+		for a = 1, #Nums do
+			
+			local Ran, Num = pcall( Calc, Nums[ a ] )
+			
+			if not Ran then return nil, false, Num:sub( -Num:reverse( ):find( ":" ) + 2 ) end
+			
+			Nums[ a ] = Num
+			
+		end
+		
+		if #Nums == 2 then
+			
+			return Nums[ 1 ] * 60 * 60 + Nums[ 2 ] * 60
+			
+		elseif #Nums == 3 then
+			
+			return Nums[ 1 ] * 60 * 60 + Nums[ 2 ] * 60 + Nums[ 3 ]
+			
+		end
 		
 	end
 	

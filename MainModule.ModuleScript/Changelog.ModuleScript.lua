@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 ]],
 
+	{ Version = "0.61.1", SetupVersion = "1.3.5", Timestamp = 1554918629, Contributors = { "Partixel" }, Changes = { [[Time argument can now handle complex strings like "2d 5h"]] } },
+
 	{ Version = "0.61.0", SetupVersion = "1.3.5", Timestamp = 1553020572, Contributors = { "Partixel" }, Additions = { [[Added the "pingof/players" command]] }, Changes = { [[The "ping" command now uses a RemoteFunction instead of a RemoteEvent to save on some networking + memory usage]], [[Fixed the "spectate" command when you are the only person in the game]] } },
 
 	{ Version = "0.60.2", SetupVersion = "1.3.5", Timestamp = 1552859244, Contributors = { "Partixel" }, Changes = { [["Commands" command now works via "cmds/page" or "cmds/cmdname/page" instead of "cmds/page/cmdname"]], [[Fixed spectate commands freecam]] } },
