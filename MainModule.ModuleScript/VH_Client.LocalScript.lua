@@ -1,8 +1,12 @@
 if script.Parent.Name ~= "PlayerScripts" then
 	
+	script:Clone( ).Parent = game.Players.LocalPlayer.PlayerScripts
+	
 	wait( )
 	
-	script.Parent = game.Players.LocalPlayer.PlayerScripts
+	script:Destroy( )
+	
+	return
 	
 end
 
