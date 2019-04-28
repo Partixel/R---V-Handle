@@ -2,12 +2,6 @@ return function ( Main, ModFolder, VH_Events )
 	
 	local Teams, Players, TeleportService, PointsService, Lighting = game:GetService( "Teams" ), game:GetService( "Players" ), game:GetService( "TeleportService" ), game:GetService( "PointsService" ), game:GetService( "Lighting" )
 	
-	ModFolder.Spectate.OnServerEvent:Connect( function ( Plr )
-		
-		Plr:LoadCharacter( )
-		
-	end )
-	
 	Main.Commands.Calculate = {
 		
 		Alias = { "calculate", "calc" },
@@ -274,9 +268,15 @@ return function ( Main, ModFolder, VH_Events )
 		
 	}
 	
+	ModFolder.Spectate.OnServerEvent:Connect( function ( Plr )
+		
+		Plr:LoadCharacter( )
+		
+	end )
+	
 	Main.Commands.Spectate = {
 		
-		Alias = { "spectate", "watch", "spec" },
+		Alias = { Main.TargetLib.AliasTypes.Toggle( 1, "spectate", "watch", "spec" ) },
 		
 		Description = "Spectates the specified player or free camera",
 		
@@ -284,41 +284,27 @@ return function ( Main, ModFolder, VH_Events )
 		
 		CanRun = "$moderator&!$console",
 		
-		ArgTypes = { Main.TargetLib.ArgTypes.Player },
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Boolean, Default = Main.TargetLib.Defaults.Toggle }, Main.TargetLib.ArgTypes.Player },
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			if Args[ 1 ] == Plr then return false, "You can't spectate yourself!" end
-			
-			if Plr.Character then
+			if Args[ 1 ] then
 				
-				Plr.Character:Destroy( )
+				if Args[ 2 ] == Plr then return false, "You can't spectate yourself!" end
+				
+				if Plr.Character then
+					
+					Plr.Character:Destroy( )
+					
+				end
+				
+				ModFolder.Spectate:FireClient( Plr, Args[ 2 ] )
+				
+			else
+				
+				ModFolder.Spectate:FireClient( Plr, false )
 				
 			end
-			
-			Plr.Character = nil
-			
-			ModFolder.Spectate:FireClient( Plr, Args[ 1 ] )
-			
-			return true
-			
-		end
-		
-	}
-	
-	Main.Commands.EndSpectate = {
-		
-		Alias = { "endspectate", "unspectate", "endwatch", "unwatch", "unspec" },
-		
-		Description = "Ends your current spectatorship",
-		
-		Category = "Players",
-		
-		CanRun = "$moderator&!$console",
-		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
-			
-			ModFolder.Spectate:FireClient( Plr, false )
 			
 			return true
 			
