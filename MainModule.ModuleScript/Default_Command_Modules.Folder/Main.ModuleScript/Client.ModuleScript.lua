@@ -400,11 +400,7 @@ end
 
 return function ( Main, ModFolder, VH_Events )
 	
-	ModFolder:WaitForChild( "Ping" ).OnClientInvoke = function ( )
-		
-		return
-		
-	end
+	ModFolder:WaitForChild( "Ping" ).OnClientInvoke = function ( ) end
 	
 	local Spectate = ModFolder:WaitForChild( "Spectate" )
 	
@@ -438,7 +434,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 	end
 	
-	local function StartNameTags( )
+	function StartNameTags( )
 		
 		Nametags = { }
 		
@@ -446,13 +442,17 @@ return function ( Main, ModFolder, VH_Events )
 		
 		for a = 1, #Plrs do
 			
-			if Plrs[ a ].Character then
+			if Plrs[ a ] ~= Players.LocalPlayer then
 				
-				Nametag( Plrs[ a ], Plrs[ a ].Character )
+				if Plrs[ a ].Character then
+					
+					Nametag( Plrs[ a ], Plrs[ a ].Character )
+					
+				end
+				
+				Events[ #Events + 1 ] = Plrs[ a ].CharacterAdded:Connect( function ( Char ) Nametag( Plrs[ a ], Char ) end )
 				
 			end
-			
-			Events[ #Events + 1 ] = Plrs[ a ].CharacterAdded:Connect( function ( Char ) Nametag( Plrs[ a ], Char ) end )
 			
 		end
 		
@@ -480,8 +480,6 @@ return function ( Main, ModFolder, VH_Events )
 			
 		end
 		
-		Players.LocalPlayer.Character = nil
-		
 		if Pos then
 			
 			workspace.CurrentCamera.Focus = Pos
@@ -500,7 +498,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 	end
 	
-	function EndSpec( )
+	function EndSpec( NoRespawn )
 		
 		if SpectateEvent and SpectateEvent ~= true then
 			
@@ -536,13 +534,15 @@ return function ( Main, ModFolder, VH_Events )
 		
 		SpectateEvent = nil
 		
-		Spectate:FireServer( )
+		if not NoRespawn then
+			
+			Spectate:FireServer( )
+			
+		end
 		
 	end
 	
 	function Spec( Plr )
-		
-		Players.LocalPlayer.Character = nil
 		
 		if SpectateEvent and SpectateEvent ~= true then
 			
@@ -648,23 +648,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 	end )
 	
-	Main.Events[ #Main.Events + 1 ] = Players.LocalPlayer.CharacterAdded:Connect( function ( )
-		
-		if SpectateEvent == nil then return end
-		
-		if SpectateEvent ~= true then
-			
-			SpectateEvent:Disconnect( )
-			
-		end
-		
-		workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-		
-		workspace.CurrentCamera.CameraSubject = Players.LocalPlayer.Character:FindFirstChildOfClass( "Humanoid" )
-		
-		SpectateEvent = nil
-		
-	end )
+	Main.Events[ #Main.Events + 1 ] = Players.LocalPlayer.CharacterAdded:Connect( EndSpec )
 	
 	Main.Events[ #Main.Events + 1 ] = game:GetService( "UserInputService" ).InputBegan:Connect( function ( Input, Processed )
 		
