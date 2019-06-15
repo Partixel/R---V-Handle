@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 ]],
 
+	{ Version = "0.62.1", SetupVersion = "1.3.5", Timestamp = 1556451560, Contributors = { "Partixel" }, Changes = { [[Fixed an error with group targetting]], [[Fixed error on update]] } },
+
 	{ Version = "0.62.0", SetupVersion = "1.3.5", Timestamp = 1556451560, Contributors = { "Partixel" }, Additions = { [[Added End and Stop to Negative Prefixes and Start to Positive Prefixes]] }, Changes = { [[Fixed a bug that caused PlayerScripts to delete on the first death]], [[Spectate command now uses ToggleAlias]], [[Fixed Spectate FreeCam showing name tag for self]] } },
 
 	{ Version = "0.61.1", SetupVersion = "1.3.5", Timestamp = 1554918629, Contributors = { "Partixel" }, Changes = { [[Time argument can now handle complex strings like "2d 5h"]] } },

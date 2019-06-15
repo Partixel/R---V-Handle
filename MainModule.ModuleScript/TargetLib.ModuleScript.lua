@@ -679,23 +679,27 @@ function Module.FindPlrsInGroups( self, String, Plr )
 		
 		for a = 1, #Plrs do
 			
-			for b = 1, #Groups do
+			if Plrs[ a ].Parent then
 				
-				if not Rank then
+				for b = 1, #Groups do
 					
-					if Plrs[ a ]:IsInGroup( Groups[ b ] ) then
+					if not Rank then
+						
+						if Plrs[ a ]:IsInGroup( Groups[ b ] ) then
+							
+							Matches[ #Matches + 1 ] = Plrs[ a ]
+							
+							break
+							
+						end
+						
+					elseif ( Type == 1 and Plrs[ a ]:GetRankInGroup( Groups[ b ] ) == Rank ) or ( Type == 2 and Plrs[ a ]:GetRankInGroup( Groups[ b ] ) <= Rank ) or ( Type == nil and Plrs[ a ]:GetRankInGroup( Groups[ b ] ) >= Rank ) then
 						
 						Matches[ #Matches + 1 ] = Plrs[ a ]
 						
 						break
 						
 					end
-					
-				elseif ( Type == 1 and Plrs[ a ]:GetRankInGroup( Groups[ b ] ) == Rank ) or ( Type == 2 and Plrs[ a ]:GetRankInGroup( Groups[ b ] ) <= Rank ) or ( Type == nil and Plrs[ a ]:GetRankInGroup( Groups[ b ] ) >= Rank ) then
-					
-					Matches[ #Matches + 1 ] = Plrs[ a ]
-					
-					break
 					
 				end
 				
