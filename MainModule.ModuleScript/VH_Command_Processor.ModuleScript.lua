@@ -20,6 +20,12 @@ return function ( ChatService )
 		
 	end
 	
+	if ChatService:ProcessCommandsFunctionExists( "VHEmotes" ) then
+		
+		ChatService:UnregisterProcessCommandsFunction( "VHEmotes" )
+		
+	end
+	
 	local VH_Channel = ChatService:AddChannel( "V-Handle" )
 	
 	local Speakers = ChatService:GetChannel( "All" ):GetSpeakerList( )
@@ -57,6 +63,12 @@ return function ( ChatService )
 		if ChatService:ProcessCommandsFunctionExists( "VH_Command_Processor" ) then
 			
 			ChatService:UnregisterProcessCommandsFunction( "VH_Command_Processor" )
+			
+		end
+		
+		if ChatService:ProcessCommandsFunctionExists( "VHEmotes" ) then
+			
+			ChatService:UnregisterProcessCommandsFunction( "VHEmotes" )
 			
 		end
 		
