@@ -314,7 +314,7 @@ return function ( Main, ModFolder, VH_Events )
 	
 	Main.Commands.SetUserPower = {
 		
-		Alias = { "setpower", "sp", "setuserpower", "sup", { function ( self, Alias ) return Main.UserPower[ Alias ] ~= nil, { nil, Main.UserPower[ Alias ] } end, "any_power_name" } },
+		Alias = { "setpower", "sp", "setuserpower", "sup", { function ( self, Alias ) return Main.UserPower[ Alias ] ~= nil, { nil, Main.UserPower[ Alias ] } end, "user" } },
 		
 		Description = "Sets the specified players user power for the current server",
 		
@@ -406,7 +406,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-		end, "any_power_name" } },
+		end, "permuser" } },
 		
 		Description = "Sets the specified player user power permanently for all servers",
 		
@@ -1746,7 +1746,7 @@ return function ( Main, ModFolder, VH_Events )
 			
 			return Alias:sub( -1 ) == "s" and Main.UserPower[ Alias:sub( 1, -2 ) ] ~= nil
 			
-		end, "any_power_name" } },
+		end, "users" } },
 		
 		Description = "Lists all of the user powers",
 		
@@ -2184,10 +2184,12 @@ return function ( Main, ModFolder, VH_Events )
 				for a = 1, #CmdObj.Alias do
 					
 					if type( CmdObj.Alias[ a ] ) == "table" then
+						
+						local Start = type( CmdObj.Alias[ a ][ 1 ] ) == "function" and 3 or 1
 												
-						for b = 3, #CmdObj.Alias[ a ] do
+						for b = Start, #CmdObj.Alias[ a ] do
 							
-							Aliases = Aliases .. ( a == 1 and b == 3 and "" or a == #CmdObj.Alias and b == #CmdObj.Alias[ a ] and " and " or ", " ) .. CmdObj.Alias[ a ][ b ]
+							Aliases = Aliases .. ( a == 1 and b == Start and "" or a == #CmdObj.Alias and b == #CmdObj.Alias[ a ] and " and " or ", " ) .. CmdObj.Alias[ a ][ b ]
 							
 						end
 						

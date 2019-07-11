@@ -132,118 +132,6 @@ end
 
 Main.TargetLib.AliasTypes = { }
 
-local function ToggleFunc( Positive, Arg, Aliases, Pos, self, Cmd, Plr )
-	
-	if Plr then
-		
-		if not self.ArgTypes[ Arg ].ToggleKey then
-			
-			self.ArgTypes[ Arg ].ToggleKey = { }
-			
-		end
-		
-		Main.TargetLib.Toggles[ Plr ] = Main.TargetLib.Toggles[ Plr ] or { }
-		
-	end
-	
-	local Args = { }
-	
-	for a = 1, #Aliases do
-		
-		local Alias = Aliases[ a ]
-		
-		if Cmd == Alias then
-			
-			if Plr then
-				
-				Main.TargetLib.Toggles[ Plr ][ self.ArgTypes[ Arg ].ToggleKey ] = Positive
-				
-			end
-			
-			Args[ Arg ] = Positive
-			
-			return true, Args
-			
-		end
-		
-		local Prefix
-		
-		if Pos then
-			
-			local PrefixEnd = Cmd:sub( 1, Pos - 1 ) == Alias:sub( 1, Pos - 1 ) and Cmd:sub( Pos ):find( Alias:sub( Pos ) )
-			
-			if PrefixEnd then
-				
-				PrefixEnd = PrefixEnd + Pos - 2
-				
-				if Cmd:sub( PrefixEnd + 1 ) == Alias:sub( Pos ) then
-					
-					Prefix = Cmd:sub( Pos, PrefixEnd )
-					
-				end
-				
-			end
-			
-		elseif Cmd:sub( #Cmd - #Alias + 1 ) == Alias then
-			
-			Prefix = Cmd:sub( 1, #Cmd - #Alias )
-			
-		end
-		
-		if Prefix then
-			
-			for a = 1, #Main.TargetLib.NegativePrefixes do
-				
-				if Prefix == Main.TargetLib.NegativePrefixes[ a ] then
-					
-					if Plr then
-						
-						Main.TargetLib.Toggles[ Plr ][ self.ArgTypes[ Arg ].ToggleKey ] = not Positive
-						
-					end
-					
-					Args[ Arg ] = not Positive
-					
-					return true, Args
-					
-				end
-				
-			end
-			
-			for a = 1, #Main.TargetLib.PositivePrefixes do
-				
-				if Prefix == Main.TargetLib.PositivePrefixes[ a ] then
-					
-					if Plr then
-						
-						Main.TargetLib.Toggles[ Plr ][ self.ArgTypes[ Arg ].ToggleKey ] = Positive
-						
-					end
-					
-					Args[ Arg ] = Positive
-					
-					return true, Args
-					
-				end
-				
-			end
-			
-			for a = 1, #Main.TargetLib.TogglePrefixes do
-				
-				if Prefix == Main.TargetLib.TogglePrefixes[ a ] then
-					
-					return true
-					
-				end
-				
-			end
-			
-		end
-	
-	end
-	
-end
-
 Main.TargetLib.AliasTypes.Toggle = function ( Arg, Pos, ... )
 	
 	local Aliases = { ... }
@@ -256,7 +144,39 @@ Main.TargetLib.AliasTypes.Toggle = function ( Arg, Pos, ... )
 		
 	end
 	
-	return { function ( ... ) return ToggleFunc( true, Arg, Aliases, Pos, ... ) end, "+" .. Aliases[ 1 ], Prefix( Aliases, "(=,+,-)" ) }
+	local PositiveAliases, NegativeAliases, ToggleAliases = { Args = { [ Arg ] = true }, unpack( Aliases ) }, { Args = { [ Arg ] = false } }, { }
+	
+	for a = 1, #Aliases do
+		
+		local First, Second = "", Aliases[ a ]
+		
+		if Pos then
+			
+			First, Second = Second:sub( 1, Pos - 1 ), Second:sub( Pos )
+			
+		end
+		
+		for b = 1, #Main.TargetLib.PositivePrefixes do
+			
+			PositiveAliases[ #PositiveAliases + 1 ] = First .. Main.TargetLib.PositivePrefixes[ b ] .. Second
+			
+		end
+		
+		for b = 1, #Main.TargetLib.NegativePrefixes do
+			
+			NegativeAliases[ #NegativeAliases + 1 ] = First .. Main.TargetLib.NegativePrefixes[ b ] .. Second
+			
+		end
+		
+		for b = 1, #Main.TargetLib.TogglePrefixes do
+			
+			ToggleAliases[ #ToggleAliases + 1 ] = First .. Main.TargetLib.TogglePrefixes[ b ] .. Second
+			
+		end
+		
+	end
+	
+	return PositiveAliases, NegativeAliases, unpack( ToggleAliases )
 	
 end
 
@@ -272,7 +192,39 @@ Main.TargetLib.AliasTypes.InvertedToggle = function ( Arg, Pos, ... )
 		
 	end
 	
-	return { function ( ... ) return ToggleFunc( false, Arg, Aliases, Pos, ... ) end, "+" .. Aliases[ 1 ], Prefix( Aliases, "(=,+,-)" ) }
+	local PositiveAliases, NegativeAliases, ToggleAliases = { Args = { [ Arg ] = false }, unpack( Aliases ) }, { Args = { [ Arg ] = true } }, { }
+	
+	for a = 1, #Aliases do
+		
+		local First, Second = "", Aliases[ a ]
+		
+		if Pos then
+			
+			First, Second = Second:sub( 1, Pos - 1 ), Second:sub( Pos )
+			
+		end
+		
+		for b = 1, #Main.TargetLib.PositivePrefixes do
+			
+			PositiveAliases[ #PositiveAliases + 1 ] = First .. Main.TargetLib.PositivePrefixes[ b ] .. Second
+			
+		end
+		
+		for b = 1, #Main.TargetLib.NegativePrefixes do
+			
+			NegativeAliases[ #NegativeAliases + 1 ] = First .. Main.TargetLib.NegativePrefixes[ b ] .. Second
+			
+		end
+		
+		for b = 1, #Main.TargetLib.TogglePrefixes do
+			
+			ToggleAliases[ #ToggleAliases + 1 ] = First .. Main.TargetLib.TogglePrefixes[ b ] .. Second
+			
+		end
+		
+	end
+	
+	return PositiveAliases, NegativeAliases, ToggleAliases
 	
 end
 
@@ -280,19 +232,9 @@ Main.TargetLib.AliasTypes.Positive = function ( Arg, ... )
 	
 	local Aliases = { ... }
 	
-	local Args = { }
+	Aliases.Args = { [ Arg ] = true }
 	
-	Args[ Arg ] = true
-	
-	return { function ( self, Cmd, Plr )
-		
-		for a = 1, #Aliases do
-			
-			if Cmd == Aliases[ a ] then return true, Args end
-			
-		end
-		
-	end, unpack( Aliases ) }
+	return Aliases
 	
 end
 
@@ -300,19 +242,9 @@ Main.TargetLib.AliasTypes.Negative = function ( Arg, ... )
 	
 	local Aliases = { ... }
 	
-	local Args = { }
+	Aliases.Args = { [ Arg ] = false }
 	
-	Args[ Arg ] = false
-	
-	return { function ( self, Cmd, Plr )
-		
-		for a = 1, #Aliases do
-			
-			if Cmd == Aliases[ a ] then return true, Args end
-			
-		end
-		
-	end, unpack( Aliases ) }
+	return Aliases
 	
 end
 
@@ -1707,9 +1639,27 @@ local CmdOptions = {
 				
 				if type( b ) == "table" then
 					
-					if type( b[ 1 ] ) ~= "function" and type( b[ 2 ] ) ~= "string" then
+					if type( b[ 1 ] ) == "function" then
 						
-						return
+						if type( b[ 2 ] ) ~= "string" then
+							
+							return
+							
+						end
+						
+					else
+						
+						if not b.Args then return end
+						
+						for c = 1, #b do
+							
+							if type( b[ c ] ) ~= "string" then
+								
+								return
+								
+							end
+							
+						end
 						
 					end
 					
@@ -1767,9 +1717,27 @@ local AliasCmdOptions = {
 				
 				if type( b ) == "table" then
 					
-					if type( b[ 1 ] ) ~= "function" and type( b[ 2 ] ) ~= "string" then
+					if type( b[ 1 ] ) == "function" then
 						
-						return
+						if type( b[ 2 ] ) ~= "string" then
+							
+							return
+							
+						end
+						
+					else
+						
+						if not b.Args then  return end
+						
+						for c = 1, #b do
+							
+							if type( b[ c ] ) ~= "string" then
+								
+								return
+								
+							end
+							
+						end
 						
 					end
 					
@@ -1971,9 +1939,21 @@ local function Metatable( self, Key, Value )
 			--TODO MAKE ERROR
 			if AliasCache[ Value.Alias[ a ][ 1 ] ] then warn( Key .. ": Alias " .. Value.Alias[ a ][ 2 ] .. " is already used" ) end
 			
-			AliasFunctions[ Value.Alias[ a ][ 1 ] ] = Value
-			
-			AliasCache[ Value.Alias[ a ][ 1 ] ] = Value
+			if type( Value.Alias[ a ][ 1 ] ) == "function" then
+				
+				AliasFunctions[ Value.Alias[ a ][ 1 ] ] = Value
+				
+				AliasCache[ Value.Alias[ a ][ 1 ] ] = Value
+				
+			else
+				
+				for b = 1, #Value.Alias[ a ] do
+					
+					AliasCache[ Value.Alias[ a ][ b ] ] = { Value, Value.Alias[ a ].Args }
+					
+				end
+				
+			end
 			
 		else
 			--TODO MAKE ERROR
@@ -2013,9 +1993,19 @@ end
 
 function Main.GetCommandAndArgs( Key, Plr )
 	
-	if AliasCache[ Key ] then
+	local Value = AliasCache[ Key ]
+	
+	if Value then
 		
-		return AliasCache[ Key ]
+		if Value[ 1 ] then
+			
+			return Value[ 1 ], Value[ 2 ]
+			
+		else
+			
+			return Value
+			
+		end
 		
 	end
 	
