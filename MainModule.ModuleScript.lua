@@ -1343,9 +1343,21 @@ Main.Events[ #Main.Events + 1 ] = DataStore:OnUpdate( "AdminPowers", function ( 
 			
 			if Players:GetPlayerByUserId( a ) then
 				
-				while not Main.Util do Main.ModuleLoaded:Wait( ) end
-				
-				Main.Util.SendMessage( Players:GetPlayerByUserId( a ), "Your new user power is '" .. Main.UserPowerName( b ) .. "'!", "Info" )
+				if not Main.Util then
+					
+					spawn( function ( )
+						
+						while not Main.Util do Main.ModuleLoaded.Event:Wait( ) end
+						
+						Main.Util.SendMessage( Players:GetPlayerByUserId( a ), "Your new user power is '" .. Main.UserPowerName( b ) .. "'!", "Info" )
+						
+					end )
+					
+				else
+					
+					Main.Util.SendMessage( Players:GetPlayerByUserId( a ), "Your new user power is '" .. Main.UserPowerName( b ) .. "'!", "Info" )
+					
+				end
 				
 			end
 			
