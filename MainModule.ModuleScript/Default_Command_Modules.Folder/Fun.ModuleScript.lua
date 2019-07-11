@@ -1,5 +1,59 @@
 return function ( Main, ModFolder, VH_Events )
 	
+	Main.Commands.Clone = {
+		
+		Alias = { "clone" },
+		
+		Description = "Clones the specified players",
+		
+		Category = "Characters",
+		
+		CanRun = "$moderator",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Default = Main.TargetLib.Defaults.SelfTable } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Plrs = Args[ 1 ]
+			
+			for a = 1, #Plrs do
+				
+				if Plrs[ a ].Character and Plrs[ a ].Character:FindFirstChild( "Humanoid" ) then
+					
+					local Orig = Plrs[ a ].Character.Archivable
+					
+					Plrs[ a ].Character.Archivable = true
+					
+					local Clone = Plrs[ a ].Character:Clone( )
+					
+					Plrs[ a ].Character.Archivable = Orig
+					
+					Main.Objs[ #Main.Objs + 1 ] = Clone
+					
+					Clone.Humanoid.Died:Connect( function ( )
+						
+						wait( 4 )
+						
+						if Clone.Parent then
+							
+							Clone:Destroy( )
+							
+						end
+						
+					end )
+					
+					Clone.Parent = workspace
+					
+				end
+				
+			end
+			
+			return true
+			
+		end
+		
+	}
+	
 	Main.Commands.JumpPower = {
 		
 		Alias = { "jumppower", "jp" },
