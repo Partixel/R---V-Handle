@@ -10,7 +10,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 		Category = "Math",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Number, Required = true }},
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Number, Required = true } },
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
@@ -1410,11 +1410,11 @@ return function ( Main, ModFolder, VH_Events )
 			
 			if Args[ 1 ] then
 				
-				H.Text = "This server has been soft locked, if you leave you may rejoin!"
+				H.Text = "This server has been soft locked, if you leave you can rejoin"
 				
 			else
 				
-				H.Text = "This server has been locked!"
+				H.Text = "This server has been locked"
 				
 			end
 			
