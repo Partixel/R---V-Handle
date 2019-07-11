@@ -82,8 +82,6 @@ VH_Events:WaitForChild( "RemoteDestroyed" ).OnClientEvent:Connect( function ( Up
 	
 	script:Destroy( )
 	
-	getfenv( ).script = nil
-	
 end )
 
 Main.FilteredFuncs = { }
