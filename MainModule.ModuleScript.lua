@@ -1127,8 +1127,6 @@ function Main.Destroy( Update )
 	
 	script:Destroy( )
 	
-	getfenv( ).script = nil
-	
 end
 
 spawn( function ( )
