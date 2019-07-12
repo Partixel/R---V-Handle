@@ -404,7 +404,7 @@ function Main.GetCmdStacks( Plr, Cmd, StrArgs )
 					
 					if type( CmdObj.ArgTypes[ a ] ) == "table" then
 						
-						if CmdObj.ArgTypes[ a ].Default and not CmdObj.ArgTypes[ a ].ManualRequired then
+						if CmdObj.ArgTypes[ a ].Default then
 							
 							local Arg = CmdObj.ArgTypes[ a ].Default
 							
@@ -518,7 +518,7 @@ function Main.GetCmdStacks( Plr, Cmd, StrArgs )
 		
 		for a = 1, #CmdObj.Commands do
 			
-			CmdStacks[ #CmdStacks + 1 ] = { CmdObj.Commands[ a ], Main.Util.TableShallowCopy( Args ), Cmd, StrArgs }
+			CmdStacks[ #CmdStacks + 1 ] = { CmdObj.Commands[ a ], Args, Cmd, StrArgs }
 			
 		end
 		
@@ -2009,7 +2009,7 @@ function Main.GetCommandAndArgs( Key, Plr )
 		
 		if Value[ 1 ] then
 			
-			return Value[ 1 ], Value[ 2 ]
+			return Value[ 1 ], Main.Util.TableDeepCopy( Value[ 2 ] )
 			
 		else
 			

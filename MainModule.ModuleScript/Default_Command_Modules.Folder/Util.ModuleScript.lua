@@ -127,6 +127,20 @@ return function ( Main, ModFolder, VH_Events )
 		
 	end
 	
+	function Module.TableDeepCopy( Table )
+		
+		local Copy = { }
+		
+		for a, b in pairs( Table ) do
+			
+			Copy[ a ] = type( b ) == "table" and Module.TableDeepCopy( b ) or b
+			
+		end
+		
+		return Copy
+		
+	end
+	
 	function Module.TableCount( Table )
 		
 		local Num = 0

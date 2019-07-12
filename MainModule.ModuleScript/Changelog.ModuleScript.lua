@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 ]],
 
+	{ Version = "0.63.1", SetupVersion = "1.3.5", Timestamp = 1562969191, Contributors = { "Partixel" }, Changes = { [[Fixed a bug with running a command causing the command to always use the same arguments]] } },
+
 	{ Version = "0.63.0", SetupVersion = "1.3.5", Timestamp = 1562798727, Contributors = { "Partixel" }, Additions = { [[Aliases can now specify set arguments via { Alias, Alias2, ..., Args = { } }]], [[Added 'clone/players' command]] }, Changes = { [[Optimised all AliasTypes to use the new system to specify arguments for aliases ( Massively reduces the amount of functional aliases )]], [[Remove a getfenv() in preperation for the new lua vm]], [[Fix a hang on startup]] } },
 	
 	{ Version = "0.62.1", SetupVersion = "1.3.5", Timestamp = 1556451620, Contributors = { "Partixel" }, Changes = { [[Fixed an error with group targetting]], [[Fixed error on update]] } },
