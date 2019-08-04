@@ -40,6 +40,20 @@ return function ( Main, ModFolder, VH_Events )
 		
 	end )
 	
+	ModFolder:WaitForChild( "TestClientError" ).OnClientEvent:Connect( function ( Msg )
+		
+		if Msg then
+			
+			error( Msg )
+			
+		else
+			
+			print( ( nil )( ) )
+			
+		end
+		
+	end )
+	
 	ModFolder:WaitForChild( "TestResults" ).OnClientEvent:Connect( function ( Results )
 		
 		local SortMode = 1 -- 0 = Name 1 = Time

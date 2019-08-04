@@ -196,78 +196,6 @@ return function ( Main, ModFolder, VH_Events )
 		
 	}
 	
-	Main.Commands.PlayerPoints = {
-		
-		Alias = { "playerpoints", "getpp" },
-		
-		Description = "Gets the amount of player points the specified player has",
-		
-		Category = "Stats",
-		
-		CanRun = "$moderator, $debugger",
-		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.UserId, Required = true } },
-		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
-			
-			if Silent then return true, Main.Util.UsernameFromID( Args[ 1 ] ) .. " has " .. PointsService:GetGamePointBalance( Args[ 1 ] ) .. " player points" end
-			
-			Main.Util.SendMessage( Plr, Main.Util.UsernameFromID( Args[ 1 ] ) .. " has " .. PointsService:GetGamePointBalance( Args[ 1 ] ) .. " player points", "Info" )
-			
-			return true
-			
-		end
-		
-	}
-	
-	Main.Commands.SetPlayerPoints = {
-		
-		Alias = { "setplayerpoints", "setpp" },
-		
-		Description = "Sets the playerpoints of the specified player",
-		
-		Category = "Stats",
-		
-		NoTest = true,
-		
-		CanRun = "$superadmin, $debugger",
-		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.UserId, Required = true }, { Func = Main.TargetLib.ArgTypes.Number, Required = true } },
-		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
-			
-			PointsService:AwardPoints( Args[ 1 ], -PointsService:GetGamePointBalance( Args[ 1 ] ) + Args[ 2 ] )
-			
-			return true
-			
-		end
-		
-	}
-	
-	Main.Commands.AddPlayerPoints = {
-		
-		Alias = { "addplayerpoints", "addpp" },
-		
-		Description = "Adds the specfiied amount to the specified players points",
-		
-		Category = "Stats",
-		
-		NoTest = true,
-		
-		CanRun = "$superadmin, $debugger",
-		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.UserId, Required = true }, { Func = Main.TargetLib.ArgTypes.Number, Required = true } },
-		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
-			
-			PointsService:AwardPoints( Args[ 1 ], Args[ 2 ] )
-			
-			return true
-			
-		end
-		
-	}
-	
 	ModFolder.Spectate.OnServerEvent:Connect( function ( Plr )
 		
 		Plr:LoadCharacter( )
@@ -1360,17 +1288,25 @@ return function ( Main, ModFolder, VH_Events )
 		
 	end )
 	
+	local Hard, Soft, Number = { [ "hard" ] = 0, [ "h" ] = 0, [ "true" ] = 0 }, { [ "soft" ] = 1, [ "s" ] = 1, [ "false" ] = 1 }, { [ "number" ] = 2, [ "n" ] = 2 }
+	
 	Main.Commands.LockServer = {
 		
 		Alias = { "lockserver" },
 		
-		Description = "Prevents players from joining the server\nIf the second argument is true, players that leave can rejoin",
+		Description = "Prevents players from joining the server\nIf the second argument is 'soft' players that leave can rejoin, if it is 'number' it locks it to the number of players on each team",
 		
 		Category = "Servers",
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { Main.TargetLib.ArgTypes.Boolean, Main.TargetLib.ArgTypes.Time },
+		ArgTypes = { { Func = function ( self, Strings, Plr )
+			
+			local String = table.remove( Strings, 1 ):lower( )
+			
+			return ( String == Main.TargetLib.ValidChar or Hard[ String ] ) or Soft[ String ] or Number[ String ] or nil
+			
+		end, Name = "hard_soft_number" }, Main.TargetLib.ArgTypes.Time },
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
@@ -1382,7 +1318,7 @@ return function ( Main, ModFolder, VH_Events )
 			
 			local PlrIds = { }
 			
-			if Args[ 1 ] then
+			if Args[ 1 ] == 1 then
 				
 				local Plrs = Players:GetPlayers( )
 				
@@ -1392,25 +1328,55 @@ return function ( Main, ModFolder, VH_Events )
 					
 				end
 				
+			elseif Args[ 1 ] == 2 then
+				
+				local Teams = Teams:GetTeams( )
+				
+				for a = 1, #Teams do
+					
+					PlrIds[ Teams[ a ] ] = #Teams[ a ]:GetPlayers( )
+					
+				end
+				
 			end
 			
 			local H = Instance.new( "Hint" )
 			
 			Locked = { H, Players.PlayerAdded:Connect( function ( Plr )
 				
-				if Args[ 1 ] and PlrIds[ Plr.UserId ] then return end
+				if Args[ 1 ] == 1 then
+					
+					if PlrIds[ Plr.UserId ] then
+						
+						return
+						
+					end
+					
+				elseif Args[ 1 ] == 2 then
+					
+					wait( )
+					
+					if #Plr.Team:GetPlayers( ) <= PlrIds[ Plr.Team ] then
+						
+						return
+						
+					end
+					
+				end
 				
-				Main.AnnounceJoin[ Plr ] = Main.AnnounceJoin[ Plr ] or { }
-				
-				Main.AnnounceJoin[ Plr ][ #Main.AnnounceJoin[ Plr ] + 1 ] = "server is locked"
+				Main.AnnouncedLeft[ Plr ] = "server is locked"
 					
 				Plr:Kick( "Server is locked" )
 				
 			end ) }
 			
-			if Args[ 1 ] then
+			if Args[ 1 ] == 1 then
 				
 				H.Text = "This server has been soft locked, if you leave you can rejoin"
+				
+			elseif Args[ 1 ] == 2 then
+				
+				H.Text = "The team numbers have been locked"
 				
 			else
 				
@@ -1462,27 +1428,87 @@ return function ( Main, ModFolder, VH_Events )
 		
 	}
 	
-	Main.Commands.Ping = {
+	local Rejoining, RejoiningEvent
+	
+	Main.Commands.Rejoin = {
 		
-		Alias = { "ping" },
+		Alias = { "rejoin" },
 		
-		Description = "Returns your current ping",
+		Description = "Makes you rejoin the server",
 		
 		Category = "Debug",
 		
-		CanRun = "!$console",
-		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			local Tick = tick( )
+			if Plr:FindFirstChild( "leaderstats" ) then
+				
+				Rejoining = Rejoining or { }
+				
+				Rejoining[ Plr.UserId ] = { }
+				
+				local Stats = Plr.leaderstats:GetChildren( )
+				
+				for a = 1, #Stats do
+					
+					Rejoining[ Plr.UserId ][ Stats[ a ].Name ] = Stats[ a ].Value
+					
+				end
+				
+				if not RejoiningEvent then
+					
+					RejoiningEvent = Players.PlayerAdded:Connect( function ( Plr )
+						
+						if Rejoining[ Plr.UserId ] then
+							
+							local leaderstats = Plr:WaitForChild( "leaderstats" )
+							
+							for a, b in pairs( Rejoining[ Plr.UserId ] ) do
+								
+								leaderstats:WaitForChild( a ).Value = b
+								
+							end
+							
+							Rejoining[ Plr.UserId ] = nil
+							
+						end
+						
+						if not next( Rejoining ) then
+							
+							Rejoining = nil
+							
+							RejoiningEvent:Disconnect( )
+							
+							RejoiningEvent = nil
+							
+						end
+						
+					end )
+					
+				end
+				
+				delay( 5, function ( )
+					
+					if RejoiningEvent then
+						
+						Rejoining[ Plr.UserId ] = nil
+						
+						if not next( Rejoining ) then
+							
+							Rejoining = nil
+							
+							RejoiningEvent:Disconnect( )
+							
+							RejoiningEvent = nil
+							
+						end
+						
+					end
+					
+				end )
+				
+			end
 			
-			ModFolder.Ping:InvokeClient( Plr )
-			
-			Tick = tick( ) - Tick
-			
-			Tick = math.floor( Tick * 100000 + 0.5 ) / 100
-			
-			Main.Util.SendMessage( Plr, "Your ping is ~" .. Tick .. "ms", "Info" )
+			TeleportService:TeleportToPlaceInstance( game.PlaceId, game.JobId, Plr )
 			
 			return true
 			
@@ -1490,15 +1516,15 @@ return function ( Main, ModFolder, VH_Events )
 		
 	}
 	
-	Main.Commands.PingOf = {
+	Main.Commands.Ping = {
 		
-		Alias = { "pingof" },
+		Alias = { "ping", "pingof" },
 		
-		Description = "Returns the specified players ping",
+		Description = "Returns the current ping of the specified player or yourself",
 		
 		Category = "Debug",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true } },
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true, Default = Main.TargetLib.Defaults.SelfTable } },
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			

@@ -606,6 +606,8 @@ end
 
 local SpaceCmds = { }
 
+local ToldDep = setmetatable( { }, { __mode = "k" } )
+
 function Main.ParseCmdStacks( Plr, Msg, ChatSpeaker, Silent )
 	
 	Plr = Plr or Main.Console
@@ -807,6 +809,14 @@ function Main.ParseCmdStacks( Plr, Msg, ChatSpeaker, Silent )
 			Main.CmdHistory[ Plr.UserId ] = Msg
 			
 		end
+		
+	end
+	
+	if Prefix == ":" and not ToldDep[ Plr ] then
+		
+		ToldDep[ Plr ] = true
+		
+		Main.Util.SendMessage( Plr, "You won't be able to run commands using the ':' prefix in the future, please run commands like so: 'cmd/arg1/arg2/etc'" , "Warning" )
 		
 	end
 	
@@ -1343,21 +1353,9 @@ Main.Events[ #Main.Events + 1 ] = DataStore:OnUpdate( "AdminPowers", function ( 
 			
 			if Players:GetPlayerByUserId( a ) then
 				
-				if not Main.Util then
-					
-					spawn( function ( )
-						
-						while not Main.Util do Main.ModuleLoaded.Event:Wait( ) end
-						
-						Main.Util.SendMessage( Players:GetPlayerByUserId( a ), "Your new user power is '" .. Main.UserPowerName( b ) .. "'!", "Info" )
-						
-					end )
-					
-				else
-					
-					Main.Util.SendMessage( Players:GetPlayerByUserId( a ), "Your new user power is '" .. Main.UserPowerName( b ) .. "'!", "Info" )
-					
-				end
+				while not Main.Util do Main.ModuleLoaded.Event:Wait( ) end
+				
+				Main.Util.SendMessage( Players:GetPlayerByUserId( a ), "Your new user power is '" .. Main.UserPowerName( b ) .. "'!", "Info" )
 				
 			end
 			
@@ -2072,7 +2070,21 @@ local Loading = { }
 
 local function RequireModule( Mod, Required, LoopReq )
 	
-	if ( not Main.Config.DisabledCommandModules[ Mod.Name ] or Required ) and not Loaded[ Mod ] then
+	if Loading[ Mod ] then
+		
+		while Loading[ Mod ] do Main.ModuleLoaded.Event:Wait( ) end
+		
+		return Loaded[ Mod ]
+		
+	end
+	
+	if Loaded[ Mod ] then
+		
+		return Loaded[ Mod ]
+		
+	end
+	
+	if ( not Main.Config.DisabledCommandModules[ Mod.Name ] or Required ) then
 		
 		Loading[ Mod ] = true
 		
@@ -2102,6 +2114,8 @@ local function RequireModule( Mod, Required, LoopReq )
 						
 					end
 					
+					ReqMod = script.Default_Command_Modules:FindFirstChild( Required[ a ].Name ) or VH_Command_Modules:FindFirstChild( Required[ a ].Name )
+					
 				end
 				
 				if LoopReq[ ReqMod ] then
@@ -2114,15 +2128,9 @@ local function RequireModule( Mod, Required, LoopReq )
 				
 				Start = tick( )
 				
-				while Loading[ ReqMod ] and wait( ) do
+				while Loading[ ReqMod ] do
 					
-					if Start and tick( ) - Start > 5 then
-						
-						Start = nil
-						
-						warn( Required[ a ].Name .. " is taking a long time to be required" )
-						
-					end
+					Main.ModuleLoaded.Event:Wait( )
 					
 				end
 				
@@ -2220,7 +2228,7 @@ local function RequireModule( Mod, Required, LoopReq )
 		
 		Loading[ Mod ] = nil
 		
-		Loaded[ Mod ] = true
+		Loaded[ Mod ] = Ran
 		
 		Main.ModuleLoaded:Fire( Mod )
 		
@@ -2232,9 +2240,9 @@ local Mods = script.Default_Command_Modules:GetChildren( )
 
 for a = 1, #Mods do
 	
-	if Mods[ a ] == script.Default_Command_Modules.Core or not VH_Command_Modules:FindFirstChild( Mods[ a ].Name ) then
+	if Mods[ a ] == script.Default_Command_Modules.Core or Mods[ a ] == script.Default_Command_Modules.Util or not VH_Command_Modules:FindFirstChild( Mods[ a ].Name ) then
 		
-		coroutine.wrap( RequireModule )( Mods[ a ], Mods[ a ] == script.Default_Command_Modules.Core )
+		coroutine.wrap( RequireModule )( Mods[ a ], Mods[ a ] == script.Default_Command_Modules.Core or Mods[ a ] == script.Default_Command_Modules.Util )
 		
 	end
 	
@@ -2251,7 +2259,7 @@ for a = 1, #Mods do
 end
 
 ----==== External Commands ====----
---[[repeat wait( ) until _G.VH_AddExternalCmds
+--[[while not _G.VH_AddExternalCmds do wait( ) end
 _G.VH_AddExternalCmds( function ( Main ) end )]]--
 
 local VH_ExternalCmds = ( _G.VH_Saved or { } ).VH_ExternalCmds or { }
@@ -2295,6 +2303,8 @@ end
 VH_Events.RunCommand.OnServerInvoke = Main.ParseCmdStacks
 
 VH_Events.RunCmdStacks.OnServerInvoke = Main.RunCmdStacks
+
+while not Main.Util do Main.ModuleLoaded.Event:Wait( ) end
 
 Main.Events[ #Main.Events + 1 ] = Players.PlayerAdded:Connect( Main.PlayerAdded )
 

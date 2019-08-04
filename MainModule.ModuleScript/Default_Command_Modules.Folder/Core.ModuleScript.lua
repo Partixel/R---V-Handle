@@ -270,6 +270,8 @@ return function ( Main, ModFolder, VH_Events )
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
+			if #NextCmds == 0 then return false, "No commands to run" end
+			
 			local Console = setmetatable( { UserId = "Console", Name = "Console", Origin = Plr }, { __tostring = Main.ConsoleToString } )
 			
 			Main.RunCmdStacks( Console, NextCmds, Silent )
@@ -1070,9 +1072,41 @@ return function ( Main, ModFolder, VH_Events )
 		
 		CanRun = "$admin, $debugger",
 		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.String } },
+		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			print( ( nil )( ) )
+			if Args[ 1 ] then
+				
+				error( Args[ 1 ] )
+				
+			else
+				
+				print( ( nil )( ) )
+				
+			end
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.TestClientError = {
+		
+		Alias = { "testclienterror" },
+		
+		Description = "Causes an error on the client for testing purposes",
+		
+		Category = "Debug",
+		
+		CanRun = "$admin&!$console, $debugger&!$console",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.String } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			ModFolder.TestClientError:FireClient( Plr, Args[ 1 ] )
 			
 			return true
 			
@@ -1594,7 +1628,7 @@ return function ( Main, ModFolder, VH_Events )
 			
 			if String == Main.TargetLib.ValidChar then
 				
-				local Key = Main.Util.TableFirstKey( Main.Loops )
+				local Key = next( Main.Loops )
 				
 				if Key then return Key end
 				

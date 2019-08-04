@@ -183,16 +183,6 @@ return function ( Main, ModFolder, VH_Events )
 		
 	end
 	
-	function Module.TableFirstKey( Table )
-		
-		for a, b in pairs( Table ) do
-			
-			return a
-			
-		end
-		
-	end
-	
 	function Module.GetPlayerTools( Plr, StarterGear )
 		
 		local Tools = { }

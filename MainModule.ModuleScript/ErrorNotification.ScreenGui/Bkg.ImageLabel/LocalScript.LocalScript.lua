@@ -24,7 +24,13 @@ game["Script Context"].Error:Connect( function ( Message, Stack, Source )
 	
 	local Ran, FullName = pcall( function ( ) return Source:GetFullName( ) end )
 	
-	script.Parent.Text.Text = Ran and FullName or ( Source and tostring( Source ) or "Something" ) .. " is creating errors (F9)"
+	if not Ran then
+		
+		Ran, FullName = pcall( function ( ) return tostring( Source ) end )
+		
+	end
+	
+	script.Parent.Text.Text = ( Ran and FullName or "Something" ) .. " is creating errors (F9)"
 	
 	local localCur = Cur + 1
 	

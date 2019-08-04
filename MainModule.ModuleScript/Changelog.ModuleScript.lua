@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 ]],
 
+	{ Version = "0.64.0", SetupVersion = "1.3.5", Timestamp = 1564916025, Contributors = { "Partixel" }, Additions = { [[Added "testclienterror/" command]], [[Added "rejoin" command]] }, Changes = { [[Fixed loading modules with requires]], [[Fix running "console" command with no following cmds]], [[Updated "lockserver" command to allow for team lock]], [[Fix error message GUI]], [[Merged "ping" and "pingof" commands]] }, Removals = { [[Removed playerpoint related commands]], [[Deprecated ":" prefix to run commands]], [[Remove useless TableFirstKey function]] } },
+
 	{ Version = "0.63.1", SetupVersion = "1.3.5", Timestamp = 1562969191, Contributors = { "Partixel" }, Changes = { [[Fixed a bug with running a command causing the command to always use the same arguments]] } },
 
 	{ Version = "0.63.0", SetupVersion = "1.3.5", Timestamp = 1562798727, Contributors = { "Partixel" }, Additions = { [[Aliases can now specify set arguments via { Alias, Alias2, ..., Args = { } }]], [[Added 'clone/players' command]] }, Changes = { [[Optimised all AliasTypes to use the new system to specify arguments for aliases ( Massively reduces the amount of functional aliases )]], [[Remove a getfenv() in preperation for the new lua vm]], [[Fix a hang on startup]] } },
