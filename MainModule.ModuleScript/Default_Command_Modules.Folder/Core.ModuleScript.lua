@@ -1,7 +1,5 @@
 return function ( Main, ModFolder, VH_Events )
 	
-	local Util_Events_Folder = game:GetService( "ReplicatedStorage" ):WaitForChild( "VH_Util" )
-	
 	local Players, TextService = game:GetService( "Players" ), game:GetService( "TextService" )
 	
 	Main.Commands.UpTime = {
@@ -862,7 +860,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-			Util_Events_Folder.Print:FireClient( Plr, Str )
+			Main.Util.PrintClient( Plr, Str )
 			
 			if Silent then return true, "Check your client log ( F9 )" end
 			
@@ -960,7 +958,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-			Util_Events_Folder.Print:FireClient( Plr, Str )
+			Main.Util.PrintClient( Plr, Str )
 			
 			if Silent then return true, "Check your client log ( F9 )" end
 			
@@ -1044,7 +1042,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			if #Main.Errors == 0 then Util_Events_Folder.Print:FireClient( Plr, "No errors have been encountered!" ) return true end
+			if #Main.Errors == 0 then Main.Util.PrintClient( Plr, "No errors have been encountered!" ) return true end
 			
 			local Str = ""
 			
@@ -1054,7 +1052,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-			Util_Events_Folder.Print:FireClient( Plr, Str:sub( 1, -2 ) )
+			Main.Util.PrintClient( Plr, Str:sub( 1, -2 ) )
 			
 			return true
 			
@@ -1694,7 +1692,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-			Util_Events_Folder.Print:FireClient( Plr, Str )
+			Main.Util.PrintClient( Plr, Str )
 			
 			if Silent then return true, "Check your client log ( F9 )" end
 			
@@ -1762,7 +1760,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-			Util_Events_Folder.Print:FireClient( Plr, Str )
+			Main.Util.PrintClient( Plr, Str )
 			
 			if Silent then return true, "Check your client log ( F9 )" end
 			
@@ -1826,7 +1824,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-			Util_Events_Folder.Print:FireClient( Plr, Str )
+			Main.Util.PrintClient( Plr, Str )
 			
 			if Silent then return true, "Check your client log ( F9 )" end
 			
@@ -1866,7 +1864,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-			Util_Events_Folder.Print:FireClient( Plr, Str )
+			Main.Util.PrintClient( Plr, Str )
 			
 			if Silent then return true, "Check your client log ( F9 )" end
 			

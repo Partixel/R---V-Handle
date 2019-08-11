@@ -413,6 +413,12 @@ return function ( Main, ModFolder, VH_Events )
 			
 		end )
 		
+		function Module.PrintClient( Plr, Text )
+			
+			ModFolder.Print:FireClient( Plr, Text )
+			
+		end
+		
 		-- { Text = "Welcome to my game!", Color = Color3.new(0,1,1), Font = Enum.Font.SourceSans, FontSize = Enum.FontSize.Size24 }
 		
 		function Module.SendMessage( Plr, Text, Color, Font, FontSize )
