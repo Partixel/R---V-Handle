@@ -26,7 +26,7 @@ for a = 1, #Kids do
 	
 end
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage" )
+local VFolder = game:GetService("ReplicatedStorage" ):WaitForChild( "V-Handle" )
 
 local Main = { }
 
@@ -34,7 +34,7 @@ Main.Objs = { }
 
 Main.Events = { }
 
-local VH_Command_Clients, VH_Events = ReplicatedStorage:WaitForChild( "VH_Command_Clients" ), ReplicatedStorage:WaitForChild( "VH_Events" )
+local VH_Command_Clients, VH_Events = VFolder:WaitForChild( "VH_Command_Clients" ), VFolder:WaitForChild( "VH_Events" )
 
 local Destroy, Disconnect = workspace.Destroy, workspace.Changed:Connect( function ( ) end )
 
@@ -104,7 +104,7 @@ _G.VH_Client = Main
 
 local function RequireModule( Mod )
 	
-	local Ran, Error = pcall( function ( ) require( Mod )( Main, ReplicatedStorage:FindFirstChild( Mod.Name:sub( 1, -8 ) ), VH_Events ) end )
+	local Ran, Error = pcall( function ( ) require( Mod )( Main, VFolder:FindFirstChild( Mod.Name:sub( 1, -8 ) ), VH_Events ) end )
 	
 	if not Ran then
 		

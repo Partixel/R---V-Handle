@@ -4,9 +4,7 @@ return function ( ChatService )
 	
 	local Main = _G.VH_Admin
 	
-	local VH_Events = game:GetService( "ReplicatedStorage" ):WaitForChild( "VH_Events" )
-	
-	local Util_Events_Folder = game:GetService( "ReplicatedStorage" ):WaitForChild( "VH_Util" )
+	local VH_Events = game:GetService( "ReplicatedStorage" ):WaitForChild( "V-Handle" ):WaitForChild( "VH_Events" )
 	
 	if ChatService:GetChannel( "V-Handle" ) then
 		
@@ -186,7 +184,7 @@ return function ( ChatService )
 				
 			end
 			
-			Util_Events_Folder.Print:FireClient( Plr, Str )
+			Main.Util.PrintClient( Plr, Str )
 			
 			if Silent then return true, "Check your client log ( F9 )" end
 			

@@ -1,6 +1,14 @@
 ----==== Create variables ====----
 
-local Main, Players, ReplicatedStorage, InsertService, StarterGui, Chat, ServerStorage, RunService, TextService, StarterPlayerScripts = { }, game:GetService( "Players" ), game:GetService( "ReplicatedStorage" ), game:GetService( "InsertService" ), game:GetService( "StarterGui" ), game:GetService( "Chat" ), game:GetService( "ServerStorage" ), game:GetService( "RunService" ), game:GetService( "TextService" ), game:GetService( "StarterPlayer" ):WaitForChild( "StarterPlayerScripts" )
+local Main, Players, InsertService, StarterGui, Chat, ServerStorage, RunService, TextService, StarterPlayerScripts = { }, game:GetService( "Players" ), game:GetService( "InsertService" ), game:GetService( "StarterGui" ), game:GetService( "Chat" ), game:GetService( "ServerStorage" ), game:GetService( "RunService" ), game:GetService( "TextService" ), game:GetService( "StarterPlayer" ):WaitForChild( "StarterPlayerScripts" )
+
+local LoaderModule = require( game:GetService( "ServerStorage" ):FindFirstChild( "LoaderModule" ) and game:GetService( "ServerStorage" ).LoaderModule:FindFirstChild( "MainModule" ) or 03593768376 )( "V-Handle" )
+
+local VFolder = game:GetService( "ReplicatedStorage" ):FindFirstChild( "V-Handle" ) or Instance.new( "Folder" )
+
+VFolder.Name = "V-Handle"
+
+VFolder.Parent = game:GetService( "ReplicatedStorage" )
 
 local ChatModules = Chat:WaitForChild( "ChatModules", math.huge )
 
@@ -18,19 +26,19 @@ if _G.VH_Admin and _G.VH_Admin.Destroy then
 	
 end
 
-if ReplicatedStorage:FindFirstChild( "VH_Events" ) then
+if VFolder:FindFirstChild( "VH_Events" ) then
 	
-	if ReplicatedStorage.VH_Events:FindFirstChild( "Destroyed" ) then
+	if VFolder.VH_Events:FindFirstChild( "Destroyed" ) then
 		
 		_G.VH_Saved = { }
 		
-		ReplicatedStorage.VH_Events.Destroyed:Fire( true )
+		VFolder.VH_Events.Destroyed:Fire( true )
 		
 	end
 	
-	if ReplicatedStorage.VH_Events:FindFirstChild( "RemoteDestroyed" ) then
+	if VFolder.VH_Events:FindFirstChild( "RemoteDestroyed" ) then
 		
-		ReplicatedStorage.VH_Events.RemoteDestroyed:FireAllClients( true )
+		VFolder.VH_Events.RemoteDestroyed:FireAllClients( true )
 		
 	end
 	
@@ -48,7 +56,7 @@ for a = 1, #Objs do
 	
 end
 
-Objs = ReplicatedStorage:GetChildren( )
+Objs = VFolder:GetChildren( )
 
 for a = 1, #Objs do
 	
@@ -298,7 +306,7 @@ local VH_Command_Modules, VH_Command_Clients
 
 local VH_Command_Processor = script.VH_Command_Processor
 
-VH_Events.Parent = ReplicatedStorage
+VH_Events.Parent = VFolder
 
 VH_Command_Processor.Parent = ChatModules
 
@@ -2042,7 +2050,7 @@ if not VH_Command_Modules then
 	
 end
 
-VH_Command_Clients = ReplicatedStorage:FindFirstChild( "VH_Command_Clients" )
+VH_Command_Clients = VFolder:FindFirstChild( "VH_Command_Clients" )
 
 if not VH_Command_Clients then
 	
@@ -2050,7 +2058,7 @@ if not VH_Command_Clients then
 	
 	VH_Command_Clients.Name = "VH_Command_Clients"
 	
-	VH_Command_Clients.Parent = ReplicatedStorage
+	VH_Command_Clients.Parent = VFolder
 	
 end
 
@@ -2196,7 +2204,7 @@ local function RequireModule( Mod, Required, LoopReq )
 			
 			if ModFolder then
 				
-				ModFolder.Parent = ReplicatedStorage
+				ModFolder.Parent = VFolder
 				
 			end
 			
@@ -2310,29 +2318,15 @@ while not Main.Util do Main.ModuleLoaded.Event:Wait( ) end
 
 Main.Events[ #Main.Events + 1 ] = Players.PlayerAdded:Connect( Main.PlayerAdded )
 
-local VH_Client = script.VH_Client
-
-VH_Client.Parent = StarterPlayerScripts
-
-if RunService:IsStudio( ) and #Players:GetPlayers( ) == 0 then
+for _, Plr in ipairs( Players:GetPlayers( ) ) do
 	
-	Players.PlayerAdded:Wait( )
+	Main.PlayerAdded( Plr )
 	
 end
 
-local Plrs = Players:GetPlayers( )
+LoaderModule( script:WaitForChild( "StarterPlayerScripts" ) )
 
-for a = 1, #Plrs do
-	
-	spawn( function ( ) Main.PlayerAdded( Plrs[ a ], Updated ) end )
-	
-	if Plrs[ a ]:FindFirstChild( "PlayerGui" ) then
-		
-		VH_Client:Clone( ).Parent = Plrs[ a ].PlayerGui
-		
-	end
-	
-end
+LoaderModule( script:WaitForChild( "StarterGui" ) )
 
 Main.Events[ #Main.Events + 1 ] = Players.PlayerRemoving:Connect( function ( Plr )
 	
@@ -2363,25 +2357,5 @@ end )
 ----==== Cleanup saved variables ====----
 
 _G.VH_Saved = nil
-
-if game:GetService( "StarterGui" ):FindFirstChild( "ErrorNotification" ) then
-	
-	game:GetService( "StarterGui" ).ErrorNotification:Destroy( )
-	
-end
-
-local ErrorNotification = script.ErrorNotification
-
-ErrorNotification.Parent = game:GetService( "StarterGui" )
-
-for a = 1, #Plrs do
-	
-	if Plrs[ a ]:FindFirstChild( "PlayerGui" ) and not Plrs[ a ].PlayerGui:FindFirstChild( "ErrorNotification" ) then
-		
-		ErrorNotification:Clone( ).Parent = Plrs[ a ].PlayerGui
-		
-	end
-	
-end
 
 return Main

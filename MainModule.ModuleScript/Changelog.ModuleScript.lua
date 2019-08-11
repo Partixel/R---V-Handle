@@ -43,6 +43,9 @@ return {
 		fix/plr ( Arms / legs / camera )
 ]],
 
+	{ Version = "0.65.0", SetupVersion = "1.3.5", Timestamp = 1565552783, Contributors = { "Partixel" }, Additions = { [[Add PrintClient function instead of directly accessing the remote]], [[Allow iteratively requiring modules
+]] }, Changes = { [[Refactor to use the new LoaderModule to handle putting everything in the correct places]], Removals = { [[Removed the ability to run commands using :cmd arg1 arg2]] } } },
+
 	{ Version = "0.64.0", SetupVersion = "1.3.5", Timestamp = 1564916025, Contributors = { "Partixel" }, Additions = { [[Added "testclienterror/" command]], [[Added "rejoin" command]] }, Changes = { [[Fixed loading modules with requires]], [[Fix running "console" command with no following cmds]], [[Updated "lockserver" command to allow for team lock]], [[Fix error message GUI]], [[Merged "ping" and "pingof" commands]] }, Removals = { [[Removed playerpoint related commands]], [[Deprecated ":" prefix to run commands]], [[Remove useless TableFirstKey function]] } },
 
 	{ Version = "0.63.1", SetupVersion = "1.3.5", Timestamp = 1562969191, Contributors = { "Partixel" }, Changes = { [[Fixed a bug with running a command causing the command to always use the same arguments]] } },
