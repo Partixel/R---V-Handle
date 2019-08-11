@@ -2060,6 +2060,18 @@ local Loading = { }
 
 local function RequireModule( Mod, Required, LoopReq )
 	
+	if Mod:IsA( "Folder" ) then
+		
+		for _, Obj in ipairs( Mod:GetChildren( ) ) do
+			
+			RequireModule( Obj, Required, LoopReq )
+			
+		end
+		
+		return
+		
+	end
+	
 	if Loading[ Mod ] then
 		
 		while Loading[ Mod ] do Main.ModuleLoaded.Event:Wait( ) end
