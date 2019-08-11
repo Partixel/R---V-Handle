@@ -606,19 +606,17 @@ end
 
 local SpaceCmds = { }
 
-local ToldDep = setmetatable( { }, { __mode = "k" } )
-
 function Main.ParseCmdStacks( Plr, Msg, ChatSpeaker, Silent )
 	
 	Plr = Plr or Main.Console
 	
 	local Prefix, CmdSplit, ArgSplit = "", "|", "/"
 	
-	if Msg:sub( 1, 1 ) == ":" then
+	--[[if Msg:sub( 1, 1 ) == ":" then
 		
 		Prefix, CmdSplit, ArgSplit = ":", "|", " "
 		
-	end
+	end]]
 	
 	local CmdStrings = Main.Util.EscapeSplit( Msg, CmdSplit )
 	
@@ -809,14 +807,6 @@ function Main.ParseCmdStacks( Plr, Msg, ChatSpeaker, Silent )
 			Main.CmdHistory[ Plr.UserId ] = Msg
 			
 		end
-		
-	end
-	
-	if Prefix == ":" and not ToldDep[ Plr ] then
-		
-		ToldDep[ Plr ] = true
-		
-		Main.Util.SendMessage( Plr, "You won't be able to run commands using the ':' prefix in the future, please run commands like so: 'cmd/arg1/arg2/etc'" , "Warning" )
 		
 	end
 	
