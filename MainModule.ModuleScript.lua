@@ -1115,18 +1115,6 @@ function Main.Destroy( Update )
 	
 end
 
-spawn( function ( )
-	
-	while script.Parent do
-		
-		script.AncestryChanged:Wait( )
-		
-	end
-	
-	if Main then Main.Destroy( ) end
-	
-end )
-
 ----==== Update Setup ====----
 
 function Main.GetLatestId( AssetId )
@@ -1191,26 +1179,6 @@ function Main.GetLatest( )
 	
 end
 
-spawn( function ( )
-	
-	local CurVersion = Main.GetLatestId( 571587156 ) or Main.GetLatestId( 543870197 )
-	
-	while wait( math.min( math.max( 30, Main.Config.UpdatePeriod or 60 ), 1800 ) ) and Main do
-		
-		local LatestVersion = Main.GetLatestId( 571587156 ) or Main.GetLatestId( 543870197 )
-		
-		if tonumber( Latest ) and CurVersion ~= LatestVersion then
-			
-			Main.Commands.Update:Callback( )
-			
-			break
-			
-		end
-		
-	end
-	
-end )
-
 ----==== Datastore Setup ====----
 
 local Ran, DataStore = pcall( game:GetService( "DataStoreService" ).GetDataStore, game:GetService( "DataStoreService" ), "Partipixel" )
@@ -1242,24 +1210,6 @@ Main.Events[ #Main.Events + 1 ] = DataStore:OnUpdate( "Bans", function ( Value )
 			end
 			
 			Plr:Kick( "You have been banned by " .. Main.Util.UsernameFromID( b.Banner ) .. ( b.Reason and ( " for " .. TextService:FilterStringAsync( b.Reason, b.Banner ):GetChatForUserAsync( Plr.UserId ) ) or "" ) .. " - You get unbanned in " .. Main.Util.TimeRemaining( b.Time ) )
-			
-		end
-		
-	end
-	
-end )
-	
-spawn( function ( )
-	
-	for a, b in pairs( DataStore:GetAsync( "Bans" ) or { } ) do
-		
-		if b.Time ~= true and b.Time - os.time( ) < 0 then
-			
-			Main.SetBan( a, nil, true )
-			
-		else
-			
-			Main.TempBans[ a ] = b
 			
 		end
 		
@@ -1333,34 +1283,6 @@ Main.Events[ #Main.Events + 1 ] = DataStore:OnUpdate( "AdminPowers", function ( 
 				
 				Main.Util.SendMessage( Players:GetPlayerByUserId( a ), "Your new user power is '" .. Main.UserPowerName( b ) .. "'!", "Info" )
 				
-			end
-			
-		end
-		
-	end
-	
-end )
-
-spawn( function ( )
-	
-	for a, b in pairs( DataStore:GetAsync( "AdminPowers" ) or { } ) do
-		
-		if Main.GetUserPower( a ) < Main.UserPower.owner then
-			
-			Main.TempAdminPowers[ a ] = b
-			
-			a = tonumber( a )
-			
-			if Main.GetUserPower( a ) ~= b and Players:GetPlayerByUserId( a ) then
-				
-				spawn( function ( )
-					
-					while not Main.Util do wait( ) end
-					
-					Main.Util.SendMessage( Players:GetPlayerByUserId( a ), "Your new user power is '" .. Main.UserPowerName( b ) .. "'!", "Info" )
-					
-				end )
-								
 			end
 			
 		end
@@ -2285,6 +2207,78 @@ for a = 1, #VH_ExternalCmds do
 	coroutine.wrap( VH_ExternalCmds[ a ] )( Main )
 	
 end
+
+----==== Looped threads & ASync DataStore Loading ====----
+
+coroutine.wrap( function ( )
+	
+	for a, b in pairs( DataStore:GetAsync( "Bans" ) or { } ) do
+		
+		if b.Time ~= true and b.Time - os.time( ) < 0 then
+			
+			Main.SetBan( a, nil, true )
+			
+		else
+			
+			Main.TempBans[ a ] = b
+			
+		end
+		
+	end
+	
+	for a, b in pairs( DataStore:GetAsync( "AdminPowers" ) or { } ) do
+		
+		if Main.GetUserPower( a ) < Main.UserPower.owner then
+			
+			Main.TempAdminPowers[ a ] = b
+			
+			a = tonumber( a )
+			
+			if Main.GetUserPower( a ) ~= b and Players:GetPlayerByUserId( a ) then
+				
+				coroutine.wrap( function ( )
+					
+					while not Main.Util do Main.ModuleLoaded.Event:Wait( ) end
+					
+					Main.Util.SendMessage( Players:GetPlayerByUserId( a ), "Your new user power is '" .. Main.UserPowerName( b ) .. "'!", "Info" )
+					
+				end )( )
+								
+			end
+			
+		end
+		
+	end
+	
+	while script.Parent do
+		
+		script.AncestryChanged:Wait( )
+		
+	end
+	
+	if Main then Main.Destroy( ) end
+	
+end )( )
+
+coroutine.wrap( function ( )
+	
+	local CurVersion = Main.GetLatestId( 571587156 ) or Main.GetLatestId( 543870197 )
+	
+	while wait( math.min( math.max( 30, Main.Config.UpdatePeriod or 60 ), 1800 ) ) and Main do
+		
+		local LatestVersion = Main.GetLatestId( 571587156 ) or Main.GetLatestId( 543870197 )
+		
+		if tonumber( Latest ) and CurVersion ~= LatestVersion then
+			
+			Main.Commands.Update:Callback( )
+			
+			break
+			
+		end
+		
+	end
+	
+end )( )
 
 ----==== Events & Client ====----
 

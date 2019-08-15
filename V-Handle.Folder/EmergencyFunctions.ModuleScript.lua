@@ -64,7 +64,7 @@ end
 
 local Updated = false
 
-spawn( function ( )
+coroutine.wrap( function ( )
 	
 	while not Updated and wait( 30 ) do
 		
@@ -90,7 +90,7 @@ spawn( function ( )
 		
 	end
 	
-end )
+end )( )
 
 function Chatted( Msg, Plr )
 	

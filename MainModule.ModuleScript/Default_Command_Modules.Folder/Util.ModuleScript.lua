@@ -269,31 +269,33 @@ return function ( Main, ModFolder, VH_Events )
 	
 	Module.LastPos = ( _G.VH_Saved or { } ).PlrLogs or setmetatable( { }, { __mode = 'k' })
 	
+	local function ActualTeleport( Player, Target, Humanoid )
+		
+		if Humanoid.SeatPart and Humanoid.SeatPart:FindFirstChild( "SeatWeld" ) then
+			
+			Humanoid.SeatPart:FindFirstChild( "SeatWeld" ):Destroy( )
+			
+			wait( ) wait( )
+			
+		end
+		
+		Module.LastPos[ Player ] = Player.Character.HumanoidRootPart.CFrame
+		
+		Player.Character.HumanoidRootPart.CFrame = Target
+		
+	end
+	
 	function Module.Teleport( Player, Target )
 		
-		spawn( function ( )
+		if Player == nil then return end
+		
+		local Humanoid = Player.Character and Player.Character:FindFirstChildOfClass( "Humanoid" )
+		
+		if Humanoid then
 			
-			if Player == nil then return end
+			coroutine.wrap( ActualTeleport )( Player, Target, Humanoid )
 			
-			if Player.Character and Player.Character:FindFirstChild( "HumanoidRootPart" ) then
-				
-				local Humanoid = Player.Character:FindFirstChildOfClass( "Humanoid" )
-				
-				if Humanoid and Humanoid.SeatPart and Humanoid.SeatPart:FindFirstChild( "SeatWeld" ) then
-					
-					Humanoid.SeatPart:FindFirstChild( "SeatWeld" ):Destroy( )
-					
-					wait( ) wait( )
-					
-				end
-				
-				Module.LastPos[ Player ] = Player.Character.HumanoidRootPart.CFrame
-				
-				Player.Character.HumanoidRootPart.CFrame = Target
-				
-			end
-			
-		end )
+		end
 		
 	end
 	

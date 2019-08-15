@@ -286,7 +286,7 @@ return function ( Main, ModFolder, VH_Events )
 			
 			for a = 1, #Args[ 1 ] do
 				
-				spawn( function ( ) Args[ 1 ][ a ]:LoadCharacter( ) end )
+				coroutine.wrap( Args[ 1 ][ a ].LoadCharacter )( Args[ 1 ][ a ] )
 				
 			end
 			
