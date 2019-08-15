@@ -114,12 +114,10 @@ local function RequireModule( Mod )
 	
 end
 
-local Clients = VH_Command_Clients:GetChildren( )
+VH_Command_Clients.ChildAdded:Connect( RequireModule )
 
-for a = 1, #Clients do
+for _, Mod in ipairs( VH_Command_Clients:GetChildren( ) ) do
 	
-	RequireModule( Clients[ a ] )
+	RequireModule( Mod )
 	
 end
-
-VH_Command_Clients.ChildAdded:Connect( RequireModule )
