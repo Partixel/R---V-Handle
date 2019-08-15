@@ -1,22 +1,16 @@
 ----==== Create variables ====----
 
-local Main, Players, InsertService, StarterGui, Chat, ServerStorage, RunService, TextService, StarterPlayerScripts = { }, game:GetService( "Players" ), game:GetService( "InsertService" ), game:GetService( "StarterGui" ), game:GetService( "Chat" ), game:GetService( "ServerStorage" ), game:GetService( "RunService" ), game:GetService( "TextService" ), game:GetService( "StarterPlayer" ):WaitForChild( "StarterPlayerScripts" )
+local Main, Players, InsertService, Chat, ServerStorage, RunService, TextService, StarterPlayerScripts, ChatModules = { }, game:GetService( "Players" ), game:GetService( "InsertService" ), game:GetService( "Chat" ), game:GetService( "ServerStorage" ), game:GetService( "RunService" ), game:GetService( "TextService" ), game:GetService( "StarterPlayer" ):WaitForChild( "StarterPlayerScripts" ), game:GetService( "Chat" ):WaitForChild( "ChatModules" )
 
 local LoaderModule = require( game:GetService( "ServerStorage" ):FindFirstChild( "LoaderModule" ) and game:GetService( "ServerStorage" ).LoaderModule:FindFirstChild( "MainModule" ) or 03593768376 )( "V-Handle" )
+
+Main.Clone = script:Clone( )
 
 local VFolder = game:GetService( "ReplicatedStorage" ):FindFirstChild( "V-Handle" ) or Instance.new( "Folder" )
 
 VFolder.Name = "V-Handle"
 
 VFolder.Parent = game:GetService( "ReplicatedStorage" )
-
-local ChatModules = Chat:WaitForChild( "ChatModules", math.huge )
-
-if RunService:IsStudio( ) then
-	
-	Main.Clone = script:Clone( )
-	
-end
 
 ----==== Cleanup Old ====----
 

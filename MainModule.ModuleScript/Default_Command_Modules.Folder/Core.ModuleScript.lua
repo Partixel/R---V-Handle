@@ -102,41 +102,35 @@ return function ( Main, ModFolder, VH_Events )
 		
 	}
 	
-	if game:GetService( "RunService" ):IsStudio( ) then
+	Main.Commands.Reload = {
 		
-		Main.Commands.FakeUpdate = {
-			
-			Alias = { "fakeupdate" },
-			
-			Description = "Updates the modules using a clone of itself (Useful when debugging updates with an unpublished version of the admin)",
-			
-			Category = "Core",
-			
-			NoTest = true,
-			
-			CanRun = "$owner, $debugger",
-			
-			Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
-				
-				if not Main.Clone then return false end
-				
-				local Clone = Main.Clone
-				
-				Main.Clone = nil
-				
-				Main.Destroy( true )
-				
-				if pcall( function ( ) require( Clone ) end ) and _G.VH_Admin then return true end
-				
-				require( game:GetService( "ServerStorage" ):WaitForChild( "EmergencyFunctions" ) )
-				
-				return true
-				
-			end
-			
-		}
+		Alias = { "reload" },
 		
-	end
+		Description = "Reloads the modules using a clone of itself (Useful when debugging updates with an unpublished version of the admin)",
+		
+		Category = "Core",
+		
+		NoTest = true,
+		
+		CanRun = "$owner, $debugger",
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local Clone = Main.Clone
+			
+			Main.Clone = nil
+			
+			Main.Destroy( true )
+			
+			if pcall( function ( ) require( Clone ) end ) and _G.VH_Admin then return true end
+			
+			require( game:GetService( "ServerStorage" ):WaitForChild( "EmergencyFunctions" ) )
+			
+			return true
+			
+		end
+		
+	}
 	
 	Main.Commands.Version = {
 		
