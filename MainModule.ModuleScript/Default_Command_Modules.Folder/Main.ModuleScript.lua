@@ -1364,7 +1364,11 @@ return function ( Main, ModFolder, VH_Events )
 					
 				end
 				
-				Main.AnnouncedLeft[ Plr ] = "server is locked"
+				Main.AnnounceJoin[ Plr ] = Main.AnnounceJoin[ Plr ] or { }
+				
+				Main.AnnounceJoin[ Plr ][ #Main.AnnounceJoin[ Plr ] + 1 ] = "the server is locked"
+				
+				Main.AnnouncedLeft[ Plr ] = false
 					
 				Plr:Kick( "Server is locked" )
 				

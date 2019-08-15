@@ -840,7 +840,7 @@ function Main.PlayerAdded( Plr, JustUpdated )
 			
 			if Main.AnnounceJoin[ Plr ] then
 				
-				Main.Util.SendMessage( nil, Plr.Name .. " could not join because " .. Main.Util.FormatStringTable( Main.AnnounceJoin[ Plr ] ), "Info" )
+				Main.Util.SendMessage( nil, Plr.Name .. " couldn't join because " .. Main.Util.FormatStringTable( Main.AnnounceJoin[ Plr ] ), "Info" )
 				
 				Main.AnnounceJoin[ Plr ] = nil
 				
@@ -880,7 +880,7 @@ function Main.PlayerAdded( Plr, JustUpdated )
 			
 			Main.AnnounceJoin[ Plr ] = Main.AnnounceJoin[ Plr ] or { }
 			
-			Main.AnnounceJoin[ Plr ][ #Main.AnnounceJoin[ Plr ] + 1 ] = "player is banned" .. ( BanInfo.Reason and ( " for " .. TextService:FilterStringAsync( BanInfo.Reason, BanInfo.Banner ):GetNonChatStringForBroadcastAsync( ) ) or "" )
+			Main.AnnounceJoin[ Plr ][ #Main.AnnounceJoin[ Plr ] + 1 ] = "they are banned" .. ( BanInfo.Reason and ( " for " .. TextService:FilterStringAsync( BanInfo.Reason, BanInfo.Banner ):GetNonChatStringForBroadcastAsync( ) ) or "" )
 			
 			Main.AnnouncedLeft[ Plr ] = false
 			
@@ -900,7 +900,7 @@ function Main.PlayerAdded( Plr, JustUpdated )
 				
 				Main.AnnounceJoin[ Plr ] = Main.AnnounceJoin[ Plr ] or { }
 				
-				Main.AnnounceJoin[ Plr ][ #Main.AnnounceJoin[ Plr ] + 1 ] = "player is banned"
+				Main.AnnounceJoin[ Plr ][ #Main.AnnounceJoin[ Plr ] + 1 ] = " they are banned"
 				
 				Main.AnnouncedLeft[ Plr ] = false
 				
@@ -920,7 +920,7 @@ function Main.PlayerAdded( Plr, JustUpdated )
 			
 			Main.AnnounceJoin[ Plr ] = Main.AnnounceJoin[ Plr ] or { }
 			
-			Main.AnnounceJoin[ Plr ][ #Main.AnnounceJoin[ Plr ] + 1 ] = "max players reached"
+			Main.AnnounceJoin[ Plr ][ #Main.AnnounceJoin[ Plr ] + 1 ] = "max players has been reached"
 			
 			Main.AnnouncedLeft[ Plr ] = false
 			
