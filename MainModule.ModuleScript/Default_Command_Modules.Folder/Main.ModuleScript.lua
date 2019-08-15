@@ -270,6 +270,8 @@ return function ( Main, ModFolder, VH_Events )
 		
 	}
 	
+	local LuaLoadCharacter = function ( Obj ) Obj:LoadCharacter( ) end
+	
 	Main.Commands.Respawn = {
 		
 		Alias = { "respawn", "re" },
@@ -286,7 +288,7 @@ return function ( Main, ModFolder, VH_Events )
 			
 			for a = 1, #Args[ 1 ] do
 				
-				coroutine.wrap( Args[ 1 ][ a ].LoadCharacter )( Args[ 1 ][ a ] )
+				coroutine.wrap( LuaLoadCharacter )( Args[ 1 ][ a ] )
 				
 			end
 			

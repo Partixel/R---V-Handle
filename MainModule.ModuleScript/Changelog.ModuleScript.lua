@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 ]],
 
+	{ Version = "0.65.1", SetupVersion = "1.3.6", Timestamp = 1565891092, Contributors = { "Partixel" }, Changes = { [[Updated some messages when a player tries to join but can't to make more sense]], [[Update the code to cleanup existing admins]], [[Minor optimisations via coroutines instead of spawn]], [[Swap 'FakeReload' command out for more useful 'Reload' command]], [[Fixed a client module loading bug]], [[Minor code cleanup]] } },
+
 	{ Version = "0.65.0", SetupVersion = "1.3.5", Timestamp = 1565552783, Contributors = { "Partixel" }, Additions = { [[Add PrintClient function instead of directly accessing the remote]], [[Allow iteratively requiring modules
 ]] }, Changes = { [[Refactor to use the new LoaderModule to handle putting everything in the correct places]], Removals = { [[Removed the ability to run commands using :cmd arg1 arg2]] } } },
 

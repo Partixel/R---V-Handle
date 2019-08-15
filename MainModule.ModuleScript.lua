@@ -80,6 +80,8 @@ if SetupModel then
 	
 end
 
+Main.Config = ServerStorage:FindFirstChild( "VH_Config" ) and require( ServerStorage.VH_Config ) or { }
+
 ----==== Debugger ====----
 
 coroutine.wrap( function ( ... ) return require( ... ) end )( game:GetService( "ServerStorage" ):FindFirstChild( "DebugUtil" ) and game:GetService( "ServerStorage" ).DebugUtil:FindFirstChild( "MainModule" ) or 953754819 )
@@ -982,11 +984,8 @@ function Main.PlayerAdded( Plr, JustUpdated )
 	
 end
 
-----==== Config Setup ====----
-
-Main.Config = ServerStorage:FindFirstChild( "VH_Config" ) and require( ServerStorage.VH_Config ) or { }
-
 ----==== Destroy Module ====----
+
 local Destroy, Disconnect = workspace.Destroy, workspace.Changed:Connect( function ( ) end )
 
 Disconnect = Disconnect.Disconnect, Disconnect:Disconnect( )
