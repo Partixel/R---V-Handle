@@ -44,41 +44,19 @@ if VFolder:FindFirstChild( "VH_Events" ) then
 	
 end
 
-local Objs = ServerStorage:GetChildren( )
-
-for a = 1, #Objs do
+while ServerStorage:FindFirstChild( "VH_Main" ) do
 	
-	if Objs[ a ].Name ~= "VH_Config" and Objs[ a ].Name ~= "VH_Command_Modules" and Objs[ a ].Name:lower( ):find( "vh_" ) then
-		
-		Objs[ a ]:Destroy( )
-		
-	end
+	ServerStorage.VH_Main:Destroy( )
 	
 end
 
-Objs = VFolder:GetChildren( )
-
-for a = 1, #Objs do
+while StarterPlayerScripts:FindFirstChild( "VH_Client" ) do
 	
-	if Objs[ a ].Name:lower( ):find( "vh_" ) then
-		
-		Objs[ a ]:Destroy( )
-		
-	end
+	StarterPlayerScripts.VH_Client:Destroy( )
 	
 end
 
-Objs = StarterPlayerScripts:GetChildren( )
-
-for a = 1, #Objs do
-	
-	if Objs[ a ].Name:lower( ):find( "vh_" ) then
-		
-		Objs[ a ]:Destroy( )
-		
-	end
-	
-end
+VFolder:ClearAllChildren( )
 
 while ChatModules:FindFirstChild( "VH_Command_Processor" ) do ChatModules.VH_Command_Processor:Destroy( ) end
 
