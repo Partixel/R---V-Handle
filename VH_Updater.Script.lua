@@ -44,6 +44,8 @@ repeat
 						
 						NewSetup.Parent = game:GetService( "ServerScriptService" )
 						
+						warn( "V-Handle Setup was updated to the latest version, please publish!" )
+						
 					else
 						
 						VH:Destroy( )
