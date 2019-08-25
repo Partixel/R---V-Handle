@@ -2291,8 +2291,6 @@ end
 
 LoaderModule( script:WaitForChild( "StarterPlayerScripts" ) )
 
-LoaderModule( script:WaitForChild( "StarterGui" ) )
-
 Main.Events[ #Main.Events + 1 ] = Players.PlayerRemoving:Connect( function ( Plr )
 	
 	if Main.Config.AnnounceLeft then
