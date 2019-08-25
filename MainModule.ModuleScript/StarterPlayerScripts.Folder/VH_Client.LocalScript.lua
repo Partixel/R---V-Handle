@@ -1,31 +1,3 @@
-if script.Parent.Name ~= "PlayerScripts" then
-	
-	script:Clone( ).Parent = game.Players.LocalPlayer.PlayerScripts
-	
-	wait( )
-	
-	script:Destroy( )
-	
-	return
-	
-end
-
-local Kids = script.Parent:GetChildren( )
-
-for a = 1, #Kids do
-	
-	if Kids[ a ] ~= script and Kids[ a ].Name == script.Name then
-		
-		wait( )
-		
-		script:Destroy( )
-		
-		return
-		
-	end
-	
-end
-
 local VFolder = game:GetService("ReplicatedStorage" ):WaitForChild( "V-Handle" )
 
 local Main = { }
