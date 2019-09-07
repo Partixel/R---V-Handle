@@ -1,8 +1,8 @@
-local ToString = require( 2789644632 )
+local Stringify = require( 2789644632 )
 
 return function ( Main, Client, VH_Events )
 	
-	local Module = { ToString = ToString }
+	local Module = { Stringify = Stringify }
 	
 	local Players, Debris = game:GetService( "Players" ), game:GetService( "Debris" )
 	
