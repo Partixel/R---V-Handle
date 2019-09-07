@@ -1,6 +1,6 @@
 return function ( Main, Client, VH_Events )
 	
-	local Players, TextService = game:GetService( "Players" ), game:GetService( "TextService" )
+	local Players, TextService, Heartbeat = game:GetService( "Players" ), game:GetService( "TextService" ), game:GetService( "RunService" ).Heartbeat
 	
 	Main.Commands.UpTime = {
 		
@@ -1504,6 +1504,8 @@ return function ( Main, Client, VH_Events )
 		
 	}
 	
+	local Heartbeat = game:GetService( "RunService" ).Heartbeat
+	
 	Main.Commands.Loop = {
 		
 		Alias = { "loop" },
@@ -1570,7 +1572,7 @@ return function ( Main, Client, VH_Events )
 				
 				if not HasWait then
 					
-					wait( )
+					Heartbeat:Wait( )
 					
 				end
 				
@@ -1870,6 +1872,20 @@ return function ( Main, Client, VH_Events )
 		
 	}
 	
+	local function HBWait( Time )
+		
+		local t = 0
+		
+		while t < Time do
+			
+			t = t + Heartbeat:Wait( )
+			
+		end
+		
+		return t
+		
+	end
+	
 	Main.Commands.Wait = {
 		
 		Alias = { "wait", "delay" },
@@ -1884,7 +1900,7 @@ return function ( Main, Client, VH_Events )
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			wait( Args[ 1 ] )
+			HBWait( Args[ 1 ] )
 			
 			return true
 			
