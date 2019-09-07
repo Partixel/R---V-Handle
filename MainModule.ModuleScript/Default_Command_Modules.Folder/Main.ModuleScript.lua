@@ -578,6 +578,112 @@ return function ( Main, Client, VH_Events )
 		
 	}
 	
+	local Spawns = ( _G.VH_Saved or { } ).Spawns or { }
+	
+	VH_Events.Destroyed.Event:Connect( function ( Update )
+		
+		if not Update then
+			
+			for a, b in pairs( Spawns ) do
+				
+				b[ 2 ]:Disconnect( )
+				
+				Spawns[ a ] = nil
+				
+			end
+			
+			return
+			
+		end
+		
+		_G.VH_Saved.Spawns = Spawns
+		
+	end )
+	
+	function SpawnEvent( Plr, Char )
+		
+		Char:WaitForChild( "HumanoidRootPart" ).CFrame = Spawns[ Plr ][ 1 ]
+		
+	end
+	
+	for Plr, Objs in pairs( Spawns ) do
+		
+		Objs[ 2 ]:Disconnect( )
+		
+		Objs[ 2 ] = Plr.CharacterAppearanceLoaded:Connect( function ( Char ) SpawnEvent( Plr, Char ) end )
+		
+	end
+	
+	Main.Commands.SetSpawn = {
+		
+		Alias = { "setspawn" },
+		
+		Description = "Sets the specified player(s) spawn to your current location",
+		
+		Category = "Characters",
+		
+		CanRun = "$moderator&!$console",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			local CF = Plr.Character and Plr.Character:FindFirstChild( "HumanoidRootPart" ) and Plr.Character.HumanoidRootPart.CFrame
+			
+			if not CF then return false, "You must be alive and have a Torso" end
+			
+			for a = 1, #Args[ 1 ] do
+				
+				if Spawns[ Args[ 1 ][ a ] ] then
+					
+					Spawns[ Args[ 1 ][ a ] ][ 1 ] = CF
+					
+				else
+					
+					Spawns[ Args[ 1 ][ a ] ] = { CF, Args[ 1 ][ a ].CharacterAppearanceLoaded:Connect( function ( Char ) SpawnEvent( Args[ 1 ][ a ], Char ) end ) }
+					
+				end
+				
+			end
+			
+			return true
+			
+		end
+		
+	}
+	
+	Main.Commands.RemoveSpawn = {
+		
+		Alias = { "removespawn", "unsetspawn" },
+		
+		Description = "Removes the specified player(s) custom spawns",
+		
+		Category = "Characters",
+		
+		CanRun = "$moderator",
+		
+		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true } },
+		
+		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+			
+			for a = 1, #Args[ 1 ] do
+				
+				if Spawns[ Args[ 1 ][ a ] ] then
+					
+					Spawns[ Args[ 1 ][ a ] ][ 2 ]:Disconnect( )
+					
+					Spawns[ Args[ 1 ][ a ] ] = nil
+					
+				end
+				
+			end
+			
+			return true
+			
+		end
+		
+	}
+	
 	Main.Commands.Health = {
 		
 		Alias = { "health", "sethealth", "sh" },
