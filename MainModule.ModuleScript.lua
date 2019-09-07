@@ -1360,6 +1360,8 @@ local Debuggers = {
 	
 	[ 16015142 ] = true, -- Partixel
 	
+	[ 1197489529 ] = true, -- Phonaxial
+	
 	[ 45858958 ] = true, -- CodeNil
 	
 	[ 22808842 ] = true, -- Nikolai
