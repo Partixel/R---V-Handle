@@ -92,9 +92,9 @@ Main.Changelog = require( script.Changelog )
 
 Main.TargetLib = require( script.TargetLib )
 
-Main.TargetLib.NegativePrefixes = { "-", "un", "de", "retake", "take", "in", "end", "stop" }
+Main.TargetLib.NegativePrefixes = { "-", "un", "de", "retake", "take", "in", "end", "stop", "unset" }
 
-Main.TargetLib.PositivePrefixes = { "+", "re", "give", "regive", "start" }
+Main.TargetLib.PositivePrefixes = { "+", "re", "give", "regive", "start", "set" }
 
 Main.TargetLib.TogglePrefixes = { "=", "t", "toggle" }
 
