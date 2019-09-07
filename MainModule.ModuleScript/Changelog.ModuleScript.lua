@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 ]],
 	
+	{ Version = "0.66.0", SetupVersion = "1.3.6", Timestamp = 1567853647, Contributors = { "Partixel" }, Additions = { [[Added "setspawn/plrs" and "remotespawn/plrs"]], [[Added "set" and "unset" positive/negative prefixes]], [[Added Phonaxial as a debugger]] }, Changes = { [[Command Module remotes are now placed directly in the Client module]], [[Fixed players getting sent join messages after an update]], [[Made the "wait/" command allow 1/60th waits (heartbeat) instead of 1/30th (wait)]], [[Refactored ToString to Stringify]] } },
+	
 	{ Version = "0.65.2", SetupVersion = "1.3.6", Timestamp = 1566737022, Contributors = { "Partixel" }, Changes = { [[Fixed an error with the VH_Client]] }, Removals = { [[Removed ErrorNotification]] } },
 	
 	{ Version = "0.65.1", SetupVersion = "1.3.6", Timestamp = 1565891092, Contributors = { "Partixel" }, Changes = { [[Updated some messages when a player tries to join but can't to make more sense]], [[Update the code to cleanup existing admins]], [[Minor optimisations via coroutines instead of spawn]], [[Swap 'FakeReload' command out for more useful 'Reload' command]], [[Fixed a client module loading bug]], [[Minor code cleanup]] } },
