@@ -2265,7 +2265,7 @@ Main.Events[ #Main.Events + 1 ] = Players.PlayerAdded:Connect( Main.PlayerAdded 
 
 for _, Plr in ipairs( Players:GetPlayers( ) ) do
 	
-	Main.PlayerAdded( Plr )
+	Main.PlayerAdded( Plr, Updated )
 	
 end
 
