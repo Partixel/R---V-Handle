@@ -1,4 +1,4 @@
-return function ( Main, ModFolder, VH_Events )
+return function ( Main, Client, VH_Events )
 	
 	local Teams, Players, TeleportService, PointsService, Lighting = game:GetService( "Teams" ), game:GetService( "Players" ), game:GetService( "TeleportService" ), game:GetService( "PointsService" ), game:GetService( "Lighting" )
 	
@@ -196,7 +196,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 	}
 	
-	ModFolder.Spectate.OnServerEvent:Connect( function ( Plr )
+	Client.Spectate.OnServerEvent:Connect( function ( Plr )
 		
 		Plr:LoadCharacter( )
 		
@@ -226,11 +226,11 @@ return function ( Main, ModFolder, VH_Events )
 					
 				end
 				
-				ModFolder.Spectate:FireClient( Plr, Args[ 2 ] )
+				Client.Spectate:FireClient( Plr, Args[ 2 ] )
 				
 			else
 				
-				ModFolder.Spectate:FireClient( Plr, false )
+				Client.Spectate:FireClient( Plr, false )
 				
 			end
 			
@@ -1540,7 +1540,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 				local Tick = tick( )
 				
-				ModFolder.Ping:InvokeClient( Args[ 1 ][ a ] )
+				Client.Ping:InvokeClient( Args[ 1 ][ a ] )
 				
 				Tick = tick( ) - Tick
 				

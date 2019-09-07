@@ -1,6 +1,6 @@
 local ToString = require( 2789644632 )
 
-return function ( Main, ModFolder, VH_Events )
+return function ( Main, Client, VH_Events )
 	
 	local Module = { ToString = ToString }
 	
@@ -417,7 +417,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 		function Module.PrintClient( Plr, Text )
 			
-			ModFolder.Print:FireClient( Plr, Text )
+			Client.Print:FireClient( Plr, Text )
 			
 		end
 		
@@ -465,19 +465,19 @@ return function ( Main, ModFolder, VH_Events )
 					
 					for a = 1, #Plr do
 						
-						ModFolder.SystemMessage:FireClient( Plr[ a ], { Text = Text, Color = Color, Font = Font, FontSize = FontSize } )
+						Client.SystemMessage:FireClient( Plr[ a ], { Text = Text, Color = Color, Font = Font, FontSize = FontSize } )
 						
 					end
 					
 				else
 					
-					ModFolder.SystemMessage:FireClient( Plr, { Text = Text, Color = Color, Font = Font, FontSize = FontSize } )
+					Client.SystemMessage:FireClient( Plr, { Text = Text, Color = Color, Font = Font, FontSize = FontSize } )
 					
 				end
 						
 			else
 				
-				ModFolder.SystemMessage:FireAllClients( { Text = Text, Color = Color, Font = Font, FontSize = FontSize } )
+				Client.SystemMessage:FireAllClients( { Text = Text, Color = Color, Font = Font, FontSize = FontSize } )
 				
 			end
 			

@@ -1054,31 +1054,23 @@ function Main.Destroy( Update )
 		
 		if a.Parent == script.Default_Command_Modules then
 			
-			b[ 1 ]:Destroy( )
-			
-			if b[ 2 ] then
-				
-				b[ 2 ]:Destroy( )
-				
-			end
+			b:Destroy( )
 			
 		else
 			
-			b[ 1 ].Name = "Client"
+			b.Name = "Client"
 			
-			b[ 1 ].Parent = a
+			b.Parent = a
 			
-			if b[ 2 ] then
+			for _, Obj in ipairs( b:GetChildren( ) ) do
 				
-				local Events = b[ 2 ]:GetChildren( )
-				
-				for c = 1, #Events do
+				if Obj:IsA( "RemoteEvent" ) or Obj:IsA( "RemoteFunction" ) or Obj:IsA( "BindableEvent" ) or Obj:IsA( "BindableFunction" ) then
 					
-					Events[ c ]:Clone( ).Parent = a
+					Obj:Clone( ).Parent = b
+					
+					Obj:Destroy( )
 					
 				end
-				
-				b[ 2 ]:Destroy( )
 				
 			end
 			
@@ -2073,7 +2065,7 @@ local function RequireModule( Mod, Required, LoopReq )
 			
 		end
 		
-		local ModFolder
+		local CommandClient
 		
 		if Mod:FindFirstChild( "Client" ) then
 			
@@ -2083,45 +2075,31 @@ local function RequireModule( Mod, Required, LoopReq )
 				
 				if Events[ a ]:IsA( "RemoteEvent" ) or Events[ a ]:IsA( "RemoteFunction" ) then
 					
-					if not ModFolder then
-						
-						ModFolder = Instance.new( "Folder" )
-						
-						ModFolder.Name = "VH_" .. Mod.Name
-						
-					end
-					
-					Events[ a ].Parent = ModFolder
+					Events[ a ].Parent = Mod.Client
 					
 				end
 				
 			end
 			
-			if ModFolder then
-				
-				ModFolder.Parent = VFolder
-				
-			end
+			CommandClient = Mod.Client
 			
-			local CommandClient = Mod.Client
-			
-			CommandClient.Name = "VH_" .. Mod.Name .. "_Client"
+			CommandClient.Name = "VH_" .. Mod.Name
 			
 			CommandClient.Parent = VH_Command_Clients
 			
-			ModuleObjs[ Mod ] = { CommandClient, ModFolder }
+			ModuleObjs[ Mod ] = CommandClient
 			
 		end
 		
-		local Ran, Error = pcall( function ( ) require( Mod )( Main, ModFolder, VH_Events ) end )
+		local Ran, Error = pcall( function ( ) require( Mod )( Main, CommandClient, VH_Events ) end )
 		
 		if not Ran then
 			
 			warn( Mod.Name .. " errored when required:\n" .. Error )
 			
-			if ModFolder then
+			if CommandClient then
 				
-				ModFolder:Destroy( )
+				CommandClient:Destroy( )
 				
 			end
 			

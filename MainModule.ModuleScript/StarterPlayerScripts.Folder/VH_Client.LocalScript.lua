@@ -76,7 +76,7 @@ _G.VH_Client = Main
 
 local function RequireModule( Mod )
 	
-	local Ran, Error = pcall( function ( ) require( Mod )( Main, VFolder:FindFirstChild( Mod.Name:sub( 1, -8 ) ), VH_Events ) end )
+	local Ran, Error = pcall( function ( ) require( Mod )( Main, Mod, VH_Events ) end )
 	
 	if not Ran then
 		

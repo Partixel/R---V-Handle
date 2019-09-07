@@ -1,4 +1,4 @@
-return function ( Main, ModFolder, VH_Events )
+return function ( Main, Client, VH_Events )
 	
 	local Players, TextService = game:GetService( "Players" ), game:GetService( "TextService" )
 	
@@ -994,7 +994,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-			ModFolder.Cleanup:FireAllClients( )
+			Client.Cleanup:FireAllClients( )
 			
 			if Silent then return true, "Cleanup complete!" end
 			
@@ -1098,7 +1098,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			ModFolder.TestClientError:FireClient( Plr, Args[ 1 ] )
+			Client.TestClientError:FireClient( Plr, Args[ 1 ] )
 			
 			return true
 			
@@ -1402,7 +1402,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			else
 				
-				ModFolder.TestResults:FireClient( Plr, TestResults )
+				Client.TestResults:FireClient( Plr, TestResults )
 				
 			end
 			
@@ -1438,7 +1438,7 @@ return function ( Main, ModFolder, VH_Events )
 				
 			end
 			
-			ModFolder.Bind:FireClient( Plr, Args[ 1 ], Cmd )
+			Client.Bind:FireClient( Plr, Args[ 1 ], Cmd )
 			
 			return true
 			
@@ -1466,7 +1466,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			ModFolder.Bind:FireClient( Plr, Args[ 1 ] )
+			Client.Bind:FireClient( Plr, Args[ 1 ] )
 			
 			return true
 			

@@ -1,4 +1,4 @@
-return function ( Main, ModFolder, VH_Events )
+return function ( Main, Client, VH_Events )
 	
 	Main.Commands.Clone = {
 		
