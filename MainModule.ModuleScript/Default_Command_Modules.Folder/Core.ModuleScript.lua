@@ -64,7 +64,7 @@ return function ( Main, Client, VH_Events )
 				
 			end
 			
-			print( Main.Util.CreateConfigString( ) .. "\n\n---------------------\n\nNext insert the 'V-Handle Setup' ( https://www.roblox.com/library/543870970/V-Handle-Setup ) model and paste the above text from 'local Config =' to 'return Config' into the new VH_Config\nFinally replace your V-Handle setup model in the ServerScriptService with this new one" )
+			print( Main.Util.CreateConfigString( Main.Config, Main.Changelog[ 2 ].SetupVersion ) .. "\n\n---------------------\n\nNext insert the 'V-Handle Setup' ( https://www.roblox.com/library/543870970/V-Handle-Setup ) model and paste the above text from 'local Config =' to 'return Config' into the new VH_Config\nFinally replace your V-Handle setup model in the ServerScriptService with this new one" )
 			
 			return true
 			

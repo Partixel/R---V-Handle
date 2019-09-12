@@ -6,74 +6,93 @@ return function ( Main, Client, VH_Events )
 	
 	local Players, Debris = game:GetService( "Players" ), game:GetService( "Debris" )
 	
-	Module.ConfigDefaults = {
-		
-		{ "AnnounceJoin", true,
-			
-	[[-- If true the admin will print when a player joins to the chat]] },
-		
-		{ "AnnounceLeft", true,
-			
-	[[-- If true the admin will print when a player leaves to the chat]] },
-		
-		{ "UpdatePeriod", 60,
-			
-	[[-- How often the admin checks for updates in seconds ( Must be at least 30 and at most 1800 )]], function ( Obj ) return math.max( math.min( Obj, 1800 ), 30 ) end },
-		
-		{ "CommandOptions", { },
-			
-	[[-- Override properties of commands like CanRun or Category
--- --Examples--
--- Config.CommandOptions = { Kill = { CanRun = "all" } } - Allows everyone to use the Kill command]] },
-		
-		{ "UserPowers", { },
-			
-	[[-- Preceed users with "-" to override any other ranks they are given with the specified ran ( More minuses means higher priority )
--- e.g. [ "-partixel" ] = "user" - will force Partixel to have the rank "user" even if other UserPowers match him
--- --Examples--
--- Config.UserPowers = { ["1234"] = "admin" } - This gives admin to the player with a userid equal to "1234"
--- Config.UserPowers = { ["^4321^50"] = "admin" } - This gives admin to anyone in the group "4321" and have a rank above "50"
--- Config.UserPowers = { ["^4321&!^1234^12"] = "admin" } - This gives admin to anyone in the group "4321" and don't have a rank of 12 or above in the group "1234"]] },
-		
-		{ "Banned", { },
-			
-	[[-- Players matching a string on this list is prevented from joining the game with the reason being the value or a default message if true
--- --Examples--
--- Config.Banned = { ["partixel"] = true }
--- Config.Banned = { ["1234"] = "Hacking", ["^1059575"] = "Bad group" }]] },
-		
-		{ "DisabledCommandModules", { [ "VH_Main" ] = false, [ "VH_Fun" ] = false },
-			
-	[[-- If true the specified command module will not load
--- Use this if you don't want commands from said command module ( e.g. if you don't want 'Fun' commands do [ "VH_Fun" ] = true]] }
-		
+	local ConfigDefaults = {
+		{
+			"AnnounceJoin",
+			true,
+			[[If true the admin will print when a player joins to the chat]],
+		},
+		{
+			"AnnounceLeft",
+			true,
+			[[If true the admin will print when a player leaves to the chat]],
+		},
+		{
+			"UpdatePeriod",
+			60,
+			[[How often the admin checks for updates in seconds ( Must be at least 30 and at most 1800 )]],
+			function ( Obj ) return math.max( math.min( Obj, 1800 ), 30 ) end,
+		},
+		{
+			"CommandOptions",
+			{ },
+			[[Override properties of commands like CanRun or Category
+	--Examples--
+	Config.CommandOptions = { Kill = { CanRun = "all" } } - Allows everyone to use the Kill command]],
+		},
+		{
+			"UserPowers",
+			{ },
+			[[Preceed users with "-" to override any other ranks they are given with the specified ran ( More minuses means higher priority )
+	e.g. [ "-partixel" ] = "user" - will force Partixel to have the rank "user" even if other UserPowers match him
+	--Examples--
+	Config.UserPowers = { ["1234"] = "admin" } - This gives admin to the player with a userid equal to "1234"
+	Config.UserPowers = { ["^4321^50"] = "admin" } - This gives admin to anyone in the group "4321" and have a rank above "50"
+	Config.UserPowers = { ["^4321&!^1234^12"] = "admin" } - This gives admin to anyone in the group "4321" and don't have a rank of 12 or above in the group "1234"]],
+		},
+		{
+			"Banned",
+			{ },
+			[[Players matching a string on this list is prevented from joining the game with the reason being the value or a default message if true
+	--Examples--
+	Config.Banned = { ["partixel"] = true }
+	Config.Banned = { ["1234"] = "Hacking", ["^1059575"] = "Bad group" }]],
+		},
+		{
+			"DisabledCommandModules",
+			{ [ "VH_Main" ] = false, [ "VH_Fun" ] = false },
+			[[If true the specified command module will not load
+	Use this if you don't want commands from said command module ( e.g. if you don't want 'Fun' commands do [ "VH_Fun" ] = true]],
+		},
 	}
 	
-	function Module.CreateConfigString( Config )
+	function Module.CreateConfigString( Config, LatestSetupVersion )
 		
-		Config = Config or Main.Config
+		Config.SetupVersion = nil
 		
-		local Cfg = "local Config = { }"
+		local Cfg = "return {"
 		
-		for a = 1, #Module.ConfigDefaults do
+		for i, Data in ipairs( ConfigDefaults ) do
 			
-			local Val = Config[ Module.ConfigDefaults[ a ][ 1 ] ] or Module.ConfigDefaults[ a ][ 2 ]
-			
-			if Module.ConfigDefaults[ a ][ 4 ] then
+			if type( Data ) == "table" then
 				
-				Val = Module.ConfigDefaults[ a ][ 4 ]( Val )
+				local Val = Config[ Data[ 1 ] ]
+				
+				if Val == nil then
+					
+					Val = Data[ 2 ]
+					
+				end
+				
+				if Data[ 4 ] then
+					
+					Val = Data[ 4 ]( Val )
+					
+				end
+				
+				Val = Stringify( Val, Data[ 1 ], nil, 1 )
+				
+				Cfg = Cfg .. ( i ~= 1 and "\n	" or "" ) .. "\n" .. ( Data[ 3 ]and "	--[[" .. Data[ 3 ] .. "]]\n" or "" ) .. Val .. ", -- Default - " .. Stringify( Data[ 2 ], nil, { NewLine = "", SecondaryNewLine = "", Tab = "" } )
+				
+			else
+				
+				Cfg = Cfg .. ( i ~= 1 and "\n	" or "" ) .. "\n	--------[[ " .. Data .. " ]]--------"
 				
 			end
 			
-			Val = Module.ToString( Val, "Config." .. Module.ConfigDefaults[ a ][ 1 ] )
-			
-			Cfg = Cfg .. "\n\n" .. Module.ConfigDefaults[ a ][ 3 ] .. "\n" .. Val
-			
 		end
 		
-		Cfg = Cfg .. "\n\nreturn Config"
-		
-		return Cfg
+		return Cfg .. '\n	\n	SetupVersion = "' .. LatestSetupVersion .. '", -- DO NOT CHANGE THIS\n}'
 		
 	end
 	
@@ -396,16 +415,6 @@ return function ( Main, Client, VH_Events )
 	end
 	
 	if Main then
-		
-		for a = 1, #Module.ConfigDefaults do
-			
-			if Main.Config[ Module.ConfigDefaults[ a ][ 1 ] ] == nil then
-				
-				Main.Config[ Module.ConfigDefaults[ a ][ 1 ] ] = Module.ConfigDefaults[ a ][ 2 ]
-				
-			end
-			
-		end
 		
 		VH_Events.Destroyed.Event:Connect( function ( Update )
 			

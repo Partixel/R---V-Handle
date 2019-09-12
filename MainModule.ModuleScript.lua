@@ -974,7 +974,7 @@ function Main.PlayerAdded( Plr, JustUpdated )
 			
 		end
 		
-		if Main.Changelog[ 2 ].SetupVersion ~= _G.VHSetupVersion then
+		if Main.Changelog[ 2 ].SetupVersion ~= Main.Config.SetupVersion then
 			
 			Main.Util.SendMessage( Plr, "A new version of the setup model is available, run help/setup for more information. Make sure the V-Handle Setup Updater plugin is updated.", "Warning" )
 			
@@ -1796,7 +1796,7 @@ local function Metatable( self, Key, Value )
 						
 						Str = Str .. Prefix .. Value.ArgTypes[ a ].Name .. Suffix
 						
-						do break end
+						break
 						
 					end
 					
