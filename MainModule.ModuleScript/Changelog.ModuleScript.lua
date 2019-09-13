@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 ]],
 	
+	{ Version = "0.66.1", SetupVersion = "1.3.7", Timestamp = 1568239360, Contributors = { "Partixel" }, Changes = { [[Update debugger list]], [[Fixed userid based config bans not working]] } },
+	
 	{ Version = "0.66.0", SetupVersion = "1.3.7", Timestamp = 1568239360, Contributors = { "Partixel" }, Changes = { [[Updated the config to look slightly better and include defaults]] } },
 	
 	{ Version = "0.66.0", SetupVersion = "1.3.6", Timestamp = 1567853647, Contributors = { "Partixel" }, Additions = { [[Added "setspawn/plrs" and "remotespawn/plrs"]], [[Added "set" and "unset" positive/negative prefixes]], [[Added Phonaxial as a debugger]] }, Changes = { [[Command Module remotes are now placed directly in the Client module]], [[Fixed players getting sent join messages after an update]], [[Made the "wait/" command allow 1/60th waits (heartbeat) instead of 1/30th (wait)]], [[Refactored ToString to Stringify]] } },

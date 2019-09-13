@@ -868,7 +868,19 @@ function Main.PlayerAdded( Plr, JustUpdated )
 	
 	for a, b in pairs( Main.Config.Banned or { } ) do
 		
-		if type( a ) == "string" and Main.TargetLib.MatchesPlr( a, Plr ) then
+		local Banned
+		
+		if type( a ) == "string" then
+			
+			Banned = Main.TargetLib.MatchesPlr( a, Plr )
+			
+		elseif Main.Config.Banned[ Plr.UserId ] then
+			
+			Banned = true
+			
+		end
+		
+		if Banned then
 			
 			if Main.Config.AnnounceJoin then
 				
