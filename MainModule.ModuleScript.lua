@@ -1356,13 +1356,11 @@ local Debuggers = {
 	
 	[ 45858958 ] = true, -- CodeNil
 	
-	[ 22808842 ] = true, -- Nikolai
-	
 	[ 4354334 ] = true, -- Antonio
 	
-	[ 7731089 ] = true, -- Pk
+	[ 7731089 ] = true, -- Peekay
 	
-	[ 14827891 ] = true -- Nawmis
+	[ 16459694 ] = true, -- DrDrRoblox
 	
 }
 
