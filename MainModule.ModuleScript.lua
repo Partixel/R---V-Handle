@@ -868,13 +868,13 @@ function Main.PlayerAdded( Plr, JustUpdated )
 	
 	for a, b in pairs( Main.Config.Banned or { } ) do
 		
-		local Banned
+		local Num, Banned = tonumber( a )
 		
-		if type( a ) == "string" then
+		if not Num then
 			
 			Banned = Main.TargetLib.MatchesPlr( a, Plr )
-			
-		elseif Main.Config.Banned[ Plr.UserId ] then
+		
+		elseif Num == Plr.UserId then
 			
 			Banned = true
 			
@@ -886,13 +886,13 @@ function Main.PlayerAdded( Plr, JustUpdated )
 				
 				Main.AnnounceJoin[ Plr ] = Main.AnnounceJoin[ Plr ] or { }
 				
-				Main.AnnounceJoin[ Plr ][ #Main.AnnounceJoin[ Plr ] + 1 ] = " they are banned"
+				Main.AnnounceJoin[ Plr ][ #Main.AnnounceJoin[ Plr ] + 1 ] = " they are banned" .. ( b == true and "" or ( " for " .. b ) )
 				
 				Main.AnnouncedLeft[ Plr ] = false
 				
 			end
 			
-			Plr:Kick( b == true and "You are banned - You get unbanned in forever" or ( "You are banned for " .. Main.Config.Banned[ a ] .. " - You get unbanned in forever" ) )
+			Plr:Kick( b == true and "You are banned" or ( "You are banned for " .. b ) )
 			
 			return
 			
