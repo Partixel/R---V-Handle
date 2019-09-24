@@ -1642,19 +1642,31 @@ return function ( Main, Client, VH_Events )
 			
 			local Msg = "The ping of the specified players are:"
 			
+			local Thread = coroutine.running( )
+			
+			local WaitingFor = 0
+			
 			for a = 1, #Args[ 1 ] do
 				
-				local Tick = tick( )
+				WaitingFor = WaitingFor + 1
 				
-				Client.Ping:InvokeClient( Args[ 1 ][ a ] )
-				
-				Tick = tick( ) - Tick
-				
-				Tick = math.floor( Tick * 100000 + 0.5 ) / 100
-				
-				Msg = Msg .. "\n" .. Args[ 1 ][ a ].Name .. " - " .. Tick .. "ms"
+				spawn( function ( )
+						
+					local Tick = tick( )
+					
+					Client.Ping:InvokeClient( Args[ 1 ][ a ] )
+					
+					Tick = tick( ) - Tick
+					
+					Tick = math.floor( Tick * 100000 + 0.5 ) / 100
+					
+					coroutine.resume( Thread, "\n" .. Args[ 1 ][ a ].Name .. " - " .. Tick .. "ms" )
+					
+				end )
 				
 			end
+			
+			while WaitingFor ~= 0 do WaitingFor = WaitingFor - 1 Msg = Msg .. coroutine.yield( ) end
 			
 			Main.Util.SendMessage( Plr, Msg, "Info" )
 			

@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 ]],
 	
+	{ Version = "0.66.2", SetupVersion = "1.3.7", Timestamp = 1569355061, Contributors = { "Partixel" }, Changes = { [[Fixed bans showing the incorrect reason]], [[Optimised "banlist/" command]], [[Optimised "ping/" command]] } },
+	
 	{ Version = "0.66.1", SetupVersion = "1.3.7", Timestamp = 1568239360, Contributors = { "Partixel" }, Changes = { [[Update debugger list]], [[Fixed userid based config bans not working]] } },
 	
 	{ Version = "0.66.0", SetupVersion = "1.3.7", Timestamp = 1568239360, Contributors = { "Partixel" }, Changes = { [[Updated the config to look slightly better and include defaults]] } },
