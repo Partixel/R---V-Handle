@@ -58,20 +58,6 @@ end )
 
 Main.FilteredFuncs = { }
 
-VH_Events:WaitForChild( "FilteredReplication" ).OnClientEvent:Connect( function ( FuncName, Text, ... )
-	
-	if Main.FilteredFuncs[ FuncName ] then
-		
-		Main.FilteredFuncs[ FuncName ]( Text, ... )
-		
-	else
-		
-		error( "V-Handle: " .. FuncName .. " doesn't exist for FilterTo" )
-		
-	end
-	
-end )
-
 _G.VH_Client = Main
 
 local function RequireModule( Mod )
@@ -93,3 +79,17 @@ for _, Mod in ipairs( VH_Command_Clients:GetChildren( ) ) do
 	RequireModule( Mod )
 	
 end
+
+VH_Events:WaitForChild( "FilteredReplication" ).OnClientEvent:Connect( function ( FuncName, Text, ... )
+	
+	if Main.FilteredFuncs[ FuncName ] then
+		
+		Main.FilteredFuncs[ FuncName ]( Text, ... )
+		
+	else
+		
+		error( "V-Handle: " .. FuncName .. " doesn't exist for FilterTo" )
+		
+	end
+	
+end )
