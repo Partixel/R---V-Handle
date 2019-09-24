@@ -1716,6 +1716,10 @@ return function ( Main, Client, VH_Events )
 			
 			local PermBans = { }
 			
+			local Thread = coroutine.running()
+			
+			local WaitingFor = 0
+			
 			for a, b in pairs( Main.TempBans ) do
 				
 				if b.Time == true or b.Time - os.time( ) > 0 then
@@ -1726,7 +1730,13 @@ return function ( Main, Client, VH_Events )
 						
 					else
 						
-						Str = Str .. Main.Util.UsernameFromID( a ) .. " - " .. ( b.Reason and TextService:FilterStringAsync( b.Reason, b.Banner ):GetChatForUserAsync( Plr.UserId ) .. " - " or "" )  .. Main.Util.TimeRemaining( b.Time ) .. "\n"
+						WaitingFor = WaitingFor + 1
+						
+						spawn( function ( )
+							
+							coroutine.resume( Thread, Main.Util.UsernameFromID( a ) .. " - " .. ( b.Reason and TextService:FilterStringAsync( b.Reason, b.Banner ):GetChatForUserAsync( Plr.UserId ) .. " - " or "" )  .. Main.Util.TimeRemaining( b.Time ) .. "\n" )
+							
+						end )
 						
 					end
 					
@@ -1734,17 +1744,35 @@ return function ( Main, Client, VH_Events )
 				
 			end
 			
+			while WaitingFor ~= 0 do WaitingFor = WaitingFor - 1 Str = Str .. coroutine.yield( ) end
+			
 			for a, b in pairs( PermBans ) do
 				
-				Str = Str .. "Perm - " .. Main.Util.UsernameFromID( a ) .. " - " .. ( b.Reason and TextService:FilterStringAsync( b.Reason, b.Banner ):GetChatForUserAsync( Plr.UserId ) .. " - " or "" )  .. Main.Util.TimeRemaining( b.Time ) .. "\n"
+				WaitingFor = WaitingFor + 1
+				
+				spawn( function ( )
+					
+					coroutine.resume( Thread, "Perm - " .. Main.Util.UsernameFromID( a ) .. " - " .. ( b.Reason and TextService:FilterStringAsync( b.Reason, b.Banner ):GetChatForUserAsync( Plr.UserId ) .. " - " or "" )  .. Main.Util.TimeRemaining( b.Time ) .. "\n" )
+					
+				end )
 				
 			end
 			
+			while WaitingFor ~= 0 do WaitingFor = WaitingFor - 1 Str = Str .. coroutine.yield( ) end
+			
 			for a, b in pairs( Main.Config.Banned or { } ) do
 				
-				Str = Str .. "Config - " .. Main.Util.UsernameFromID( a ) .. " - " .. ( type( b ) == "string" and b .. " - " or "" ) ..  "forever\n"
+				WaitingFor = WaitingFor + 1
+				
+				spawn( function ( )
+					
+					coroutine.resume( Thread, "Config - " .. Main.Util.UsernameFromID( a ) .. ( type( b ) == "string" and ( " - " .. b ) or "" ) ..  "\n" )
+					
+				end )
 				
 			end
+			
+			while WaitingFor ~= 0 do WaitingFor = WaitingFor - 1 Str = Str .. coroutine.yield( ) end
 			
 			if Str == "" then
 				
