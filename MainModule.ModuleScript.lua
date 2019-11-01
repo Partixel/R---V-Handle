@@ -376,7 +376,7 @@ function Main.GetCmdStacks( Plr, Cmd, StrArgs )
 		
 		local ArgCount = math.max( #StrArgs, #CmdObj.ArgTypes )
 		
-		local Tmp = Main.Util.TableShallowCopy( StrArgs )
+		local Tmp = { unpack( StrArgs ) }
 		
 		for a = 1, ArgCount do
 			
@@ -484,7 +484,7 @@ function Main.GetCmdStacks( Plr, Cmd, StrArgs )
 		
 	else
 		
-		Args = Main.Util.TableShallowCopy( StrArgs )
+		Args = { unpack( StrArgs ) }
 		
 	end
 	

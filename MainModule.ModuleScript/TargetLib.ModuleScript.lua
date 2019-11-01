@@ -177,20 +177,6 @@ local function TableHasValue( Table, Obj )
 	
 end
 
-local function TableShallowCopy( Table )
-	
-	local Copy = { }
-	
-	for a, b in pairs( Table ) do
-		
-		Copy[ a ] = b
-		
-	end
-	
-	return Copy
-	
-end
-
 local function GetValidTools( )
 	
 	local Tools = { }
@@ -369,7 +355,7 @@ function Module.MultipleOf( self, String, Plr, Funcs, Base, BaseChar, ExactOnly 
 				
 			elseif Module.IsWildcard( String, Base ) then
 				
-				Found, Matches = true, TableShallowCopy( Base )
+				Found, Matches = true, { unpack( Base ) }
 				
 			elseif String == "random" then
 				

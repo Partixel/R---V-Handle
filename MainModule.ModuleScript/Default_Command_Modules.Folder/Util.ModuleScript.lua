@@ -132,20 +132,6 @@ return function ( Main, Client, VH_Events )
 		
 	end
 	
-	function Module.TableShallowCopy( Table )
-		
-		local Copy = { }
-		
-		for a, b in pairs( Table ) do
-			
-			Copy[ a ] = b
-			
-		end
-		
-		return Copy
-		
-	end
-	
 	function Module.TableDeepCopy( Table )
 		
 		local Copy = { }
