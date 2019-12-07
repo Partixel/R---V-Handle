@@ -10,7 +10,7 @@ local VH_Command_Clients, VH_Events = VFolder:WaitForChild( "VH_Command_Clients"
 
 local Destroy, Disconnect = workspace.Destroy, workspace.Changed:Connect( function ( ) end )
 
-Disconnect = Disconnect.Disconnect, Disconnect:Disconnect( )
+Disconnect, _ = Disconnect.Disconnect, Disconnect:Disconnect( )
 
 local function EmptyTable( Table )
 	

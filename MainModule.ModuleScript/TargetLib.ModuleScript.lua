@@ -203,7 +203,7 @@ end
 
 local function TableHasMatchingObj( Table, String, ExactOnly )
 	
-	local Found, Exact = { }
+	local Found, Exact = { }, nil
 	
 	for a = 1, #Table do
 		
@@ -657,7 +657,7 @@ function Module.FindPlrsInGroups( self, String, Plr )
 	
 	local Groups, Rank, Type = Module.FindGroup( self, String, Plr )
 	
-	if Groups == nil then Groups, Rank = Module.FindAllied( self, String, Plr ) or Module.FindEnemy( self, String, Plr ) end
+	if Groups == nil then Groups, Rank = Module.FindAllied( self, String, Plr ) or Module.FindEnemy( self, String, Plr ), nil end
 	
 	if Groups then
 		

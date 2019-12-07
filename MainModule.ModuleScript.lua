@@ -732,8 +732,6 @@ function Main.ParseCmdStacks( Plr, Msg, ChatSpeaker, Silent )
 				
 			end
 			
-			break
-			
 		end
 		
 	until not CmdStrings[ 1 ]
@@ -1000,7 +998,7 @@ end
 
 local Destroy, Disconnect = workspace.Destroy, workspace.Changed:Connect( function ( ) end )
 
-Disconnect = Disconnect.Disconnect, Disconnect:Disconnect( )
+Disconnect, _ = Disconnect.Disconnect, Disconnect:Disconnect( )
 
 local function EmptyTable( Table )
 	

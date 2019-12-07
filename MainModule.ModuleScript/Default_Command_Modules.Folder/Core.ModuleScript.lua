@@ -1534,7 +1534,7 @@ return function ( Main, Client, VH_Events )
 			
 			local Cur = ( Main.Loops[ Key ] or 0 ) + 1
 			
-			local WaitCmd, HasWait = Main.Commands.Wait
+			local WaitCmd, HasWait = Main.Commands.Wait, nil
 			
 			local Cmd = ""
 			

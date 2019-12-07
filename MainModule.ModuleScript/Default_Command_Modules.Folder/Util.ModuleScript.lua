@@ -214,7 +214,7 @@ return function ( Main, Client, VH_Events )
 		
 		local Result = { }
 		
-		local Count, _ = 0
+		local Count = 0
 		
 		local From = 1
 		
@@ -363,8 +363,6 @@ return function ( Main, Client, VH_Events )
 			return "Guest "..tostring( ID ):sub( -4 ):gsub( "^0*","" )
 			
 		end
-		
-		return ID
 		
 	end
 	
