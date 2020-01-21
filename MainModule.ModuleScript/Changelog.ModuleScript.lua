@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 ]],
 	
+	{ Version = "0.67.0", SetupVersion = "1.3.7", Timestamp = 1579216267, Contributors = { "Partixel" }, Additions = { [[Added Numbers argtype]] } },
+	
 	{ Version = "0.66.3", SetupVersion = "1.3.7", Timestamp = 1569355061, Contributors = { "Partixel" }, Changes = { [[Some minor optimisations to table copying]], [[Added "on" and "off" command prefixes]] } },
 	
 	{ Version = "0.66.2", SetupVersion = "1.3.7", Timestamp = 1569355061, Contributors = { "Partixel" }, Changes = { [[Fixed bans showing the incorrect reason]], [[Optimised "banlist/" command]], [[Optimised "ping/" command]], [[Fixed FilteredFunc load order]] } },

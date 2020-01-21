@@ -956,6 +956,31 @@ Module.ArgTypes.Number = function ( self, Strings, Plr )
 	
 end
 
+Module.ArgTypeNames[ "Numbers" ] = "Number..."
+Module.ArgTypes.Numbers = function ( self, Strings, Plr )
+	
+	local String = table.remove( Strings, 1 )
+	
+	if String == Module.ValidChar then return {1, 2} end
+	
+	local Strings = string.split( String:lower( ), "," )
+	
+	for a = 1, #Strings do
+		
+		local Num, Ran, Error = Module.ArgTypes.Number(self, Strings[a], Plr)
+		
+		if not Num then
+			
+			return Num, Ran, Error
+			
+		end
+		
+		Strings[ a ] = Num
+		
+	end
+	
+end
+
 Module.ArgTypes.Key = function ( self, Strings, Plr )
 	
 	local String = table.remove( Strings, 1 )
