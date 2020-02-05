@@ -15,6 +15,7 @@ local Module, Players, Teams, MarketplaceService = { }, game:GetService( "Player
 -- +Friend
 -- %Team
 -- $UserPower
+-- >OwnerType
 -- ^GroupId^Rank
 -- @Allied
 -- #Enemy
@@ -765,7 +766,7 @@ function Module.FindFriendsOfPlr( self, String, Plr )
 	
 end
 
-function Module.FindPlrsFromString( self, String, Plr, Matches, Base )
+function Module.FindPlrsFromString( self, String, Plr )
 	
 	if Plr then
 		
