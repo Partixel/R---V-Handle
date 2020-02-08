@@ -1534,11 +1534,11 @@ table.insert(Main.TargetLib.MatchFuncs, #Main.TargetLib.MatchFuncs - 1, function
 	if String:sub( 1, 1 ) == ">" then
 		String = String:lower():sub(2):match('^%s*(.*%S)') or ""
 		
-		if String == "creator" or string == "vip" then
+		if String == "creator" or String == "vip" then
 			local Plrs = {}
 			for _, Player in ipairs(Players:GetPlayers()) do
 				if (String == "creator" and Main.GetUserPower(Player.UserId) == Main.UserPower.owner) or (String == "vip" and Player.UserId == game.PrivateServerOwnerId) then
-					Plrs[Plrs + 1] = Player
+					Plrs[#Plrs + 1] = Player
 				end
 			end
 			return true, Plrs
