@@ -43,6 +43,8 @@ return {
 		fix/plr ( Arms / legs / camera )
 ]],
 	
+	{ Version = "0.68.1", SetupVersion = "1.3.7", Timestamp = 1581169292, Contributors = { "Partixel" }, Changes = { [[Rejoin command now saves team]], [[Fixed ">OwnerType"]] } },
+	
 	{ Version = "0.68.0", SetupVersion = "1.3.7", Timestamp = 1580940909, Contributors = { "Partixel" }, Additions = { [[Added ">OwnerType" player targetting (e.g. "kill/>creator" will kill the creator of the game, "kill>vip" will kill the owner of the vip server")]] } },
 	
 	{ Version = "0.67.0", SetupVersion = "1.3.7", Timestamp = 1579216267, Contributors = { "Partixel" }, Additions = { [[Added Numbers argtype]] } },

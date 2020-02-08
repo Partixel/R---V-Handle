@@ -1556,7 +1556,7 @@ return function ( Main, Client, VH_Events )
 				
 				Rejoining = Rejoining or { }
 				
-				Rejoining[ Plr.UserId ] = { }
+				Rejoining[ Plr.UserId ] = { ["Team"] = Plr.Team }
 				
 				local Stats = Plr.leaderstats:GetChildren( )
 				
@@ -1579,6 +1579,10 @@ return function ( Main, Client, VH_Events )
 								leaderstats:WaitForChild( a ).Value = b
 								
 							end
+							
+							wait()
+							
+							Plr.Team = Rejoining[Plr.UserId].Team
 							
 							Rejoining[ Plr.UserId ] = nil
 							
