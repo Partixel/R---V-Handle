@@ -1024,6 +1024,22 @@ return function ( Main, Client, VH_Events )
 		
 	}
 	
+	local Errors = ( _G.VH_Saved or { } ).Errors or { }
+	
+	VH_Events.Destroyed.Event:Connect( function ( Update )
+		
+		if not Update then return end
+		
+		_G.VH_Saved.Errors = Errors
+		
+	end )
+	
+	Main.CommandRan.Event:Connect(function(Success, Ran, RanMsg, Plr, Cmd)
+		if not Success then
+			Errors[ #Errors + 1 ] = {Cmd, Ran}
+		end
+	end)
+	
 	Main.Commands.Errors = {
 		
 		Alias = { "errors" },
@@ -1036,13 +1052,13 @@ return function ( Main, Client, VH_Events )
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			if #Main.Errors == 0 then Main.Util.PrintClient( Plr, "No errors have been encountered!" ) return true end
+			if #Errors == 0 then Main.Util.PrintClient( Plr, "No errors have been encountered!" ) return true end
 			
 			local Str = ""
 			
-			for a = 1, #Main.Errors do
+			for a = 1, #Errors do
 				
-				Str = Main.Errors[ a ][ 1 ] .. " - " .. Main.Errors[ a ][ 2 ] .. "\n"
+				Str = Errors[ a ][ 1 ] .. " - " .. Errors[ a ][ 2 ] .. "\n"
 				
 			end
 			
@@ -1474,6 +1490,31 @@ return function ( Main, Client, VH_Events )
 		
 	}
 	
+	local CmdHistory = ( _G.VH_Saved or { } ).CmdHistory or { }
+	
+	VH_Events.Destroyed.Event:Connect( function ( Update )
+		
+		if not Update then return end
+		
+		_G.VH_Saved.CmdHistory = CmdHistory
+		
+	end )
+	
+	Main.CommandStackRan.Event:Connect(function(UserId, Msg, CmdStacks)
+		local NoRepeat
+		for _, CmdStack in ipairs(CmdStacks) do
+			if CmdStack[ 1 ].NoRepeat then
+				NoRepeat = true
+				break
+			end
+		end
+		
+		if not NoRepeat then
+			--------------- TODO Change from Msg to CmdStacks - Make logs/ and such check [ 3 ] and [ 4 ] for Cmd and StrArgs
+			CmdHistory[UserId] = Msg
+		end
+	end)
+	
 	Main.Commands.Repeat = {
 		
 		Alias = { "repeat", "^" },
@@ -1486,7 +1527,7 @@ return function ( Main, Client, VH_Events )
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			local Last = Main.CmdHistory[ Plr.UserId ]
+			local Last = CmdHistory[ Plr.UserId ]
 			
 			if Last then
 				
@@ -1860,6 +1901,20 @@ return function ( Main, Client, VH_Events )
 		
 	}
 	
+	local CmdLogs = ( _G.VH_Saved or { } ).CmdLogs or { }
+	
+	VH_Events.Destroyed.Event:Connect( function ( Update )
+		
+		if not Update then return end
+		
+		_G.VH_Saved.CmdLogs = CmdLogs
+		
+	end )
+	
+	Main.CommandStackRan.Event:Connect(function(UserId, Msg)
+		CmdLogs[ #CmdLogs + 1 ] = { os.time( ), UserId, Msg }
+	end)
+	
 	Main.Commands.CmdLogs = {
 		
 		Alias = { "cmdlogs", "logs" },
@@ -1872,13 +1927,13 @@ return function ( Main, Client, VH_Events )
 			
 			local Str = "Command Logs:\n"
 			
-			for a = 1, #Main.Log do
+			for a = 1, #CmdLogs do
 				
-				Str = Str .. Main.Util.TimeSince( Main.Log[ a ][ 1 ] ) .. " - " .. Main.Util.UsernameFromID( Main.Log[ a ][ 2 ] ) .. ":" .. Main.Log[ a ][ 2 ] .. " ran " .. TextService:FilterStringAsync( Main.Log[ a ][ 3 ], Main.Log[ a ][ 2 ] ):GetChatForUserAsync( Plr.UserId ) .. "\n"
+				Str = Str .. Main.Util.TimeSince( CmdLogs[ a ][ 1 ] ) .. " - " .. Main.Util.UsernameFromID( CmdLogs[ a ][ 2 ] ) .. ":" .. CmdLogs[ a ][ 2 ] .. " ran " .. TextService:FilterStringAsync( CmdLogs[ a ][ 3 ], CmdLogs[ a ][ 2 ] ):GetChatForUserAsync( Plr.UserId ) .. "\n"
 				
 			end
 			
-			if #Main.Log == 0 then
+			if #CmdLogs == 0 then
 				
 				Str = "No log entries exist"
 				

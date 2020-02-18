@@ -234,12 +234,6 @@ Main.ConsoleToString = function ( ) return "Console" end
 
 Main.Console = setmetatable( { UserId = "Console", Name = "Console" }, { __tostring = Main.ConsoleToString } )
 
-Main.Errors = ( _G.VH_Saved or { } ).Errors or { }
-
-Main.Log = ( _G.VH_Saved or { } ).Log or { }
-
-Main.CmdHistory = ( _G.VH_Saved or { } ).CmdHistory or { }
-
 Main.Loops = { }
 
 Main.Objs = { }
@@ -251,6 +245,8 @@ Main.AnnounceJoin = { }
 Main.AnnouncedLeft = { }
 
 Main.CommandRan = Instance.new( "BindableEvent" )
+
+Main.CommandStackRan = Instance.new( "BindableEvent" )
 
 Main.ModuleLoaded = Instance.new( "BindableEvent" )
 
@@ -526,11 +522,9 @@ function Main.RunCmdStacks( Plr, CmdStacks, Silent )
 		
 		if not Main then return Success and Ran end
 		
-		Main.CommandRan:Fire( Plr, CmdStack[ 3 ], { Fill( CmdStack[ 2 ] ) }, CmdStack[ 4 ], CmdStacks, Silent )
+		Main.CommandRan:Fire( Success, Ran, RanMsg, Plr, CmdStack[ 3 ], { Fill( CmdStack[ 2 ] ) }, CmdStack[ 4 ], CmdStacks, Silent )
 		
 		if not Success then
-			
-			Main.Errors[ #Main.Errors + 1 ] =  { CmdStack[ 3 ], Ran }
 			
 			if Silent then
 				
@@ -766,27 +760,7 @@ function Main.ParseCmdStacks( Plr, Msg, ChatSpeaker, Silent )
 			
 		end
 		--------------- TODO Change from Msg to CmdStacks - Make logs/ and such check [ 3 ] and [ 4 ] for Cmd and StrArgs
-		Main.Log[ #Main.Log + 1 ] = { os.time( ), Plr.UserId, Msg }
-		
-		local NoRepeat
-		
-		for a = 1, #CmdStacks do
-			
-			if CmdStacks[ a ][ 1 ].NoRepeat then
-				
-				NoRepeat = true
-				
-				break
-				
-			end
-			
-		end
-		
-		if not NoRepeat then
-			--------------- TODO Change from Msg to CmdStacks - Make logs/ and such check [ 3 ] and [ 4 ] for Cmd and StrArgs
-			Main.CmdHistory[ Plr.UserId ] = Msg
-			
-		end
+		Main.CommandStackRan:Fire(Plr.UserId, Msg, CmdStacks)
 		
 	end
 	
@@ -1024,7 +998,7 @@ function Main.Destroy( Update )
 	
 	if Update then
 		
-		_G.VH_Saved = { TempBans = Main.TempBans, TempAdminPowers = Main.TempAdminPowers, Errors = Main.Errors, Log = Main.Log, CmdHistory = Main.CmdHistory }
+		_G.VH_Saved = { TempBans = Main.TempBans, TempAdminPowers = Main.TempAdminPowers }
 		
 	end
 	
@@ -1032,7 +1006,7 @@ function Main.Destroy( Update )
 	
 	if Update then
 	
-		Main.TempBans, Main.TempAdminPowers, Main.Config, Main.Errors, Main.Log, Main.CmdHistory = nil, nil, nil, nil, nil, nil
+		Main.TempBans, Main.TempAdminPowers, Main.Config = nil, nil, nil
 		
 	else
 		
