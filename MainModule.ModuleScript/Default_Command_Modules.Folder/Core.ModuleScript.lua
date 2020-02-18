@@ -742,15 +742,9 @@ return function ( Main, Client, VH_Events )
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			local Message = Instance.new( "Message" )
-			
-			Message.Text = "Game is shutting down..."
-			
-			Message.Parent = workspace
-			
 			Players.PlayerAdded:Connect( function ( Plr )
 				
-				Plr:Kick( )
+				Plr:Kick( Plr.Name .. " has shutdown the server" )
 				
 			end )
 			
@@ -758,7 +752,7 @@ return function ( Main, Client, VH_Events )
 			
 			for a = 1, #Plrs do
 				
-				Plrs[ a ]:Kick( "Server is shutting down!" )
+				Plrs[ a ]:Kick( Plr.Name .. " has shutdown the server" )
 				
 			end
 			
