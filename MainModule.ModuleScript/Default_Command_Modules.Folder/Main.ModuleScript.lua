@@ -1228,7 +1228,7 @@ return function ( Main, Client, VH_Events )
 			
 			if Time < 0 then return true end
 			
-			Main.FilterTo( Plr, nil, "Message", Args[ 1 ], Plr.Name, Time )
+			Main.PersistentFilter( Plr, "Message", Time, Args[ 1 ], Plr.Name )
 			
 			if not Silent then
 				
@@ -1260,7 +1260,7 @@ return function ( Main, Client, VH_Events )
 			
 			if Time < 0 then return true end
 			
-			Main.FilterTo( Plr, nil, "Hint", Args[ 1 ], Plr.Name, Time )
+			Main.PersistentFilter( Plr, "Hint", Time, Args[ 1 ], Plr.Name )
 			
 			if not Silent then
 				
@@ -1428,6 +1428,8 @@ return function ( Main, Client, VH_Events )
 			
 			if Args[ 1 ] == 1 then
 				
+				Main.PersistentFilter( Plr, "LockServer", "LockServer", nil, "1" )
+				
 				local Plrs = Players:GetPlayers( )
 				
 				for a = 1, #Plrs do
@@ -1438,6 +1440,8 @@ return function ( Main, Client, VH_Events )
 				
 			elseif Args[ 1 ] == 2 then
 				
+				Main.PersistentFilter( Plr, "LockServer", "LockServer", nil, "2" )
+				
 				local Teams = Teams:GetTeams( )
 				
 				for a = 1, #Teams do
@@ -1446,11 +1450,13 @@ return function ( Main, Client, VH_Events )
 					
 				end
 				
+			else
+				
+				Main.PersistentFilter( Plr, "LockServer", "LockServer", nil, "3" )
+				
 			end
 			
-			local H = Instance.new( "Hint" )
-			
-			Locked = { H, Players.PlayerAdded:Connect( function ( Plr )
+			Locked = Players.PlayerAdded:Connect( function ( Plr )
 				
 				if Args[ 1 ] == 1 then
 					
@@ -1480,23 +1486,7 @@ return function ( Main, Client, VH_Events )
 					
 				Plr:Kick( "Server is locked" )
 				
-			end ) }
-			
-			if Args[ 1 ] == 1 then
-				
-				H.Text = "This server has been soft locked, if you leave you can rejoin"
-				
-			elseif Args[ 1 ] == 2 then
-				
-				H.Text = "The team numbers have been locked"
-				
-			else
-				
-				H.Text = "This server has been locked"
-				
-			end
-			
-			H.Parent = workspace
+			end )
 			
 			if Args[ 2 ] then
 				
@@ -1528,11 +1518,9 @@ return function ( Main, Client, VH_Events )
 			
 			if not Locked then return false, "Server isn't locked" end
 			
-			Locked[ 1 ]:Destroy( )
+			Main.EndPersistentFilter("LockServer")
 			
-			Locked[ 2 ]:Disconnect( )
-			
-			Locked = nil
+			Locked = Locked:Disconnect( )
 			
 			return true
 			

@@ -744,7 +744,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 	end )
 	
-	Main.FilteredFuncs[ "Message" ] = function ( Text, PlrName, Time )
+	Main.PersistentFilteredFuncs[ "Message" ] = function ( Time, Text, PlrName )
 		
 		local Object = Instance.new( "Message" )
 		
@@ -758,7 +758,7 @@ return function ( Main, ModFolder, VH_Events )
 		
 	end
 	
-	Main.FilteredFuncs[ "Hint" ] = function ( Text, PlrName, Time )
+	Main.PersistentFilteredFuncs[ "Hint" ] = function ( Time, Text, PlrName )
 		
 		local Object = Instance.new( "Hint" )
 		
@@ -772,4 +772,15 @@ return function ( Main, ModFolder, VH_Events )
 		
 	end
 	
+	local LockMessages = {"This server has been soft locked, if you leave you can rejoin", "The team numbers have been locked", "This server has been locked"}
+	local LockHint
+	Main.PersistentFilteredFuncs["LockServer"] = function(_, _, Type)
+		if Type then
+			LockHint = Instance.new("Hint")
+			LockHint.Text = LockMessages[tonumber(Type)]
+			LockHint.Parent = Players.LocalPlayer.PlayerGui
+		elseif LockHint then
+			LockHint:Destroy()
+		end
+	end
 end

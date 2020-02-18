@@ -2,6 +2,8 @@
 
 local Main, Players, InsertService, Chat, ServerStorage, RunService, TextService, StarterPlayerScripts, ChatModules = { }, game:GetService( "Players" ), game:GetService( "InsertService" ), game:GetService( "Chat" ), game:GetService( "ServerStorage" ), game:GetService( "RunService" ), game:GetService( "TextService" ), game:GetService( "StarterPlayer" ):WaitForChild( "StarterPlayerScripts" ), game:GetService( "Chat" ):WaitForChild( "ChatModules" )
 
+require(game:GetService("ServerStorage"):FindFirstChild("TimeSync") and game:GetService("ServerStorage").TimeSync:FindFirstChild("MainModule") or 4698309617) -- TimeSync
+
 local LoaderModule = require( game:GetService( "ServerStorage" ):FindFirstChild( "LoaderModule" ) and game:GetService( "ServerStorage" ).LoaderModule:FindFirstChild( "MainModule" ) or 03593768376 )( "V-Handle" )
 
 Main.Clone = script:Clone( )
@@ -282,32 +284,79 @@ VH_Command_Processor.Parent = ChatModules
 
 local TextService = game:GetService("TextService")
 
-function Main.FilterTo( From, To, FuncName, Text, ... )
+function Main.FilterTo(From, To, FuncName, Text, ...)
+	From = type(From) == "table" and From.Origin or From
 	
-	From = type( From ) == "table" and From.Origin or From
-	
-	To = type( To ) == "userdata" and { To } or type( To ) == "table" and To or Players:GetPlayers( )
-	
-	if From.UserId == "Console" then
-		
-		for a = 1, #To do
-			
-			VH_Events.FilteredReplication:FireClient( To[ a ], FuncName, Text, ... )
-			
+	if From.UserId == "Console" or not Text then
+		for _, ToPlr in ipairs(type(To) == "userdata" and {To} or type(To) == "table" and To or Players:GetPlayers()) do
+			VH_Events.FilteredReplication:FireClient(ToPlr, FuncName, Text, ...)
 		end
-		
 	else
-		
-		local FilterResult = TextService:FilterStringAsync( Text, From.UserId )
-		
-		for a = 1, #To do
-			
-			VH_Events.FilteredReplication:FireClient( To[ a ], FuncName, FilterResult:GetChatForUserAsync( To[ a ].UserId ), ... )
-			
+		local FilterResult = TextService:FilterStringAsync(Text, From.UserId)
+		for _, ToPlr in ipairs(type(To) == "userdata" and {To} or type(To) == "table" and To or Players:GetPlayers()) do
+			VH_Events.FilteredReplication:FireClient(ToPlr, FuncName, FilterResult:GetChatForUserAsync(ToPlr.UserId), ...)
 		end
-		
 	end
+end
+
+local PersistentFilters = {}
+
+Main.Events[#Main.Events + 1] = Players.PlayerAdded:Connect(function(Plr)
+	for _, FilterInfo in pairs(PersistentFilters) do
+		if FilterInfo.From.UserId == "Console" or not FilterInfo.Text then
+			VH_Events.PersistentFilteredReplication:FireClient(Plr, FilterInfo.FuncName, FilterInfo.Key_Time, FilterInfo.Text, unpack(FilterInfo.Args))
+			if FilterInfo.To then
+				FilterInfo.To[#FilterInfo.To + 1] = Plr
+			end
+		else
+			local FilterResult = TextService:FilterStringAsync(FilterInfo.Text, FilterInfo.From.UserId)
+			VH_Events.PersistentFilteredReplication:FireClient(Plr, FilterInfo.FuncName, FilterInfo.Key_Time, FilterResult:GetChatForUserAsync(Plr.UserId), unpack(FilterInfo.Args))
+			if FilterInfo.To then
+				FilterInfo.To[#FilterInfo.To + 1] = Plr
+			end
+		end
+	end
+end)
+
+local function EndTimedFilter(Key, Time, ...)
+	wait(Time)
 	
+	PersistentFilters[Key] = nil
+end
+
+function Main.PersistentFilter(From, FuncName, Key_Time, Text, ...)
+	From = type(From) == "table" and From.Origin or From
+	local To = Players:GetPlayers()
+	local Start, Args = tick(), {...}
+	
+	if From.UserId == "Console" or not Text then
+		for _, ToPlr in ipairs(To) do
+			VH_Events.PersistentFilteredReplication:FireClient(ToPlr, FuncName, type(Key_Time) == "number" and tick() + Key_Time or Key_Time, Text, ...)
+		end
+	else
+		local FilterResult = TextService:FilterStringAsync(Text, From.UserId)
+		for _, ToPlr in ipairs(To) do
+			VH_Events.PersistentFilteredReplication:FireClient(ToPlr, FuncName, type(Key_Time) == "number" and tick() + Key_Time or Key_Time, FilterResult:GetChatForUserAsync(ToPlr.UserId), ...)
+		end
+	end
+		
+	if type(Key_Time) == "string" then
+		PersistentFilters[Key_Time] = {To = To, From = From, FuncName = FuncName, Key_Time = Key_Time, Text = Text, Args = Args}
+	else
+		local Key = {}
+		PersistentFilters[Key] = {From = From, FuncName = FuncName, Key_Time = tick() + Key_Time, Text = Text, Args = Args}
+		
+		coroutine.wrap(EndTimedFilter)(Key, Key_Time, FuncName, Text)
+	end
+end
+
+function Main.EndPersistentFilter(Key)
+	for _, ToPlr in ipairs(PersistentFilters[Key].To) do
+		if ToPlr.Parent then
+			VH_Events.PersistentFilteredReplication:FireClient(ToPlr, PersistentFilters[Key].FuncName, Key)
+		end
+	end
+	PersistentFilters[Key] = nil
 end
 
 local function Fill( Table, a, max )
