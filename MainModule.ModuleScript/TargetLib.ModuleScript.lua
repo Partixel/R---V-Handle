@@ -1,4 +1,4 @@
-local Module, Players, Teams, MarketplaceService = { }, game:GetService( "Players" ), game:GetService( "Teams" ), game:GetService( "MarketplaceService" )
+local Module, Players, Teams, MarketplaceService = {}, game:GetService("Players"), game:GetService("Teams"), game:GetService("MarketplaceService")
 
 -- ! = invert
 -- & = and
@@ -64,33 +64,33 @@ local Module, Players, Teams, MarketplaceService = { }, game:GetService( "Player
 
 Module.ValidChar = "?"
 
-local WildCardChars = { "all", "*" }
+local WildCardChars = {"all", "*"}
 
-local ValidToolLocations = { game:GetService( "Lighting" ), game:GetService( "ServerStorage" ), game:GetService( "ReplicatedStorage" ), game:GetService( "StarterPack" ), game:GetService( "Teams" ) }
+local ValidToolLocations = {game:GetService("Lighting"), game:GetService("ServerStorage"), game:GetService("ReplicatedStorage"), game:GetService("StarterPack"), game:GetService("Teams")}
 
-local BoolEquivs = { { "true", "1", "y", "yes", "t", "on" }, { "false", "0", "n", "no", "f", "off" } }
+local BoolEquivs = {{"true", "1", "y", "yes", "t", "on"}, {"false", "0", "n", "no", "f", "off"}}
 
-local TimeEquivs = { [ "s" ] = 1, [ "m" ] = 60, [ "mi" ] = 60, [ "h" ] = 60 * 60, [ "d" ] = 60 * 60 * 24, [ "w" ] = 60 * 60 * 24 * 7, [ "mo" ] = 60 * 60 * 24 * 30, [ "y" ] = 60 * 60 * 24 * 365.25 }
+local TimeEquivs = {["s"] = 1, ["m"] = 60, ["mi"] = 60, ["h"] = 60 * 60, ["d"] = 60 * 60 * 24, ["w"] = 60 * 60 * 24 * 7, ["mo"] = 60 * 60 * 24 * 30, ["y"] = 60 * 60 * 24 * 365.25}
 
-local Calc = require( 2621701837 )
+local Calc = require(2621701837)
 
-Module.Events = { }
+Module.Events = {}
 
-Module.ArgTypes = { }
+Module.ArgTypes = {}
 
-Module.Defaults = { }
+Module.Defaults = {}
 
-Module.ArgTypeNames = { }
+Module.ArgTypeNames = {}
 
 -- Util functions --
 
-function Module.AddArgAsset( Type, TypeId, ValidID )
+function Module.AddArgAsset(Type, TypeId, ValidID)
 	
-	Module.ArgTypes[ Type .. "Id" ] = function ( self, Strings, Plr )
+	Module.ArgTypes[Type .. "Id"] = function (self, Strings, Plr)
 		
-		local String = table.remove( Strings, 1 )
+		local String = table.remove(Strings, 1)
 		
-		local Num = tonumber( String )
+		local Num = tonumber(String)
 		
 		if String == Module.ValidChar then
 			
@@ -102,7 +102,7 @@ function Module.AddArgAsset( Type, TypeId, ValidID )
 			
 			Num = Num
 			
-			local _, Matched = pcall( function( ) return MarketplaceService:GetProductInfo( Num ).AssetTypeId == TypeId end )
+			local _, Matched = pcall(function() return MarketplaceService:GetProductInfo(Num).AssetTypeId == TypeId end)
 			
 			if Matched == true then return Num end
 			
@@ -114,19 +114,19 @@ function Module.AddArgAsset( Type, TypeId, ValidID )
 	
 end
 
-function Module.AddArgMultiple( Type )
+function Module.AddArgMultiple(Type)
 	
-	Module.ArgTypeNames[ Type .. "s" ] = Type .. "..."
+	Module.ArgTypeNames[Type .. "s"] = Type .. "..."
 	
-	Module.ArgTypes[ Type ] = function ( self, Strings, Plr )
+	Module.ArgTypes[Type] = function (self, Strings, Plr)
 		
-		local String = table.remove( Strings, 1 )
+		local String = table.remove(Strings, 1)
 		
-		local Objs = Module[ "Find" .. Type .. "s" ]( self, String, Plr )
+		local Objs = Module["Find" .. Type .. "s"](self, String, Plr)
 		
 		if Objs and #Objs == 1 then
 			
-			return Objs[ 1 ]
+			return Objs[1]
 			
 		end
 		
@@ -134,17 +134,17 @@ function Module.AddArgMultiple( Type )
 		
 	end
 	
-	Module.ArgTypes[ Type .. "s" ] = function ( self, Strings, Plr )
+	Module.ArgTypes[Type .. "s"] = function (self, Strings, Plr)
 		
-		local String = table.remove( Strings, 1 )
+		local String = table.remove(Strings, 1)
 		
-		while String:sub( -1 ) == "," and Strings[ 1 ] do
+		while String:sub(-1) == "," and Strings[1] do
 			
-			String = String .. table.remove( Strings, 1 )
+			String = String .. table.remove(Strings, 1)
 			
 		end
 		
-		local Objs = Module[ "Find" .. Type .. "s" ]( self, String, Plr )
+		local Objs = Module["Find" .. Type .. "s"](self, String, Plr)
 		
 		if Objs and #Objs ~= 0 then
 			
@@ -158,9 +158,9 @@ function Module.AddArgMultiple( Type )
 	
 end
 
-function Module.GetArgType( ArgType )
+function Module.GetArgType(ArgType)
 	
-	for a, b in pairs( Module.ArgTypes ) do
+	for a, b in pairs(Module.ArgTypes) do
 		
 		if b == ArgType then return a end
 		
@@ -168,29 +168,29 @@ function Module.GetArgType( ArgType )
 	
 end
 
-local function TableHasValue( Table, Obj )
+local function TableHasValue(Table, Obj)
 	
 	for a = 1, #Table do
 		
-		if Table[ a ] == Obj then return a end
+		if Table[a] == Obj then return a end
 		
 	end
 	
 end
 
-local function GetValidTools( )
+local function GetValidTools()
 	
-	local Tools = { }
+	local Tools = {}
 	
 	for a = 1, #ValidToolLocations do
 		
-		local Children = ValidToolLocations[ a ]:GetDescendants( )
+		local Children = ValidToolLocations[a]:GetDescendants()
 		
 		for b = 1, #Children do
 			
-			if Children[ b ]:IsA( "Tool" ) then
+			if Children[b]:IsA("Tool") then
 				
-				Tools[ #Tools + 1 ] = Children[ b ]
+				Tools[#Tools + 1] = Children[b]
 				
 			end
 			
@@ -202,57 +202,46 @@ local function GetValidTools( )
 	
 end
 
-local function TableHasMatchingObj( Table, String, ExactOnly )
-	
-	local Found, Exact = { }, nil
-	
-	for a = 1, #Table do
-		
-		local Name = ( type( Table[ a ] ) == "string" and Table[ a ] or Table[ a ].Name ):lower( )
-		
-		if Name == String then
-			
-			if not Exact then Found = { } end
-			
-			Found[ #Found + 1 ] = Table[ a ]
-			
-			Exact = true
-			
-		elseif not ExactOnly and not Exact and Name:sub( 1, #String ):lower( ) == String then
-			
-			Found[ #Found + 1 ] = Table[ a ]
-			
-		end
-		
-	end
-	
-	if #Found > 0 then return true, Found end
-	
-	if ExactOnly then return end
-	
-	for a = 1, #Table do
-		
-		local Name = ( type( Table[ a ] ) == "string" and Table[ a ] or Table[ a ].Name ):lower( )
-		
-		if Name:find( String ) then
-			
-			Found[ #Found + 1 ] = Table[ a ]
-			
-		end
-		
-	end
-	
-	if #Found > 0 then return true, Found end
-	
+local function TableHasActualMatch(Table, String, ExactOnly)
 end
 
-function Module.IsWildcard( String, Base )
+local function TableHasMatchingObj(Table, String, ExactOnly)
+	local Regex = String:match("r(%b())")
+	if not ExactOnly and Regex then
+		Regex = Regex:sub(2, -2)
+		
+		local Found = {}
+		for a = 1, #Table do
+			if (type(Table[a]) == "string" and Table[a] or Table[a].Name):lower():match(Regex) then
+				Found[#Found + 1] = Table[a]
+			end
+		end
+		
+		if #Found > 0 then return true, Found end
+	else
+		local Found, Exact = {}, nil
+		for a = 1, #Table do
+			local Name = (type(Table[a]) == "string" and Table[a] or Table[a].Name):lower()
+			if Name == String then
+				if not Exact then Found = {} end
+				Found[#Found + 1] = Table[a]
+				Exact = true
+			elseif not ExactOnly and not Exact and Name:sub(1, #String):lower() == String then
+				Found[#Found + 1] = Table[a]
+			end
+		end
+		
+		if #Found > 0 then return true, Found end
+	end
+end
+
+function Module.IsWildcard(String, Base)
 	
 	if Base then
 		
 		for a = 1, #Base do
 			
-			if ( type( Base[ a ] ) == "string" and Base[ a ] or Base[ a ].Name ):lower( ) == String then
+			if (type(Base[a]) == "string" and Base[a] or Base[a].Name):lower() == String then
 				
 				return false
 				
@@ -262,29 +251,29 @@ function Module.IsWildcard( String, Base )
 		
 	end
 	
-	return TableHasValue( WildCardChars, String )
+	return TableHasValue(WildCardChars, String)
 	
 end
 
-function Module.MultipleOf( self, String, Plr, Funcs, Base, BaseChar, ExactOnly )
+function Module.MultipleOf(self, String, Plr, Funcs, Base, BaseChar, ExactOnly)
 	
-	local Multiple = String:find( "&" )
+	local Multiple = String:find("&")
 	
 	if Multiple then
 		
-		local Strings = string.split( String, "&" )
+		local Strings = string.split(String, "&")
 		
-		local Matches, Valid = { }, { }
+		local Matches, Valid = {}, {}
 		
 		for a = 1, #Strings do
 			
-			Matches[ #Matches + 1 ] = Module.MultipleOf( self, Strings[ a ], Plr, Funcs, Base, BaseChar )
+			Matches[#Matches + 1] = Module.MultipleOf(self, Strings[a], Plr, Funcs, Base, BaseChar)
 			
 		end
 		
 		if #Matches > 1 then
 			
-			for a = 1, #Matches[ 1 ] do
+			for a = 1, #Matches[1] do
 				
 				local FoundAll = true
 				
@@ -292,9 +281,9 @@ function Module.MultipleOf( self, String, Plr, Funcs, Base, BaseChar, ExactOnly 
 					
 					local Found
 					
-					for c = 1, #Matches[ b ] do
+					for c = 1, #Matches[b] do
 						
-						if Matches[ b ][ c ] == Matches[ 1 ][ a ] then
+						if Matches[b][c] == Matches[1][a] then
 							
 							Found = true
 							
@@ -308,7 +297,7 @@ function Module.MultipleOf( self, String, Plr, Funcs, Base, BaseChar, ExactOnly 
 				
 				if FoundAll then
 					
-					Valid[ #Valid + 1 ] = Matches[ 1 ][ a ]
+					Valid[#Valid + 1] = Matches[1][a]
 					
 				end
 				
@@ -322,51 +311,51 @@ function Module.MultipleOf( self, String, Plr, Funcs, Base, BaseChar, ExactOnly 
 	
 	BaseChar = BaseChar or ""
 	
-	String = String:lower( )
+	String = String:lower()
 	
-	local Strings = string.split( String:lower( ), "," )
+	local Strings = string.split(String:lower(), ",")
 	
-	local TotalMatches = { }
+	local TotalMatches = {}
 	
 	for a = 1, #Strings do
 		
-		local String = Strings[ a ]:match( '^%s*(.*%S)' ) or ""
+		local String = Strings[a]:match('^%s*(.*%S)') or ""
 		
-		if #String > 0 and String:sub( 1, #BaseChar ) == BaseChar:lower( ) then
+		if #String > 0 and String:sub(1, #BaseChar) == BaseChar:lower() then
 			
-			String = String:sub( #BaseChar + 1 )
+			String = String:sub(#BaseChar + 1)
 			
 			local Invert = false
 			
-			if String:sub( 1, 1 ) == "!" then
+			if String:sub(1, 1) == "!" then
 				
 				Invert = true
 				
-				String = String:sub( 2 )
+				String = String:sub(2)
 				
 			end
 			
-			local Matches = { }
+			local Matches = {}
 			
 			local Found = false
 			
 			if String == Module.ValidChar then
 				
-				Found, Matches = true, Base[ 1 ]
+				Found, Matches = true, Base[1]
 				
-			elseif Module.IsWildcard( String, Base ) then
+			elseif Module.IsWildcard(String, Base) then
 				
-				Found, Matches = true, { unpack( Base ) }
+				Found, Matches = true, {unpack(Base)}
 				
 			elseif String == "random" then
 				
-				Found, Matches = true, { Base[ math.random( 1, #Base ) ] }
+				Found, Matches = true, {Base[math.random(1, #Base)]}
 				
 			else
 				
 				for a = 1, #Funcs do
 					
-					Found, Matches = Funcs[ a ]( self, String, Plr, Matches, Base )
+					Found, Matches = Funcs[a](self, String, Plr, Matches, Base)
 					
 					if Found then break end
 					
@@ -376,23 +365,23 @@ function Module.MultipleOf( self, String, Plr, Funcs, Base, BaseChar, ExactOnly 
 			
 			if not Found then
 				
-				Found, Matches = TableHasMatchingObj( Base, String, ExactOnly )
+				Found, Matches = TableHasMatchingObj(Base, String, ExactOnly)
 				
 			end
 			
 			if Found then
 				
-				if type( Matches ) ~= "table" then Matches = { Matches } end
+				if type(Matches) ~= "table" then Matches = {Matches} end
 				
 				if Invert then
 					
-					local InvertedMatches = { }
+					local InvertedMatches = {}
 					
 					for a = 1, #Base do
 						
-						if not TableHasValue( Matches, Base[ a ] ) then
+						if not TableHasValue(Matches, Base[a]) then
 							
-							InvertedMatches[ #InvertedMatches + 1 ] = Base[ a ]
+							InvertedMatches[#InvertedMatches + 1] = Base[a]
 							
 						end
 						
@@ -404,9 +393,9 @@ function Module.MultipleOf( self, String, Plr, Funcs, Base, BaseChar, ExactOnly 
 				
 				for a = 1, #Matches do
 					
-					if not TableHasValue( TotalMatches, Matches[ a ] ) then
+					if not TableHasValue(TotalMatches, Matches[a]) then
 						
-						TotalMatches[ #TotalMatches + 1 ] = Matches[ a ]
+						TotalMatches[#TotalMatches + 1] = Matches[a]
 						
 					end
 					
@@ -424,19 +413,19 @@ end
 
 -- Target functions --
 
-function Module.FindTools( self, String, Plr, Table )
+function Module.FindTools(self, String, Plr, Table)
 	
-	return Module.MultipleOf( self, String, Plr, { }, ( Table or GetValidTools( ) ) )
+	return Module.MultipleOf(self, String, Plr, {}, (Table or GetValidTools()))
 	
 end
 
-function Module.FindTeam( self, String, Plr, Matches, Base )
+function Module.FindTeam(self, String, Plr, Matches, Base)
 	
-	String = String:lower( )
+	String = String:lower()
 	
 	if #Base == 0 then return end
 	
-	String = String:match( '^%s*(.*%S)' ) or ""
+	String = String:match('^%s*(.*%S)') or ""
 	
 	if Plr and String == "me" then
 		
@@ -444,97 +433,97 @@ function Module.FindTeam( self, String, Plr, Matches, Base )
 		
 	elseif String == "biggest" then
 		
-		local TeamSizes = { }
+		local TeamSizes = {}
 		
-		local Teams = Teams:GetTeams( )
+		local Teams = Teams:GetTeams()
 		
 		for a = 1, #Teams do
 			
-			TeamSizes[ #TeamSizes + 1 ] = { Teams[ a ], #Teams[ a ]:GetPlayers( ) }
+			TeamSizes[#TeamSizes + 1] = {Teams[a], #Teams[a]:GetPlayers()}
 			
 		end
 		
-		table.sort( TeamSizes, function ( a, b ) return a[ 2 ] > b[ 2 ] end )
+		table.sort(TeamSizes, function (a, b) return a[2] > b[2] end)
 		
-		if TeamSizes[ 1 ][ 1 ] then return true, TeamSizes[ 1 ][ 1 ] else return end
+		if TeamSizes[1][1] then return true, TeamSizes[1][1] else return end
 		
 	elseif String == "smallest" then
 		
-		local TeamSizes = { }
+		local TeamSizes = {}
 		
-		local Teams = Teams:GetTeams( )
+		local Teams = Teams:GetTeams()
 		
 		for a = 1, #Teams do
 			
-			TeamSizes[ #TeamSizes + 1 ] = { Teams[ a ], #Teams[ a ]:GetPlayers( ) }
+			TeamSizes[#TeamSizes + 1] = {Teams[a], #Teams[a]:GetPlayers()}
 			
 		end
 		
-		table.sort( TeamSizes, function ( a, b ) return a[ 2 ] < b[ 2 ] end )
+		table.sort(TeamSizes, function (a, b) return a[2] < b[2] end)
 		
-		if TeamSizes[ 1 ][ 1 ] then return true, TeamSizes[ 1 ][ 1 ] else return end
+		if TeamSizes[1][1] then return true, TeamSizes[1][1] else return end
 		
 	end
 	
 end
 
-function Module.FindTeams( self, String, Plr )
+function Module.FindTeams(self, String, Plr)
 	
-	return Module.MultipleOf( self, String, Plr, { Module.FindTeam }, Teams:GetTeams( ) )
-	
-end
-
-function Module.FindTeamsForPlr( self, String, Plr )
-	
-	return Module.MultipleOf( self, String, Plr, { Module.FindTeam }, Teams:GetTeams( ), "%" )
+	return Module.MultipleOf(self, String, Plr, {Module.FindTeam}, Teams:GetTeams())
 	
 end
 
-function Module.FindGroup( self, String, Plr )
+function Module.FindTeamsForPlr(self, String, Plr)
 	
-	String = String:lower( )
-	
-	if String:sub( 1, 1 ) ~= "^" then return end
-	
-	String = String:sub( 2 )
-	
-	String = String:match( '^%s*(.*%S)' ) or ""
-	
-	local GroupId, Type, Rank = String:match( "^(%d+)([><=^]*)(%d*)" )
-	
-	GroupId, Rank = tonumber( GroupId or "" ), tonumber( Rank or "1" )
-	
-	if not GroupId then return { } end
-	
-	return { GroupId }, Rank or 1, Type == "=" and 1 or Type == "<" and 2 or nil
+	return Module.MultipleOf(self, String, Plr, {Module.FindTeam}, Teams:GetTeams(), "%")
 	
 end
 
-function Module.FindAllied( self, String, Plr )
+function Module.FindGroup(self, String, Plr)
 	
-	String = String:lower( )
+	String = String:lower()
 	
-	if String:sub( 1, 1 ) ~= "@" then return end
+	if String:sub(1, 1) ~= "^" then return end
 	
-	String = String:sub( 2 )
+	String = String:sub(2)
 	
-	String = String:match( '^%s*(.*%S)' ) or ""
+	String = String:match('^%s*(.*%S)') or ""
 	
-	local GroupId = tonumber( String )
+	local GroupId, Type, Rank = String:match("^(%d+)([><=^]*)(%d*)")
 	
-	if not GroupId then return { } end
+	GroupId, Rank = tonumber(GroupId or ""), tonumber(Rank or "1")
 	
-	local Allies = { GroupId }
+	if not GroupId then return {} end
 	
-	local Pages = game:GetService( "GroupService" ):GetAlliesAsync( GroupId )
+	return {GroupId}, Rank or 1, Type == "=" and 1 or Type == "<" and 2 or nil
+	
+end
+
+function Module.FindAllied(self, String, Plr)
+	
+	String = String:lower()
+	
+	if String:sub(1, 1) ~= "@" then return end
+	
+	String = String:sub(2)
+	
+	String = String:match('^%s*(.*%S)') or ""
+	
+	local GroupId = tonumber(String)
+	
+	if not GroupId then return {} end
+	
+	local Allies = {GroupId}
+	
+	local Pages = game:GetService("GroupService"):GetAlliesAsync(GroupId)
 	
 	if not Pages then return Allies end
 	
 	while true do
 		
-		for a, b in pairs( Pages:GetCurrentPage( ) ) do
+		for a, b in pairs(Pages:GetCurrentPage()) do
 			
-			Allies[ #Allies + 1 ] = b.Id
+			Allies[#Allies + 1] = b.Id
 			
 		end
 		
@@ -544,7 +533,7 @@ function Module.FindAllied( self, String, Plr )
 			
 		end
 		
-		Pages:AdvanceToNextPageAsync( )
+		Pages:AdvanceToNextPageAsync()
 		
 	end
 	
@@ -552,31 +541,31 @@ function Module.FindAllied( self, String, Plr )
 	
 end
 
-function Module.FindEnemy( self, String, Plr )
+function Module.FindEnemy(self, String, Plr)
 	
-	String = String:lower( )
+	String = String:lower()
 	
-	if String:sub( 1, 1 ) ~= "#" then return end
+	if String:sub(1, 1) ~= "#" then return end
 	
-	String = String:sub( 2 )
+	String = String:sub(2)
 	
-	String = String:match( '^%s*(.*%S)' ) or ""
+	String = String:match('^%s*(.*%S)') or ""
 	
-	local GroupId = tonumber( String )
+	local GroupId = tonumber(String)
 	
-	if not GroupId then return { } end
+	if not GroupId then return {} end
 	
-	local Enemies = { }
+	local Enemies = {}
 	
-	local Pages = game:GetService( "GroupService" ):GetEnemiesAsync( GroupId )
+	local Pages = game:GetService("GroupService"):GetEnemiesAsync(GroupId)
 	
-	if not Pages then return { } end
+	if not Pages then return {} end
 	
 	while true do
 		
-		for a, b in pairs( Pages:GetCurrentPage( ) ) do
+		for a, b in pairs(Pages:GetCurrentPage()) do
 			
-			Enemies[ #Enemies + 1 ] = b.Id
+			Enemies[#Enemies + 1] = b.Id
 			
 		end
 		
@@ -586,7 +575,7 @@ function Module.FindEnemy( self, String, Plr )
 			
 		end
 		
-		Pages:AdvanceToNextPageAsync( )
+		Pages:AdvanceToNextPageAsync()
 		
 	end
 	
@@ -594,33 +583,33 @@ function Module.FindEnemy( self, String, Plr )
 	
 end
 
-function Module.FindFriend( self, String, Plr )
+function Module.FindFriend(self, String, Plr)
 	
-	String = String:lower( )
+	String = String:lower()
 	
-	if String:sub( 1, 1 ) ~= "+" then return end
+	if String:sub(1, 1) ~= "+" then return end
 	 
-	String = String:sub( 2 )
+	String = String:sub(2)
 	
-	String = String:match( '^%s*(.*%S)' ) or ""
+	String = String:match('^%s*(.*%S)') or ""
 	
-	return ( Module.FindPlayers( self, String, Plr ) or { } )[ 1 ]
+	return (Module.FindPlayers(self, String, Plr) or {})[1]
 	
 end
 
-function Module.FindPlrsNearPlr( self, String, Plr )
+function Module.FindPlrsNearPlr(self, String, Plr)
 	
-	String = String:lower( )
+	String = String:lower()
 	
-	if String:sub( 1, 1 ) ~= "*" then return end
+	if String:sub(1, 1) ~= "*" then return end
 	
-	String = String:sub( 2 )
+	String = String:sub(2)
 	
-	String = String:match( '^%s*(.*%S)' ) or ""
+	String = String:match('^%s*(.*%S)') or ""
 	
-	local Target, Type, Dist = String:match( "^(.+)([><=%*]*)(%d*)" )
+	local Target, Type, Dist = String:match("^(.+)([><=%*]*)(%d*)")
 	
-	Target = Module.FindPlayers( self, Target or "", Plr )[ 1 ]
+	Target = Module.FindPlayers(self, Target or "", Plr)[1]
 
 	if not Target or not Target.Character or not Target.Character.PrimaryPart then return end
 	
@@ -628,19 +617,19 @@ function Module.FindPlrsNearPlr( self, String, Plr )
 	
 	Target = Target.Character.PrimaryPart.Position
 	
-	Dist = tonumber( Dist or "15" )
+	Dist = tonumber(Dist or "15")
 	
-	local Plrs = Players:GetPlayers( )
+	local Plrs = Players:GetPlayers()
 	
-	local Near = { }
+	local Near = {}
 	
 	for a = 1, #Plrs do
 		
-		if Plrs[ a ] ~= Plr and Plrs[ a ].Character and Plrs[ a ].Character.PrimaryPart then
+		if Plrs[a] ~= Plr and Plrs[a].Character and Plrs[a].Character.PrimaryPart then
 			
-			if ( Type == 1 and math.floor( Plrs[ a ]:DistanceFromCharacter( Target ) + 0.5 ) == math.floor( Dist + 0.5 ) ) or ( Type == 2 and Plrs[ a ]:DistanceFromCharacter( Target ) <= Dist ) or ( Type == nil and Plrs[ a ]:DistanceFromCharacter( Target ) >= Dist )  then
+			if (Type == 1 and math.floor(Plrs[a]:DistanceFromCharacter(Target) + 0.5) == math.floor(Dist + 0.5)) or (Type == 2 and Plrs[a]:DistanceFromCharacter(Target) <= Dist) or (Type == nil and Plrs[a]:DistanceFromCharacter(Target) >= Dist)  then
 				
-				Near[ #Near + 1 ] = Plrs[ a ]
+				Near[#Near + 1] = Plrs[a]
 				
 			end
 			
@@ -652,37 +641,37 @@ function Module.FindPlrsNearPlr( self, String, Plr )
 	
 end
 
-function Module.FindPlrsInGroups( self, String, Plr )
+function Module.FindPlrsInGroups(self, String, Plr)
 	
-	String = String:lower( )
+	String = String:lower()
 	
-	local Groups, Rank, Type = Module.FindGroup( self, String, Plr )
+	local Groups, Rank, Type = Module.FindGroup(self, String, Plr)
 	
-	if Groups == nil then Groups, Rank = Module.FindAllied( self, String, Plr ) or Module.FindEnemy( self, String, Plr ), nil end
+	if Groups == nil then Groups, Rank = Module.FindAllied(self, String, Plr) or Module.FindEnemy(self, String, Plr), nil end
 	
 	if Groups then
 		
-		local Plrs, Matches = Players:GetPlayers( ), { }
+		local Plrs, Matches = Players:GetPlayers(), {}
 		
 		for a = 1, #Plrs do
 			
-			if Plrs[ a ].Parent then
+			if Plrs[a].Parent then
 				
 				for b = 1, #Groups do
 					
 					if not Rank then
 						
-						if Plrs[ a ]:IsInGroup( Groups[ b ] ) then
+						if Plrs[a]:IsInGroup(Groups[b]) then
 							
-							Matches[ #Matches + 1 ] = Plrs[ a ]
+							Matches[#Matches + 1] = Plrs[a]
 							
 							break
 							
 						end
 						
-					elseif ( Type == 1 and Plrs[ a ]:GetRankInGroup( Groups[ b ] ) == Rank ) or ( Type == 2 and Plrs[ a ]:GetRankInGroup( Groups[ b ] ) <= Rank ) or ( Type == nil and Plrs[ a ]:GetRankInGroup( Groups[ b ] ) >= Rank ) then
+					elseif (Type == 1 and Plrs[a]:GetRankInGroup(Groups[b]) == Rank) or (Type == 2 and Plrs[a]:GetRankInGroup(Groups[b]) <= Rank) or (Type == nil and Plrs[a]:GetRankInGroup(Groups[b]) >= Rank) then
 						
-						Matches[ #Matches + 1 ] = Plrs[ a ]
+						Matches[#Matches + 1] = Plrs[a]
 						
 						break
 						
@@ -700,11 +689,11 @@ function Module.FindPlrsInGroups( self, String, Plr )
 	
 end
 
-function Module.FindPlrsInTeam( self, String, Plr )
+function Module.FindPlrsInTeam(self, String, Plr)
 	
-	String = String:lower( )
+	String = String:lower()
 	
-	local Teams, Matches = Module.FindTeamsForPlr( self, String, Plr ), { }
+	local Teams, Matches = Module.FindTeamsForPlr(self, String, Plr), {}
 	
 	if Teams then
 		
@@ -714,19 +703,19 @@ function Module.FindPlrsInTeam( self, String, Plr )
 			
 			if a == 1 then
 				
-				Matches = Teams[ a ]:GetPlayers( )
+				Matches = Teams[a]:GetPlayers()
 				
 				Found = #Matches > 0
 				
 			else
 				
-				local Plrs = Teams[ a ]:GetPlayers( )
+				local Plrs = Teams[a]:GetPlayers()
 				
 				for b = 1, #Plrs do
 					
 					Found = true
 					
-					Matches[ #Matches + 1 ] = Plrs[ b ]
+					Matches[#Matches + 1] = Plrs[b]
 					
 				end
 				
@@ -740,21 +729,21 @@ function Module.FindPlrsInTeam( self, String, Plr )
 	
 end
 
-function Module.FindFriendsOfPlr( self, String, Plr )
+function Module.FindFriendsOfPlr(self, String, Plr)
 	
-	String = String:lower( )
+	String = String:lower()
 	
-	local Friend, Matches = Module.FindFriend( self, String, Plr ), { }
+	local Friend, Matches = Module.FindFriend(self, String, Plr), {}
 	
 	if Friend then
 		
-		local Plrs = Players:GetPlayers( )
+		local Plrs = Players:GetPlayers()
 		
 		for a = 1, #Plrs do
 			
-			if Friend:IsFriendsWith( Plrs[ a ].userId ) then
+			if Friend:IsFriendsWith(Plrs[a].userId) then
 				
-				Matches[ #Matches + 1 ] = Plrs[ a ]
+				Matches[#Matches + 1] = Plrs[a]
 				
 			end
 			
@@ -766,11 +755,11 @@ function Module.FindFriendsOfPlr( self, String, Plr )
 	
 end
 
-function Module.FindPlrsFromString( self, String, Plr )
+function Module.FindPlrsFromString(self, String, Plr)
 	
 	if Plr then
 		
-		if String:lower( ) == "me" then
+		if String:lower() == "me" then
 			
 			return true, Plr
 			
@@ -778,7 +767,7 @@ function Module.FindPlrsFromString( self, String, Plr )
 		
 	end
 	
-	local Plr = tonumber( String ) and Players:GetPlayerByUserId( String ) or nil
+	local Plr = tonumber(String) and Players:GetPlayerByUserId(String) or nil
 	
 	if Plr then
 		
@@ -790,29 +779,29 @@ function Module.FindPlrsFromString( self, String, Plr )
 	
 end
 
-Module.MatchFuncs = { Module.FindPlrsInTeam, Module.FindPlrsInGroups, Module.FindFriendsOfPlr, Module.FindPlrsNearPlr, Module.FindPlrsFromString }
+Module.MatchFuncs = {Module.FindPlrsInTeam, Module.FindPlrsInGroups, Module.FindFriendsOfPlr, Module.FindPlrsNearPlr, Module.FindPlrsFromString}
 
-function Module.FindPlayers( self, String, Plr )
+function Module.FindPlayers(self, String, Plr)
 	
-	return Module.MultipleOf( self, String, Plr, Module.MatchFuncs, Players:GetPlayers( ) )
+	return Module.MultipleOf(self, String, Plr, Module.MatchFuncs, Players:GetPlayers())
 	
 end
 
-function Module.MatchesPlr( String, Plr )
+function Module.MatchesPlr(String, Plr)
 	
 	if Plr.UserId == "Console" then
 		
-		return not String:lower( ):find( "!$console" )
+		return not String:lower():find("!$console")
 		
 	end
 	
-	local Plrs =  Module.MultipleOf( nil, String, nil, Module.MatchFuncs, Players:GetPlayers( ), nil, true )
+	local Plrs =  Module.MultipleOf(nil, String, nil, Module.MatchFuncs, Players:GetPlayers(), nil, true)
 	
 	if Plrs then
 		
 		for a = 1, #Plrs do
 			
-			if Plrs[ a ] == Plr then
+			if Plrs[a] == Plr then
 				
 				return true
 				
@@ -826,13 +815,13 @@ end
 
 -- ArgTypes --
 
-Module.ArgTypes.String = function ( self, Strings, Plr, LastArg )
+Module.ArgTypes.String = function (self, Strings, Plr, LastArg)
 	
 	local String
 	
 	if LastArg then
 		
-		String = table.concat( Strings, " " )
+		String = table.concat(Strings, " ")
 		
 	else
 		
@@ -840,31 +829,31 @@ Module.ArgTypes.String = function ( self, Strings, Plr, LastArg )
 		
 		local a, Start
 		
-		while Strings[ 1 ] do
+		while Strings[1] do
 			
-			if not Strings[ 1 ] then break end
+			if not Strings[1] then break end
 			
 			if not Start then
 				
-				if Strings[ 1 ]:sub( 1, 1 ) == "'" then
+				if Strings[1]:sub(1, 1) == "'" then
 					
 					Start = "'"
 					
-					String = table.remove( Strings, 1 )
+					String = table.remove(Strings, 1)
 					
-					String = String:sub( 2 )
+					String = String:sub(2)
 					
-				elseif Strings[ 1 ]:sub( 1, 1 ) == '"' then
+				elseif Strings[1]:sub(1, 1) == '"' then
 					
 					Start = '"'
 					
-					String = table.remove( Strings, 1 )
+					String = table.remove(Strings, 1)
 					
-					String = String:sub( 2 )
+					String = String:sub(2)
 					
 				else
 					
-					String = table.remove( Strings, 1 )
+					String = table.remove(Strings, 1)
 					
 					break
 					
@@ -872,21 +861,21 @@ Module.ArgTypes.String = function ( self, Strings, Plr, LastArg )
 				
 			else
 				
-				if Strings[ 1 ]:sub( 1, 1 ) == " " then
+				if Strings[1]:sub(1, 1) == " " then
 					
-					String = String .. table.remove( Strings, 1 )
+					String = String .. table.remove(Strings, 1)
 					
 				else
 					
-					String = String .. " " .. table.remove( Strings, 1 )
+					String = String .. " " .. table.remove(Strings, 1)
 					
 				end
 				
 			end
 			
-			if String:sub( -1 ) == Start then
+			if String:sub(-1) == Start then
 				
-				String = String:sub( 1, -2 )
+				String = String:sub(1, -2)
 				
 				break
 				
@@ -911,13 +900,13 @@ Module.ArgTypes.String = function ( self, Strings, Plr, LastArg )
 	
 	if self.Upper then
 		
-		String = String:upper( )
+		String = String:upper()
 		
 	end
 	
 	if self.Lower then
 		
-		String = String:lower( )
+		String = String:lower()
 		
 	end
 	
@@ -925,15 +914,15 @@ Module.ArgTypes.String = function ( self, Strings, Plr, LastArg )
 	
 end
 
-Module.ArgTypes.Number = function ( self, Strings, Plr )
+Module.ArgTypes.Number = function (self, Strings, Plr)
 	
-	local String = table.remove( Strings, 1 )
+	local String = table.remove(Strings, 1)
 	
 	if String == Module.ValidChar then return 1 end
 	
-	local Ran, Num = pcall( Calc, String )
+	local Ran, Num = pcall(Calc, String)
 	
-	if not Ran then return nil, false, Num:sub( -Num:reverse( ):find( ":" ) + 2 ) end
+	if not Ran then return nil, false, Num:sub(-Num:reverse():find(":") + 2) end
 	
 	if Num then
 		
@@ -957,14 +946,14 @@ Module.ArgTypes.Number = function ( self, Strings, Plr )
 	
 end
 
-Module.ArgTypeNames[ "Numbers" ] = "Number..."
-Module.ArgTypes.Numbers = function ( self, Strings, Plr )
+Module.ArgTypeNames["Numbers"] = "Number..."
+Module.ArgTypes.Numbers = function (self, Strings, Plr)
 	
-	local String = table.remove( Strings, 1 )
+	local String = table.remove(Strings, 1)
 	
 	if String == Module.ValidChar then return {1, 2} end
 	
-	local Strings = string.split( String:lower( ), "," )
+	local Strings = string.split(String:lower(), ",")
 	
 	for a = 1, #Strings do
 		
@@ -976,23 +965,23 @@ Module.ArgTypes.Numbers = function ( self, Strings, Plr )
 			
 		end
 		
-		Strings[ a ] = Num
+		Strings[a] = Num
 		
 	end
 	
 end
 
-Module.ArgTypes.Key = function ( self, Strings, Plr )
+Module.ArgTypes.Key = function (self, Strings, Plr)
 	
-	local String = table.remove( Strings, 1 )
+	local String = table.remove(Strings, 1)
 	
 	if String == Module.ValidChar then return Enum.KeyCode.A end
 	
-	local Keys = Enum.KeyCode:GetEnumItems( )
+	local Keys = Enum.KeyCode:GetEnumItems()
 	
 	for a = 1, #Keys do
 		
-		if Keys[ a ].Name:lower( ) == String then return Keys[ a ] end
+		if Keys[a].Name:lower() == String then return Keys[a] end
 		
 	end
 	
@@ -1000,17 +989,17 @@ Module.ArgTypes.Key = function ( self, Strings, Plr )
 	
 end
 
-Module.Toggles = { }
+Module.Toggles = {}
 
-Module.Events[ #Module.Events + 1 ] = Players.PlayerRemoving:Connect( function ( Plr )
+Module.Events[#Module.Events + 1] = Players.PlayerRemoving:Connect(function (Plr)
 	
-	Module.Toggles[ Plr ] = nil
+	Module.Toggles[Plr] = nil
 	
-end )
+end)
 
-Module.ArgTypes.Boolean = function ( self, Strings, Plr )
+Module.ArgTypes.Boolean = function (self, Strings, Plr)
 	
-	local String = table.remove( Strings, 1 )
+	local String = table.remove(Strings, 1)
 	
 	if String == Module.ValidChar then 
 		
@@ -1018,37 +1007,37 @@ Module.ArgTypes.Boolean = function ( self, Strings, Plr )
 		
 	end
 	
-	String = String:lower( )
+	String = String:lower()
 	
-	if TableHasValue( BoolEquivs[ 1 ], String ) then return true end
+	if TableHasValue(BoolEquivs[1], String) then return true end
 	
-	if TableHasValue( BoolEquivs[ 2 ], String ) then return false end
+	if TableHasValue(BoolEquivs[2], String) then return false end
 	
 	return nil, false
 	
 end
 
-Module.ArgTypes.Time = function ( self, Strings, Plr )
+Module.ArgTypes.Time = function (self, Strings, Plr)
 	
-	local String = table.remove( Strings, 1 )
+	local String = table.remove(Strings, 1)
 	
 	if String == Module.ValidChar then return 5 end
 	
-	String = String:lower( ):gsub( " ", "" )
+	String = String:lower():gsub(" ", "")
 	
-	local Nums = string.split( String, ":" )
+	local Nums = string.split(String, ":")
 	
 	if #Nums == 1 then
 		
 		local Time = 0
 		
-		for a, b in string.gmatch( Nums[ 1 ], "([%d%.]+)(%D*)" ) do
+		for a, b in string.gmatch(Nums[1], "([%d%.]+)(%D*)") do
 			
-			local Ran, Num = pcall( Calc, a )
+			local Ran, Num = pcall(Calc, a)
 			
-			if not Ran then return nil, false, Num:sub( -Num:reverse( ):find( ":" ) + 2 ) end
+			if not Ran then return nil, false, Num:sub(-Num:reverse():find(":") + 2) end
 			
-			Time = Time + Num * ( TimeEquivs[ b ] or 1 )
+			Time = Time + Num * (TimeEquivs[b] or 1)
 			
 		end
 		
@@ -1058,21 +1047,21 @@ Module.ArgTypes.Time = function ( self, Strings, Plr )
 		
 		for a = 1, #Nums do
 			
-			local Ran, Num = pcall( Calc, Nums[ a ] )
+			local Ran, Num = pcall(Calc, Nums[a])
 			
-			if not Ran then return nil, false, Num:sub( -Num:reverse( ):find( ":" ) + 2 ) end
+			if not Ran then return nil, false, Num:sub(-Num:reverse():find(":") + 2) end
 			
-			Nums[ a ] = Num
+			Nums[a] = Num
 			
 		end
 		
 		if #Nums == 2 then
 			
-			return Nums[ 1 ] * 60 * 60 + Nums[ 2 ] * 60
+			return Nums[1] * 60 * 60 + Nums[2] * 60
 			
 		elseif #Nums == 3 then
 			
-			return Nums[ 1 ] * 60 * 60 + Nums[ 2 ] * 60 + Nums[ 3 ]
+			return Nums[1] * 60 * 60 + Nums[2] * 60 + Nums[3]
 			
 		end
 		
@@ -1080,17 +1069,17 @@ Module.ArgTypes.Time = function ( self, Strings, Plr )
 	
 end
 
-Module.ArgTypes.ArgType = function ( self, Strings, Plr )
+Module.ArgTypes.ArgType = function (self, Strings, Plr)
 	
-	local String = table.remove( Strings, 1 )
+	local String = table.remove(Strings, 1)
 	
 	if String == Module.ValidChar then return Module.ArgTypes.Boolean end
 	
-	String = String:lower( )
+	String = String:lower()
 	
-	for a, b in pairs( Module.ArgTypes ) do
+	for a, b in pairs(Module.ArgTypes) do
 		
-		if a:lower( ) == String then return b end
+		if a:lower() == String then return b end
 		
 	end
 	
@@ -1098,19 +1087,19 @@ Module.ArgTypes.ArgType = function ( self, Strings, Plr )
 	
 end
 
-Module.ArgTypes.UserId = function ( self, Strings, Plr )
+Module.ArgTypes.UserId = function (self, Strings, Plr)
 	
-	local String = table.remove( Strings, 1 )
+	local String = table.remove(Strings, 1)
 	
-	local UserId = tonumber( String )
+	local UserId = tonumber(String)
 	
 	if UserId then return UserId end
 	
-	local Plrs = Module.FindPlayers( self, String, Plr )
+	local Plrs = Module.FindPlayers(self, String, Plr)
 	
-	if #Plrs == 1 then return Plrs[ 1 ].UserId end
+	if #Plrs == 1 then return Plrs[1].UserId end
 	
-	local Ran, UserId = pcall( Players.GetUserIdFromNameAsync, Players, String )
+	local Ran, UserId = pcall(Players.GetUserIdFromNameAsync, Players, String)
 	
 	if Ran then return UserId end
 	
@@ -1118,33 +1107,33 @@ Module.ArgTypes.UserId = function ( self, Strings, Plr )
 	
 end
 
-Module.AddArgMultiple( "Tool" )
+Module.AddArgMultiple("Tool")
 
-Module.AddArgMultiple( "Player" )
+Module.AddArgMultiple("Player")
 
-Module.AddArgMultiple( "Team" )
+Module.AddArgMultiple("Team")
 
-Module.AddArgAsset( "Sound", 3, 130775431 )
+Module.AddArgAsset("Sound", 3, 130775431)
 
-Module.AddArgAsset( "Place", 9, 64542766 )
+Module.AddArgAsset("Place", 9, 64542766)
 
-Module.Defaults.Toggle = function ( self, Strings, Plr )
+Module.Defaults.Toggle = function (self, Strings, Plr)
 	
 	local CurToggle
 	
 	if self.ToggleValue then
 		
-		CurToggle = not self.ToggleValue( )
+		CurToggle = not self.ToggleValue()
 		
 	else
 		
-		if not self.ToggleKey then self.ToggleKey = { } end
+		if not self.ToggleKey then self.ToggleKey = {} end
 		
-		Module.Toggles[ Plr ] = Module.Toggles[ Plr ] or { }
+		Module.Toggles[Plr] = Module.Toggles[Plr] or {}
 		
-		CurToggle = not Module.Toggles[ Plr ][ self.ToggleKey ]
+		CurToggle = not Module.Toggles[Plr][self.ToggleKey]
 		
-		Module.Toggles[ Plr ][ self.ToggleKey ] = CurToggle
+		Module.Toggles[Plr][self.ToggleKey] = CurToggle
 		
 	end
 	
@@ -1152,10 +1141,10 @@ Module.Defaults.Toggle = function ( self, Strings, Plr )
 	
 end
 
-Module.Defaults.Self = function ( self, Strings, Plr ) return Plr end
+Module.Defaults.Self = function (self, Strings, Plr) return Plr end
 
-Module.Defaults.SelfTable = function ( self, Strings, Plr ) return { Plr } end
+Module.Defaults.SelfTable = function (self, Strings, Plr) return {Plr} end
 
-Module.Defaults.SelfId = function ( self, Strings, Plr ) return Plr.UserId end
+Module.Defaults.SelfId = function (self, Strings, Plr) return Plr.UserId end
 
 return Module
