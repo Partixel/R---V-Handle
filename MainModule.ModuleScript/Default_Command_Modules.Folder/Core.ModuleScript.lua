@@ -2015,21 +2015,23 @@ return function ( Main, Client, VH_Events )
 			
 			for a, b in pairs( Main.Commands ) do
 				
-				local Matches = false
+				local Matches = a:lower():find(Args[1]) or b.Category:lower():find(Args[1])
 				
-				for c = 1, #b.Alias do
+				if not Matches then
 					
-					if type( b.Alias[ c ] ) == "string" and b.Alias[ c ]:find( Args[ 1 ] ) then
+					for c = 1, #b.Alias do
 						
-						Matches = true
-						
-						break
+						if type( b.Alias[ c ] ) == "string" and b.Alias[ c ]:find( Args[ 1 ] ) then
+							
+							Matches = true
+							
+							break
+							
+						end
 						
 					end
 					
 				end
-				
-				if a:lower( ):find( Args[ 1 ] ) then Matches = true end
 				
 				if Matches then
 					
