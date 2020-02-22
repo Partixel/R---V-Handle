@@ -232,6 +232,16 @@ local function TableHasMatchingObj(Table, String, ExactOnly)
 		end
 		
 		if #Found > 0 then return true, Found end
+		
+		if ExactOnly then return end
+		
+		for a = 1, #Table do
+			if (type(Table[a]) == "string" and Table[a] or Table[a].Name):lower():find( String ) then
+				Found[#Found + 1] = Table[a]
+			end
+		end
+		
+		if #Found > 0 then return true, Found end
 	end
 end
 

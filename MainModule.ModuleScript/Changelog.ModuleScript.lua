@@ -41,6 +41,7 @@ return {
 		Invisible / Cloak iteratively and save old
 		fix/plr(Arms / legs / camera)
 ]],
+	{Version = "0.70.1", SetupVersion = "1.3.7", Timestamp = 1582381731, Contributors = {"Partixel"}, Changes = {[[Re-added partial match in targetting as it's hard to target without]]}},
 	{Version = "0.70.0", SetupVersion = "1.3.7", Timestamp = 1582236406, Contributors = {"Partixel"}, Additions = {[[Pattern matching for arguments]]}, Changes = {[[No longer find strings within objects for regular argument matching]], [[Formatted the script]]}},
 	{Version = "0.69.0", SetupVersion = "1.3.7", Timestamp = 1581984000, Contributors = {"Partixel"}, Additions = {[[Added PersistentFilter and EndPersistentFilter to handle either timed or permanent messages to all players, including players that join part way through]], [[Added CommandStackRan event - Currently used for "repeat/" and "logs/" commands instead of being hardcoded]]}, Changes = {[[Pass Success, Ran and RanMsg to CommandRan event so you can tell if the command ran successfully or not - Used for the "errors/" command instead of hardcoded]], "Give the name of the player that shutdown the server and no longer create the shutdown message as it's superflous", "Format Changelog to new style"}},
 	{Version = "0.68.1", SetupVersion = "1.3.7", Timestamp = 1581169292, Contributors = {"Partixel"}, Changes = {[[Rejoin command now saves team]], [[Fixed ">OwnerType"]]}},
