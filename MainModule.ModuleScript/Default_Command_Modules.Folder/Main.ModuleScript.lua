@@ -1564,7 +1564,11 @@ return function ( Main, Client, VH_Events )
 							
 							for a, b in pairs( Rejoining[ Plr.UserId ] ) do
 								
-								leaderstats:WaitForChild( a ).Value = b
+								if a ~= "Team" then
+									
+									leaderstats:WaitForChild( a ).Value = b
+									
+								end
 								
 							end
 							

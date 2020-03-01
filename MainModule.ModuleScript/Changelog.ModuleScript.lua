@@ -41,6 +41,7 @@ return {
 		Invisible / Cloak iteratively and save old
 		fix/plr(Arms / legs / camera)
 ]],
+	{Version = "0.70.4", SetupVersion = "1.3.8", Timestamp = 1583064432, Contributors = {"Partixel"}, Changes = {[[Fixed an infinite wait in the rejoin command]]}},
 	{Version = "0.70.3", SetupVersion = "1.3.8", Timestamp = 1582831167, Contributors = {"Partixel"}, Changes = {[[Fixed an error in the Setup]]}},
 	{Version = "0.70.3", SetupVersion = "1.3.7", Timestamp = 1582831167, Contributors = {"Partixel"}, Changes = {[[Fixed a busy wait that some scripts were doing]]}},
 	{Version = "0.70.2", SetupVersion = "1.3.7", Timestamp = 1582389702, Contributors = {"Partixel"}, Changes = {[["cmds/" command now searches through categories as well as aliases]]}},
