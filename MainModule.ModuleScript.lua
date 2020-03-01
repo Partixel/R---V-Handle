@@ -2191,43 +2191,54 @@ for a = 1, #Mods do
 end
 
 ----==== External Commands ====----
---[[while not _G.VH_AddExternalCmds do wait( ) end
-_G.VH_AddExternalCmds( function ( Main ) end )]]--
+--[[if _G.VH_AddExternalCmds then
+	_G.VH_AddExternalCmds(VH_Func)
+else
+	_G.VH_AddExternalCmdsQueue = _G.VH_AddExternalCmdsQueue or {}
+	_G.VH_AddExternalCmdsQueue[script] = VH_Func
+end]]--
 
-local VH_ExternalCmds = ( _G.VH_Saved or { } ).VH_ExternalCmds or { }
+local VH_ExternalCmds = (_G.VH_Saved or {}).VH_ExternalCmds or {}
 
-VH_Events.Destroyed.Event:Connect( function ( Update )
+VH_Events.Destroyed.Event:Connect(function(Update)
 	
 	if not Update then return end
 	
 	_G.VH_Saved.VH_ExternalCmds = VH_ExternalCmds
 	
-end )
+end)
 
-function _G.VH_AddExternalCmds( Func )
+function _G.VH_AddExternalCmds(Func)
 	
-	VH_ExternalCmds[ #VH_ExternalCmds + 1 ] = Func
+	VH_ExternalCmds[#VH_ExternalCmds + 1] = Func
 	
-	Func( Main )
+	Func(Main)
 	
 	return #VH_ExternalCmds
 	
 end
 
-function _G.VH_RemoveExternalCmds( Key )
+function _G.VH_RemoveExternalCmds(Key)
 	
 	local Size = #_G.VH_ExternalCmds
 	
-	_G.VH_ExternalCmds[ Key ] = _G.VH_ExternalCmds[ Size ]
+	_G.VH_ExternalCmds[Key] = _G.VH_ExternalCmds[Size]
 	
-	_G.VH_ExternalCmds[ Size ] = nil
+	_G.VH_ExternalCmds[Size] = nil
 	
 end
 
 for a = 1, #VH_ExternalCmds do
 	
-	coroutine.wrap( VH_ExternalCmds[ a ] )( Main )
+	coroutine.wrap(VH_ExternalCmds[a])(Main)
 	
+end
+
+if _G.VH_AddExternalCmdsQueue then
+	for _, Func in pairs(_G.VH_AddExternalCmdsQueue) do
+		_G.VH_AddExternalCmds(Func)
+	end
+	_G.VH_AddExternalCmdsQueue = nil
 end
 
 ----==== Looped threads & ASync DataStore Loading ====----

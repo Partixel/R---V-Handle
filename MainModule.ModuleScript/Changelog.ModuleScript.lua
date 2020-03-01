@@ -41,6 +41,7 @@ return {
 		Invisible / Cloak iteratively and save old
 		fix/plr(Arms / legs / camera)
 ]],
+	{Version = "0.70.3", SetupVersion = "1.3.7", Timestamp = 1582831167, Contributors = {"Partixel"}, Changes = {[[Fixed a busy wait that some scripts were doing]]}},
 	{Version = "0.70.2", SetupVersion = "1.3.7", Timestamp = 1582389702, Contributors = {"Partixel"}, Changes = {[["cmds/" command now searches through categories as well as aliases]]}},
 	{Version = "0.70.1", SetupVersion = "1.3.7", Timestamp = 1582381731, Contributors = {"Partixel"}, Changes = {[[Re-added partial match in targetting as it's hard to target without]]}},
 	{Version = "0.70.0", SetupVersion = "1.3.7", Timestamp = 1582236406, Contributors = {"Partixel"}, Additions = {[[Pattern matching for arguments]]}, Changes = {[[No longer find strings within objects for regular argument matching]], [[Formatted the script]]}},
