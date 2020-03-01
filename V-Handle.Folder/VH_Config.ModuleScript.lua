@@ -37,5 +37,5 @@ return {
 		
 	}, -- Default - { VH_Fun = false, VH_Main = false, }
 	
-	SetupVersion = "1.3.7", -- DO NOT CHANGE THIS
+	SetupVersion = "1.3.8", -- DO NOT CHANGE THIS
 }

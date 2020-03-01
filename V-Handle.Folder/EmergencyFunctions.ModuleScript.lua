@@ -1,143 +1,91 @@
-local Hint = Instance.new( "Hint", workspace )
+local Players, InsertService = game:GetService("Players"), game:GetService("InsertService")
 
+local Hint = Instance.new("Hint", workspace)
 Hint.Text = "Admin failed to load, reverting to emergency functions - Say update/ to attempt a fix"
 
-local Players, InsertService = game:GetService( "Players" ), game:GetService( "InsertService" )
-
-local Events = { }
-
-function GetLatestId( AssetId )
-	
-	local Ran, Id = pcall( InsertService.GetLatestAssetVersionAsync, InsertService, AssetId )
-	
-	if Ran then return Id end
-	
-	Ran, Id = pcall( game.HttpService.GetAsync, game.HttpService, "https://rbxapi.v-handle.com/?type=1&id=" .. AssetId )
-	
-	if Ran then return tonumber( Id ) end
-	
-	return Id
-	
+function GetLatestId(AssetId)
+	local Ran, Id = pcall(InsertService.GetLatestAssetVersionAsync, InsertService, AssetId)
+	if Ran then
+		return Id
+	else
+		Ran, Id = pcall(game.HttpService.GetAsync, game.HttpService, "https://rbxapi.v-handle.com/?type=1&id=" .. AssetId)
+		if Ran then
+			return tonumber(Id)
+		else
+			return Id
+		end
+	end
 end
 
-function GetLatest( )
-	
-	local Ids = { 543870197, 571587156 }
-	
+local Ids = {543870197, 571587156}
+function GetLatest()
 	local Error
-	
-	for a = 1, #Ids do
-		
-		local Id = GetLatestId( Ids[ a ] )
-		
-		if type( Id ) == "number" then
-			
-			local Ran, Mod = pcall( InsertService.LoadAssetVersion, InsertService, Id )
-			
+	for _, ID in ipairs(Ids) do
+		local LatestID = GetLatestId(ID)
+		if type(LatestID) == "number" then
+			local Ran, Mod = pcall(InsertService.LoadAssetVersion, InsertService, LatestID)
 			if Ran and Mod then
-			
-				local ModChild = Mod:GetChildren( )[ 1 ]
-				
+				local ModChild = Mod:GetChildren()[1]
 				ModChild.Parent = nil
-				
-				Mod:Destroy( )
+				Mod:Destroy()
 				
 				return ModChild
-				
 			else
-				
-				Error = "Couldn't insert latest version of " .. Ids[ a ] .. "\n" .. Mod
-				
+				Error = "Couldn't insert latest version of " .. ID .. "\n" .. Mod
 			end
-			
 		else
-			
-			Error = "Couldn't get latest version of " .. Ids[ a ] .. "\n" .. Id
-			
+			Error = "Couldn't get latest version of " .. ID .. "\n" .. LatestID
 		end
-		
 	end
 	
 	return Error
-	
 end
 
+local Events = {}
 local Updated = false
-
-coroutine.wrap( function ( )
+local function Update()
+	local NewMain = GetLatest()
+	if not NewMain or type(NewMain) == "string" then return end
 	
-	while not Updated and wait( 30 ) do
+	if pcall(function() require(NewMain) end) then
+		Updated = true
 		
-		local NewMain = GetLatest( )
-		
-		if not NewMain or type( NewMain ) == "string" then return end
-		
-		if pcall( function ( ) require( NewMain ) end ) then
-			
-			Updated = true
-			
-			for a = 1, #Events do
-				
-				Events[ a ]:Disconnect( )
-				
-			end
-			
-			Hint:Destroy( )
-			
-			break
-			
+		for _, Event in ipairs(Events) do
+			Event:Disconnect()
 		end
 		
+		Hint:Destroy()
 	end
-	
-end )( )
-
-function Chatted( Msg, Plr )
-	
-	if Msg == "shutdown/" then
-		
-		Players.PlayerAdded:Connect( function ( Plr ) Plr:Kick( "Shutdown" ) end )
-		
-		local Plrs = Players:GetPlayers( )
-		
-		for a = 1, #Plrs do
-			
-			Plrs[ a ]:Kick( "Shutdown" )
-			
-		end
-		
-	elseif Msg == "update/" then
-		
-		local NewMain = GetLatest( )
-		
-		if not NewMain or type( NewMain ) == "string" then return end
-		
-		if pcall( function ( ) require( NewMain ) end ) then
-			
-			Updated = true
-			
-			for a = 1, #Events do
-				
-				Events[ a ]:Disconnect( )
-				
-			end
-			
-			Hint:Destroy( )
-			
-		end
-		
-	end
-	
 end
 
-Events[ #Events + 1 ] = Players.PlayerAdded:Connect( function ( Plr ) Events[ #Events + 1 ] = Plr.Chatted:Connect( function ( Msg ) Chatted( Msg, Plr ) end ) end )
+coroutine.wrap(function()
+	while not Updated and wait(30) do
+		Update()
+	end
+end)()
 
-local Plrs = Players:GetPlayers( )
+function Chatted(Msg, Plr)
+	if Msg == "shutdown/" then
+		Players.PlayerAdded:Connect(function(Plr) Plr:Kick("Shutdown") end)
+		
+		for _, Plr in ipairs(Players:GetPlayers()) do
+			Plr:Kick("Shutdown")
+		end
+	elseif Msg == "update/" then
+		Update()
+	end
+end
 
-for a = 1, #Plrs do
-	
-	Events[ #Events + 1 ] = Plrs[ a ].Chatted:Connect( function ( Msg ) Chatted( Msg, Plrs[ a ] ) end )
-	
+Events[#Events + 1] = Players.PlayerAdded:Connect(function(Plr)
+	Events[#Events + 1] = Plr.Chatted:Connect(function(Msg)
+		Chatted(Msg, Plr)
+	end)
+end)
+
+for _, Plr in ipairs(Players:GetPlayers()) do
+	Events[#Events + 1] = Plr.Chatted:Connect(function(Msg)
+		Chatted(Msg, Plr)
+	end)
 end
 
 return nil
