@@ -136,9 +136,9 @@ return function ( Main, ModFolder, VH_Events )
 			
 			print( "Passes:" )
 			
-			for a = 1, #Pass do
+			for _, Result in ipairs(Pass) do
 				
-				print( Pass[ a ][ 1 ] .. ( Pass[ a ][ 3 ] and ( " - " .. Pass[ a ][ 3 ] ) or "" ) .. " - " .. ( Pass[ a ][ 2 ] * 1000 ) .. "ms" )
+				print( Result[ 1 ] .. ( Result[ 3 ] and ( " - " .. Result[ 3 ] ) or "" ) .. " - " .. ( Result[ 2 ] * 1000 ) .. "ms" )
 				
 			end
 			
@@ -148,9 +148,9 @@ return function ( Main, ModFolder, VH_Events )
 			
 			print( "Fails:" )
 			
-			for a = 1, #Fail do
+			for _, Result in ipairs(Fail) do
 				
-				print( Fail[ a ][ 1 ] .. ( Fail[ a ][ 3 ] and ( " - " .. Fail[ a ][ 3 ] ) or "" ) .. " - " .. ( Fail[ a ][ 2 ] * 1000 ) .. "ms"  )
+				print( Result[ 1 ] .. ( Result[ 3 ] and ( " - " .. Result[ 3 ] ) or "" ) .. " - " .. ( Result[ 2 ] * 1000 ) .. "ms"  )
 				
 			end
 			
@@ -160,9 +160,9 @@ return function ( Main, ModFolder, VH_Events )
 			
 			print( "Errors:" )
 			
-			for a = 1, #Errored do
+			for _, Result in ipairs(Errored) do
 				
-				print( Errored[ a ][ 1 ] .. ( Errored[ a ][ 3 ] and ( " - " .. Errored[ a ][ 3 ] ) or "" ) .. " - " .. ( Errored[ a ][ 2 ] * 1000 ) .. "ms"  )
+				print( Result[ 1 ] .. ( Result[ 3 ] and ( " - " .. Result[ 3 ] ) or "" ) .. " - " .. ( Result[ 2 ] * 1000 ) .. "ms"  )
 				
 			end
 			

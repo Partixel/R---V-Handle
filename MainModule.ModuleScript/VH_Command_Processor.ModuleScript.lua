@@ -1,3 +1,5 @@
+local TextService, Players, LocalizationService = game:GetService("TextService"), game:GetService("Players"), game:GetService("LocalizationService")
+
 return function ( ChatService )
 	
 	repeat wait( ) until _G.VH_Admin
@@ -9,6 +11,12 @@ return function ( ChatService )
 	if ChatService:GetChannel( "V-Handle" ) then
 		
 		ChatService:RemoveChannel( "V-Handle" )
+		
+	end
+	
+	if ChatService:GetSpeaker("V-Handle") then
+		
+		ChatService:RemoveSpeaker("V-Handle")
 		
 	end
 	
@@ -26,11 +34,9 @@ return function ( ChatService )
 	
 	local VH_Channel = ChatService:AddChannel( "V-Handle" )
 	
-	local Speakers = ChatService:GetChannel( "All" ):GetSpeakerList( )
-	
-	for a = 1, #Speakers do
+	for _, Speaker in ipairs(ChatService:GetChannel( "All" ):GetSpeakerList( )) do
 		
-		local SpeakerObj = ChatService:GetSpeaker( Speakers[ a ] )
+		local SpeakerObj = ChatService:GetSpeaker( Speaker )
 		
 		if SpeakerObj then
 			
@@ -127,10 +133,6 @@ return function ( ChatService )
 		return false
 		
 	end )
-	
-	repeat wait( ) until _G.VH_Admin and _G.VH_Admin.Util
-	
-	local Main = _G.VH_Admin
 	
 	function GetChannels( )
 		
@@ -240,19 +242,17 @@ return function ( ChatService )
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			local Plrs, Channels = Args[ 1 ], Args[ 2 ] or GetChannels( )
-			
-			for a = 1, #Plrs do
+			for _, Target in ipairs(Args[1]) do
 				
-				for b = 1, #Channels do
+				for _, Channel in ipairs(Args[ 2 ] or GetChannels( )) do
 					
-					Muted[ Plrs[ a ].UserId ] = Muted[ Plrs[ a ].UserId ] or { }
+					Muted[ Target.UserId ] = Muted[ Target.UserId ] or { }
 					
-					Muted[ Plrs[ a ].UserId ][ Channels[ b ] ] = true
+					Muted[ Target.UserId ][ Channel ] = true
 					
-					local Channel = ChatService:GetChannel( Channels[ b ] )
+					local Channel = ChatService:GetChannel( Channel )
 					
-					Channel:MuteSpeaker( Plrs[ a ].Name )
+					Channel:MuteSpeaker( Target.Name )
 					
 				end
 				
@@ -278,27 +278,25 @@ return function ( ChatService )
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			local Plrs, Channels = Args[ 1 ], Args[ 2 ] or GetChannels( )
-			
-			for a = 1, #Plrs do
+			for _, Target in ipairs(Args[1]) do
 				
-				for b = 1, #Channels do
+				for _, Channel in ipairs(Args[ 2 ] or GetChannels( )) do
 					
-					if Muted[ Plrs[ a ].UserId ] and Muted[ Plrs[ a ].UserId ][ Channels[ b ] ] then
+					if Muted[ Target.UserId ] and Muted[ Target.UserId ][ Channel ] then
 						
-						Muted[ Plrs[ a ].UserId ][ Channels[ b ] ] = nil
+						Muted[ Target.UserId ][ Channel ] = nil
 						
 						local Found = false
 						
-						for a, b in pairs( Muted[ Plrs[ a ].UserId ] ) do Found = true break end
+						for a, b in pairs( Muted[ Target.UserId ] ) do Found = true break end
 						
-						if not Found then Muted[ Plrs[ a ].UserId ] = nil end
+						if not Found then Muted[ Target.UserId ] = nil end
 						
 					end
 					
-					local Channel = ChatService:GetChannel( Channels[ b ] )
+					local Channel = ChatService:GetChannel( Channel )
 					
-					Channel:UnmuteSpeaker( Plrs[ a ].Name )
+					Channel:UnmuteSpeaker( Target.Name )
 					
 				end
 				

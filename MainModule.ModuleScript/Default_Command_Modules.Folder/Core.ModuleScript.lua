@@ -1551,7 +1551,7 @@ return function ( Main, Client, VH_Events )
 		
 		NoTest = true,
 		
-		CanRun = "$admin, $debugger",
+		CanRun = "$moderator, $debugger",
 		
 		ArgTypes = { { Func = Main.TargetLib.ArgTypes.String, Required = true }, { Func = Main.TargetLib.ArgTypes.Number, Default = 0 } },
 		
@@ -1649,7 +1649,7 @@ return function ( Main, Client, VH_Events )
 		
 		NoTest = true,
 		
-		CanRun = "$admin, $debugger",
+		CanRun = "$moderator, $debugger",
 		
 		ArgTypes = { { Func = function ( self, Strings, Plr )
 			
@@ -2274,12 +2274,11 @@ return function ( Main, Client, VH_Events )
 				
 			end
 			
-			local CmdObj = Main.GetCommandAndArgs( Args[ 1 ]:lower( ) )
-			
-			if Args[ 1 ] == Main.TargetLib.ValidChar then
-				
+			local TargetCmd, CmdObj = Args[1]:lower()
+			if TargetCmd == Main.TargetLib.ValidChar then
 				CmdObj = Main.Commands.Help
-				
+			else
+				CmdObj = Main.GetCommandAndArgs(TargetCmd)
 			end
 			
 			if CmdObj then
@@ -2300,27 +2299,20 @@ return function ( Main, Client, VH_Events )
 					
 				end
 				
-				local Aliases = ""
-				
+				local Aliases = {TargetCmd}
 				for a = 1, #CmdObj.Alias do
-					
-					if type( CmdObj.Alias[ a ] ) == "table" then
-						
-						local Start = type( CmdObj.Alias[ a ][ 1 ] ) == "function" and 3 or 1
-												
-						for b = Start, #CmdObj.Alias[ a ] do
-							
-							Aliases = Aliases .. ( a == 1 and b == Start and "" or a == #CmdObj.Alias and b == #CmdObj.Alias[ a ] and " and " or ", " ) .. CmdObj.Alias[ a ][ b ]
-							
+					if type(CmdObj.Alias[a]) == "table" then
+						local Start = type(CmdObj.Alias[a][1]) == "function" and 3 or 1
+						for b = Start, #CmdObj.Alias[a] do
+							if CmdObj.Alias[a][b] ~= TargetCmd then
+								Aliases[#Aliases + 1] = CmdObj.Alias[a][b]
+							end
 						end
-						
-					else
-						
-						Aliases = Aliases .. ( a == 1 and "" or a == #CmdObj.Alias and " and " or ", " ) .. CmdObj.Alias[ a ]
-						
+					elseif CmdObj.Alias[a] ~= TargetCmd then
+						Aliases[#Aliases + 1] = CmdObj.Alias[a]
 					end
-					
 				end
+				Aliases = Main.Util.FormatStringTable(Aliases)
 				
 				local CanRun
 				
@@ -2341,7 +2333,7 @@ return function ( Main, Client, VH_Events )
 					CanRun = "\nCan run - " .. ( CmdObj.CanRun or "anyone" )
 				end
 				
-				Main.Util.SendMessage( Plr, "Aliases - " .. Aliases .. "\nDescription - " .. CmdObj.Description .. "\nCategory - " .. CmdObj.Category .. "\nUsage - " .. ( type( CmdObj.Alias[ 1 ] ) == "table" and CmdObj.Alias[ 1 ][ 2 ] or CmdObj.Alias[ 1 ] ) .. Main.GetUsage( CmdObj ) .. CanRun .. Config, "Info" )
+				Main.Util.SendMessage( Plr, "Aliases - " .. Aliases .. "\nDescription - " .. CmdObj.Description .. "\nCategory - " .. CmdObj.Category .. "\nUsage - " .. TargetCmd .. Main.GetUsage( Plr, TargetCmd ) .. CanRun .. Config, "Info" )
 				
 				return true
 				

@@ -1,22 +1,22 @@
-return function ( Main, Client, VH_Events )
+return function(Main, Client, VH_Events)
 	
-	local Teams, Players, TeleportService, PointsService, Lighting = game:GetService( "Teams" ), game:GetService( "Players" ), game:GetService( "TeleportService" ), game:GetService( "PointsService" ), game:GetService( "Lighting" )
+	local Teams, Players, TeleportService, PointsService, Lighting = game:GetService("Teams"), game:GetService("Players"), game:GetService("TeleportService"), game:GetService("PointsService"), game:GetService("Lighting")
 	
 	Main.Commands.Calculate = {
 		
-		Alias = { "calculate", "calc" },
+		Alias = {"calculate", "calc"},
 		
 		Description = "Calculates out the given equation",
 		
 		Category = "Math",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Number, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Number, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			if Silent then return true, Args[ 1 ] end
+			if Silent then return true, Args[1] end
 			
-			Main.Util.SendMessage( Plr, Args[ 1 ], "Info" )
+			Main.Util.SendMessage(Executor, Args[1], "Info")
 			
 			return true
 			
@@ -26,7 +26,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.Give = {
 		
-		Alias = { "give", "givetool" },
+		Alias = {"give", "givetool"},
 		
 		Description = "Gives the specified player(s) the specified tools",
 		
@@ -34,17 +34,17 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.Tools, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.Tools, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			for a = 1, #Args[ 1 ] do
+			for a = 1, #Args[1] do
 				
-				if Args[ 1 ][ a ]:FindFirstChild( "Backpack" ) then
+				if Args[1][a]:FindFirstChild("Backpack") then
 					
-					for b = 1, #Args[ 2 ] do
+					for b = 1, #Args[2] do
 						
-						Args[ 2 ][ b ]:Clone( ).Parent = Args[ 1 ][ a ].Backpack
+						Args[2][b]:Clone().Parent = Args[1][a].Backpack
 						
 					end
 					
@@ -60,7 +60,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.Take = {
 		
-		Alias = { "take", "taketool", "strip" },
+		Alias = {"take", "taketool", "strip"},
 		
 		Description = "Takes the specified tools from the specified player(s)",
 		
@@ -68,17 +68,17 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.String, Required = true, Name = "tool..." } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.String, Required = true, Name = "tool..."}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			for a = 1, #Args[ 1 ] do
+			for a = 1, #Args[1] do
 				
-				local Tools = Main.TargetLib.FindTools( self.ArgTypes[ 2 ], Args[ 2 ], Plr, Main.Util.GetPlayerTools( Args[ 1 ][ a ] )  )
+				local Tools = Main.TargetLib.FindTools(self.ArgTypes[2], Args[2], Executor, Main.Util.GetPlayerTools(Args[1][a]) )
 				
 				for b = 1, #Tools do
 					
-					Tools[ b ]:Destroy( )
+					Tools[b]:Destroy()
 					
 				end
 				
@@ -92,7 +92,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.PermGive = {
 		
-		Alias = { "permgive", "toggle" },
+		Alias = {"permgive", "toggle"},
 		
 		Description = "Gives the specified tools to the specified player(s) permanently",
 		
@@ -100,23 +100,23 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.Tools, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.Tools, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			for a = 1, #Args[ 1 ] do
+			for a = 1, #Args[1] do
 				
-				for b = 1, #Args[ 2 ] do
+				for b = 1, #Args[2] do
 					
-					if Args[ 1 ][ a ]:FindFirstChild( "StarterGear" ) then
+					if Args[1][a]:FindFirstChild("StarterGear") then
 						
-						Args[ 2 ][ b ]:Clone( ).Parent = Args[ 1 ][ a ].StarterGear
+						Args[2][b]:Clone().Parent = Args[1][a].StarterGear
 						
 					end
 					
-					if Args[ 1 ][ a ]:FindFirstChild( "Backpack" ) then
+					if Args[1][a]:FindFirstChild("Backpack") then
 						
-						Args[ 2 ][ b ]:Clone( ).Parent = Args[ 1 ][ a ].Backpack
+						Args[2][b]:Clone().Parent = Args[1][a].Backpack
 						
 					end
 					
@@ -132,7 +132,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.PermTake = {
 		
-		Alias = { "permtake", "untoggle" },
+		Alias = {"permtake", "untoggle"},
 		
 		Description = "Takes the specified tools from the specified player(s) permanently",
 		
@@ -140,17 +140,17 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.String, Required = true, Name = "tool..." } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.String, Required = true, Name = "tool..."}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			for a = 1, #Args[ 1 ] do
+			for a = 1, #Args[1] do
 				
-				local Tools = Main.TargetLib.FindTools( { }, Args[ 2 ], Plr, Main.Util.GetPlayerTools( Args[ 1 ][ a ], true )  )
+				local Tools = Main.TargetLib.FindTools({}, Args[2], Executor, Main.Util.GetPlayerTools(Args[1][a], true) )
 				
 				for b = 1, #Tools do
 					
-					Tools[ b ]:Destroy( )
+					Tools[b]:Destroy()
 					
 				end
 				
@@ -164,7 +164,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.Rank = {
 		
-		Alias = { "rank" },
+		Alias = {"rank"},
 		
 		Description = "Gets the rank of the specified player in the specified group",
 		
@@ -172,23 +172,23 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.Number, Required = true, Name = "groupid" } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.Number, Required = true, Name = "groupid"}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
 			local String = ""
 			
-			for a = 1, #Args[ 1 ] do
+			for a = 1, #Args[1] do
 				
-				String = String .. Args[ 1 ][ a ].Name .. " is rank " .. Args[ 1 ][ a ]:GetRankInGroup( Args[ 2 ] ) .. " - " .. Args[ 1 ][ a ] :GetRoleInGroup( Args[ 2 ] ) .. "\n"
+				String = String .. Args[1][a].Name .. " is rank " .. Args[1][a]:GetRankInGroup(Args[2]) .. " - " .. Args[1][a] :GetRoleInGroup(Args[2]) .. "\n"
 				
 			end
 			
-			String = String:sub( 1, -2 )
+			String = String:sub(1, -2)
 			
 			if Silent then return true, String end
 			
-			Main.Util.SendMessage( Plr, String, "Info" )
+			Main.Util.SendMessage(Executor, String, "Info")
 			
 			return true
 			
@@ -196,15 +196,15 @@ return function ( Main, Client, VH_Events )
 		
 	}
 	
-	Client.Spectate.OnServerEvent:Connect( function ( Plr )
+	Client.Spectate.OnServerEvent:Connect(function(Plr)
 		
-		Plr:LoadCharacter( )
+		Plr:LoadCharacter()
 		
-	end )
+	end)
 	
 	Main.Commands.Spectate = {
 		
-		Alias = { Main.TargetLib.AliasTypes.Toggle( 1, "spectate", "watch", "spec" ) },
+		Alias = {Main.TargetLib.AliasTypes.Toggle(1, "spectate", "watch", "spec")},
 		
 		Description = "Spectates the specified player or free camera",
 		
@@ -212,25 +212,25 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator&!$console",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Boolean, Default = Main.TargetLib.Defaults.Toggle }, Main.TargetLib.ArgTypes.Player },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Boolean, Default = Main.TargetLib.Defaults.Toggle}, Main.TargetLib.ArgTypes.Player},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			if Args[ 1 ] then
+			if Args[1] then
 				
-				if Args[ 2 ] == Plr then return false, "You can't spectate yourself!" end
+				if Args[2] == Executor then return false, "You can't spectate yourself!" end
 				
-				if Plr.Character then
+				if Executor.Character then
 					
-					Plr.Character:Destroy( )
+					Executor.Character:Destroy()
 					
 				end
 				
-				Client.Spectate:FireClient( Plr, Args[ 2 ] )
+				Client.Spectate:FireClient(Executor, Args[2])
 				
 			else
 				
-				Client.Spectate:FireClient( Plr, false )
+				Client.Spectate:FireClient(Executor, false)
 				
 			end
 			
@@ -241,66 +241,43 @@ return function ( Main, Client, VH_Events )
 	}
 	
 	Main.Commands.Kill = {
-		
-		Alias = { "kill", "slay" },
-		
+		Alias = {"kill", "slay"},
 		Description = "Kills the specified player(s)",
-		
 		Category = "Characters",
-		
 		CanRun = "$moderator",
-		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true, Default = Main.TargetLib.Defaults.SelfTable } },
-		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
-			
-			for a = 1, #Args[ 1 ] do
-				
-				if Args[ 1 ][ a ].Character and Args[ 1 ][ a ].Character:FindFirstChild( "Humanoid" ) then
-					
-					Args[ 1 ][ a ].Character:FindFirstChild( "Humanoid" ).Health = 0
-					
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true, Default = Main.TargetLib.Defaults.SelfTable}},
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
+			local Successful = {}
+			for _, Target in ipairs(Args[1]) do
+				if Target.Character and Target.Character:FindFirstChild("Humanoid") then
+					Target.Character:FindFirstChild("Humanoid").Health = 0
+					Successful[#Successful + 1] = Target
 				end
-				
 			end
 			
-			return true
-			
+			return Main.Util.HandlePlayerTargetResult(Executor, Silent, Args[1], Successful, {})
 		end
-		
 	}
 	
-	local LuaLoadCharacter = function ( Obj ) Obj:LoadCharacter( ) end
-	
+	local LuaLoadCharacter = function(Obj) Obj:LoadCharacter() end
 	Main.Commands.Respawn = {
-		
-		Alias = { "respawn", "re" },
-		
+		Alias = {"respawn", "re"},
 		Description = "Respawns the specified player(s)",
-		
 		Category = "Characters",
-		
 		CanRun = "$moderator",
-		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true } },
-		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
-			
-			for a = 1, #Args[ 1 ] do
-				
-				coroutine.wrap( LuaLoadCharacter )( Args[ 1 ][ a ] )
-				
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Default = Main.TargetLib.Defaults.SelfTable, Required = true}},
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
+			for _, Target in ipairs(Args[1]) do
+				coroutine.wrap(LuaLoadCharacter)(Target)
 			end
 			
-			return true
-			
+			return {Success = true, Message = {"Success", {Targets = Main.Util.FormatPlayerList(Executor, Args[1])}}}
 		end
-		
 	}
 	
 	Main.Commands.Heal = {
 		
-		Alias = { "heal" },
+		Alias = {"heal"},
 		
 		Description = "Full heals the target player(s)",
 		
@@ -308,37 +285,31 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Default = Main.TargetLib.Defaults.SelfTable, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
-			
-			local Plrs = Args[ 1 ]
-			
-			for a = 1, #Plrs do
-				
-				if Plrs[ a ].Character and Plrs[ a ].Character:FindFirstChild( "Humanoid" ) then
-					
-					Plrs[ a ].Character.Humanoid.Health = Plrs[ a ].Character.Humanoid.MaxHealth
-					
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
+			local Successful = {}
+			for _, Target in ipairs(Args[1]) do
+				if Target.Character and Target.Character:FindFirstChild("Humanoid") then
+					Target.Character.Humanoid.Health = Target.Character.Humanoid.MaxHealth
+					Successful[#Successful + 1] = Target
 				end
-				
 			end
 			
-			return true
-			
+			return Main.Util.HandlePlayerTargetResult(Executor, Silent, Args[1], Successful, {})
 		end
 		
 	}
 	
-	local Blind = ( _G.VH_Saved or { } ).Blind or setmetatable( { }, { __mode = "k" } )
+	local Blind = (_G.VH_Saved or {}).Blind or setmetatable({}, {__mode = "k"})
 	
-	VH_Events.Destroyed.Event:Connect( function ( Update )
+	VH_Events.Destroyed.Event:Connect(function(Update)
 		
 		if not Update then
 			
-			for a, b in pairs( Blind ) do
+			for a, b in pairs(Blind) do
 				
-				b:Destroy( )
+				b:Destroy()
 				
 			end
 			
@@ -348,11 +319,11 @@ return function ( Main, Client, VH_Events )
 		
 		_G.VH_Saved.Blind = Blind
 		
-	end )
+	end)
 	
 	Main.Commands.Blind = {
 		
-		Alias = { Main.TargetLib.AliasTypes.Toggle( 2, "blind" ) },
+		Alias = {Main.TargetLib.AliasTypes.Toggle(2, "blind")},
 		
 		Description = "Makes the specified player(s) (un)blind",
 		
@@ -360,49 +331,54 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.Boolean, Default = Main.TargetLib.Defaults.Toggle } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.Boolean, Default = Main.TargetLib.Defaults.Toggle}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			local GUI = Instance.new( "ScreenGui" )
+			local GUI = Instance.new("ScreenGui")
 			
 			GUI.Name = "VH_Blind"
 			
 			GUI.ResetOnSpawn = false
 			
-			local Frame = Instance.new( "Frame", GUI )
+			local Frame = Instance.new("Frame", GUI)
 			
-			Frame.Size = UDim2.new( 10, 0, 10, 0 )
+			Frame.Size = UDim2.new(10, 0, 10, 0)
 			
-			Frame.Position = UDim2.new( -5, 0, -5, 0 )
+			Frame.Position = UDim2.new(-5, 0, -5, 0)
 			
-			Frame.BackgroundColor3 = Color3.new( 0, 0, 0 )
+			Frame.BackgroundColor3 = Color3.new(0, 0, 0)
 			
 			Frame.ZIndex = -10
 			
-			for a = 1, #Args[ 1 ] do
+			local Successful = {}
+			for _, Target in ipairs(Args[1]) do
 				
-				local PlayerGui = Args[ 1 ][ a ]:FindFirstChildOfClass( "PlayerGui" )
+				local PlayerGui = Target:FindFirstChildOfClass("PlayerGui")
 				
 				if PlayerGui then
 					
-					if Args[ 2 ] then
+					if Args[2] then
 						
-						if not Blind[ Args[ 1 ][ a ] ] then
+						if not Blind[Target] then
 							
-							local Clone = GUI:Clone( )
+							local Clone = GUI:Clone()
 							
 							Clone.Parent = PlayerGui
 							
-							Blind[ Args[ 1 ][ a ] ] = Clone
+							Blind[Target] = Clone
+							
+							Successful[#Successful + 1] = Target
 							
 						end
 						
-					else
+					elseif Blind[Target] then
 						
-						Blind[ Args[ 1 ][ a ] ]:Destroy( )
+						Blind[Target]:Destroy()
 						
-						Blind[ Args[ 1 ][ a ] ] = nil
+						Blind[Target] = nil
+						
+						Successful[#Successful + 1] = Target
 						
 					end
 					
@@ -410,25 +386,25 @@ return function ( Main, Client, VH_Events )
 				
 			end
 			
-			return true
+			return Main.Util.HandlePlayerTargetResult(Executor, Silent, Args[1], Successful, {Blind = Args[2]})
 			
 		end
 		
 	}
 	
-	local Invincible = ( _G.VH_Saved or { } ).Invincible or setmetatable( { }, { __mode = "k" } )
+	local Invincible = (_G.VH_Saved or {}).Invincible or setmetatable({}, {__mode = "k"})
 	
-	VH_Events.Destroyed.Event:Connect( function ( Update )
+	VH_Events.Destroyed.Event:Connect(function(Update)
 		
 		if not Update then return end
 		
 		_G.VH_Saved.Invincible = Invincible
 		
-	end )
+	end)
 	
 	Main.Commands.Invincible = {
 		
-		Alias = { Main.TargetLib.AliasTypes.Toggle( 2, "invincible", "god" ) },
+		Alias = {Main.TargetLib.AliasTypes.Toggle(2, "invincible", "god")},
 		
 		Description = "Makes the specified player(s) invincible/vincible",
 		
@@ -436,27 +412,31 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true, Default = Main.TargetLib.Defaults.SelfTable }, { Func = Main.TargetLib.ArgTypes.Boolean, Default = Main.TargetLib.Defaults.Toggle } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true, Default = Main.TargetLib.Defaults.SelfTable}, {Func = Main.TargetLib.ArgTypes.Boolean, Default = Main.TargetLib.Defaults.Toggle}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			for a = 1, #Args[ 1 ] do
+			for a = 1, #Args[1] do
 				
-				local Hum = Args[ 1 ][ a ].Character and Args[ 1 ][ a ].Character:FindFirstChildOfClass( "Humanoid" )
+				local Hum = Args[1][a].Character and Args[1][a].Character:FindFirstChildOfClass("Humanoid")
 				
 				if Hum then
 					
-					if Args[ 2 ] then
+					if Args[2] then
 						
-						Invincible[ Args[ 1 ][ a ] ] = { Hum.Health, Hum.MaxHealth }
-						
-						Hum.MaxHealth = math.huge
-						
-						Hum.Health = math.huge
+						if not Invincible[Args[1][a]] then
+							
+							Invincible[Args[1][a]] = {Hum.Health, Hum.MaxHealth}
+							
+							Hum.MaxHealth = math.huge
+							
+							Hum.Health = math.huge
+							
+						end
 						
 					else
 						
-						local Health, Max = unpack( Invincible[ Args[ 1 ][ a ] ] or { 100, 100 } )
+						local Health, Max = unpack(Invincible[Args[1][a]] or {100, 100})
 						
 						Hum.MaxHealth = Max or 100
 						
@@ -476,7 +456,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.ForceField = {
 		
-		Alias = { Main.TargetLib.AliasTypes.Toggle( 2, "ff", "forcefield" ) },
+		Alias = {Main.TargetLib.AliasTypes.Toggle(2, "ff", "forcefield")},
 		
 		Description = "Gives/removes the specified player(s) forcefield",
 		
@@ -484,23 +464,23 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true, Default = Main.TargetLib.Defaults.SelfTable }, { Func = Main.TargetLib.ArgTypes.Boolean, Default = Main.TargetLib.Defaults.Toggle } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true, Default = Main.TargetLib.Defaults.SelfTable}, {Func = Main.TargetLib.ArgTypes.Boolean, Default = Main.TargetLib.Defaults.Toggle}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			for a = 1, #Args[ 1 ] do
+			for a = 1, #Args[1] do
 				
-				if Args[ 1 ][ a ].Character then
+				if Args[1][a].Character then
 					
-					if Args[ 2 ] then
+					if Args[2] then
 						
-						Instance.new( "ForceField", Args[ 1 ][ a ].Character ).Name = "VH_FF"
+						Instance.new("ForceField", Args[1][a].Character).Name = "VH_FF"
 						
 					else
 						
-						while Args[ 1 ][ a ].Character:FindFirstChildOfClass( "ForceField" ) do
+						while Args[1][a].Character:FindFirstChildOfClass("ForceField") do
 							
-							Args[ 1 ][ a ].Character:FindFirstChildOfClass( "ForceField" ):Destroy( )
+							Args[1][a].Character:FindFirstChildOfClass("ForceField"):Destroy()
 							
 						end
 						
@@ -518,7 +498,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.Invisible = {
 		
-		Alias = { "invisible", "hide", "cloak" },
+		Alias = {"invisible", "hide", "cloak"},
 		
 		Description = "Makes the specified player(s) invisible/visible",
 		
@@ -526,43 +506,43 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true, Default = Main.TargetLib.Defaults.SelfTable }, { Func = Main.TargetLib.ArgTypes.Boolean, Default = Main.TargetLib.Defaults.Toggle } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true, Default = Main.TargetLib.Defaults.SelfTable}, {Func = Main.TargetLib.ArgTypes.Boolean, Default = Main.TargetLib.Defaults.Toggle}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			for a = 1, #Args[ 1 ] do
+			for a = 1, #Args[1] do
 				
-				if Args[ 1 ][ a ].Character then
+				if Args[1][a].Character then
 					
-					local Children = Args[ 1 ][ a ].Character:GetDescendants( )
+					local Children = Args[1][a].Character:GetDescendants()
 					
 					for b = 1, #Children do
 						
-						local Property = ( ( Children[ b ]:IsA( "BasePart" ) or Children[ b ]:IsA( "Decal" ) ) and "Transparency" )
+						local Property = ((Children[b]:IsA("BasePart") or Children[b]:IsA("Decal")) and "Transparency")
 						
 						if Property then
 							
-							local Old = Children[ b ]:FindFirstChild( "VH_Invisible_Old" )
+							local Old = Children[b]:FindFirstChild("VH_Invisible_Old")
 							
-							if Args[ 2] then
+							if Args[2] then
 								
-								local Old = Instance.new( "NumberValue" )
+								local Old = Instance.new("NumberValue")
 								
 								Old.Name = "VH_Invisible_Old"
 								
-								Old.Value = Children[ b ][ Property ]
+								Old.Value = Children[b][Property]
 								
-								Old.Parent = Children[ b ]
+								Old.Parent = Children[b]
 								
-								Children[ b ][ Property ] = 1
+								Children[b][Property] = 1
 								
 							elseif Old then
 								
-								Children[ b ][ Property ] = Old.Value
+								Children[b][Property] = Old.Value
 								
 							end
 							
-							if Old then Old:Destroy( ) end
+							if Old then Old:Destroy() end
 							
 						end
 						
@@ -578,17 +558,17 @@ return function ( Main, Client, VH_Events )
 		
 	}
 	
-	local Spawns = ( _G.VH_Saved or { } ).Spawns or { }
+	local Spawns = (_G.VH_Saved or {}).Spawns or {}
 	
-	VH_Events.Destroyed.Event:Connect( function ( Update )
+	VH_Events.Destroyed.Event:Connect(function(Update)
 		
 		if not Update then
 			
-			for a, b in pairs( Spawns ) do
+			for a, b in pairs(Spawns) do
 				
-				b[ 2 ]:Disconnect( )
+				b[2]:Disconnect()
 				
-				Spawns[ a ] = nil
+				Spawns[a] = nil
 				
 			end
 			
@@ -598,25 +578,25 @@ return function ( Main, Client, VH_Events )
 		
 		_G.VH_Saved.Spawns = Spawns
 		
-	end )
+	end)
 	
-	function SpawnEvent( Plr, Char )
+	function SpawnEvent(Plr, Char)
 		
-		Char:WaitForChild( "HumanoidRootPart" ).CFrame = Spawns[ Plr ][ 1 ]
+		Char:WaitForChild("HumanoidRootPart").CFrame = Spawns[Plr][1]
 		
 	end
 	
-	for Plr, Objs in pairs( Spawns ) do
+	for Plr, Objs in pairs(Spawns) do
 		
-		Objs[ 2 ]:Disconnect( )
+		Objs[2]:Disconnect()
 		
-		Objs[ 2 ] = Plr.CharacterAppearanceLoaded:Connect( function ( Char ) SpawnEvent( Plr, Char ) end )
+		Objs[2] = Plr.CharacterAppearanceLoaded:Connect(function(Char) SpawnEvent(Plr, Char) end)
 		
 	end
 	
 	Main.Commands.SetSpawn = {
 		
-		Alias = { "setspawn" },
+		Alias = {"setspawn"},
 		
 		Description = "Sets the specified player(s) spawn to your current location",
 		
@@ -624,23 +604,23 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator&!$console",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			local CF = Plr.Character and Plr.Character:FindFirstChild( "HumanoidRootPart" ) and Plr.Character.HumanoidRootPart.CFrame
+			local CF = Executor.Character and Executor.Character:FindFirstChild("HumanoidRootPart") and Executor.Character.HumanoidRootPart.CFrame
 			
 			if not CF then return false, "You must be alive and have a Torso" end
 			
-			for a = 1, #Args[ 1 ] do
+			for a = 1, #Args[1] do
 				
-				if Spawns[ Args[ 1 ][ a ] ] then
+				if Spawns[Args[1][a]] then
 					
-					Spawns[ Args[ 1 ][ a ] ][ 1 ] = CF
+					Spawns[Args[1][a]][1] = CF
 					
 				else
 					
-					Spawns[ Args[ 1 ][ a ] ] = { CF, Args[ 1 ][ a ].CharacterAppearanceLoaded:Connect( function ( Char ) SpawnEvent( Args[ 1 ][ a ], Char ) end ) }
+					Spawns[Args[1][a]] = {CF, Args[1][a].CharacterAppearanceLoaded:Connect(function(Char) SpawnEvent(Args[1][a], Char) end)}
 					
 				end
 				
@@ -654,7 +634,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.RemoveSpawn = {
 		
-		Alias = { "removespawn", "unsetspawn" },
+		Alias = {"removespawn", "unsetspawn"},
 		
 		Description = "Removes the specified player(s) custom spawns",
 		
@@ -662,17 +642,17 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			for a = 1, #Args[ 1 ] do
+			for a = 1, #Args[1] do
 				
-				if Spawns[ Args[ 1 ][ a ] ] then
+				if Spawns[Args[1][a]] then
 					
-					Spawns[ Args[ 1 ][ a ] ][ 2 ]:Disconnect( )
+					Spawns[Args[1][a]][2]:Disconnect()
 					
-					Spawns[ Args[ 1 ][ a ] ] = nil
+					Spawns[Args[1][a]] = nil
 					
 				end
 				
@@ -686,51 +666,51 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.Health = {
 		
-		Alias = { "health", "sethealth", "sh" },
+		Alias = {"health", "sethealth", "sh"},
 		
-		Description = "Sets the specified players health to a specific amount or to a percent of max health ( e.g. 50% )",
+		Description = "Sets the specified players health to a specific amount or to a percent of max health (e.g. 50%)",
 		
 		Category = "Characters",
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = function ( self, Strings, Plr )
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = function(self, Strings, Plr)
 			
-			local String = table.remove( Strings, 1 )
+			local String = table.remove(Strings, 1)
 			
-			if String == Main.TargetLib.ValidChar then return { true, 0.75 } end
+			if String == Main.TargetLib.ValidChar then return {true, 0.75} end
 			
-			if String:sub( -1 ) == "%" and tonumber( String:sub( 1, -2 ) ) then
+			if String:sub(-1) == "%" and tonumber(String:sub(1, -2)) then
 				
-				return { false, tonumber( String:sub( 1, -2 ) ) / 100 }
+				return {false, tonumber(String:sub(1, -2)) / 100}
 				
-			elseif tonumber( String ) then
+			elseif tonumber(String) then
 				
-				return { true, tonumber( String) }
+				return {true, tonumber(String)}
 				
 			end
 			
 			return nil, false
 			
-		end, Required = true, Name = "number_or_percentage" } },
+		end, Required = true, Name = "number_or_percentage"}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			local Plrs = Args[ 1 ]
+			local Plrs = Args[1]
 				
 			for a = 1, #Plrs do
 				
-				if Plrs[ a ].Character and Plrs[ a ].Character:FindFirstChild( "Humanoid" ) then
+				if Plrs[a].Character and Plrs[a].Character:FindFirstChild("Humanoid") then
 					
-					local Humanoid = Plrs[ a ].Character.Humanoid
+					local Humanoid = Plrs[a].Character.Humanoid
 					
-					if Args[ 2 ][ 1 ] then
+					if Args[2][1] then
 						
-						Humanoid.Health = Args[ 2 ][ 2 ]
+						Humanoid.Health = Args[2][2]
 						
 					else
 						
-						Humanoid.Health = Humanoid.MaxHealth * Args[ 2 ][ 2 ]
+						Humanoid.Health = Humanoid.MaxHealth * Args[2][2]
 						
 					end
 					
@@ -746,7 +726,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.MaxHealth = {
 		
-		Alias = { "maxhealth", "mh" },
+		Alias = {"maxhealth", "mh"},
 		
 		Description = "Sets the maximum health of the specified player(s) to the specified amount",
 		
@@ -754,21 +734,21 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.Number, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.Number, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			local Plrs = Args[ 1 ]
+			local Plrs = Args[1]
 			
 			for a = 1, #Plrs do
 				
-				if Plrs[ a ].Character and Plrs[ a ].Character:FindFirstChild( "Humanoid" ) then
+				if Plrs[a].Character and Plrs[a].Character:FindFirstChild("Humanoid") then
 					
-					local Humanoid = Plrs[ a ].Character.Humanoid
+					local Humanoid = Plrs[a].Character.Humanoid
 					
-					Humanoid.MaxHealth = Args[ 2 ]
+					Humanoid.MaxHealth = Args[2]
 					
-					Humanoid.Health = math.min( Humanoid.Health, Humanoid.MaxHealth )
+					Humanoid.Health = math.min(Humanoid.Health, Humanoid.MaxHealth)
 					
 				end
 				
@@ -780,9 +760,9 @@ return function ( Main, Client, VH_Events )
 		
 	}
 	
-	Main.Commands.Speed = {
+	Main.Commands.WalkSpeed = {
 		
-		Alias = { "speed", "walkspeed", "ws" },
+		Alias = {"walkspeed", "speed", "ws"},
 		
 		Description = "Sets the walkspeed of the specified player(s) to the specified amount",
 		
@@ -790,17 +770,17 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.Number, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.Number, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			local Plrs = Args[ 1 ]
+			local Plrs = Args[1]
 			
 			for a = 1, #Plrs do
 				
-				if Plrs[ a ].Character and Plrs[ a ].Character:FindFirstChild( "Humanoid" ) then
+				if Plrs[a].Character and Plrs[a].Character:FindFirstChild("Humanoid") then
 					
-					Plrs[ a ].Character.Humanoid.WalkSpeed = Args[ 2 ]
+					Plrs[a].Character.Humanoid.WalkSpeed = Args[2]
 					
 				end
 				
@@ -812,9 +792,28 @@ return function ( Main, Client, VH_Events )
 		
 	}
 	
+	Main.Commands.JumpPower = {
+		Alias = {"jumppower", "jp"},
+		Description = "Changes the jumppower of the specified players",
+		Category = "Characters",
+		CanRun = "$moderator",
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.Number, Required = true}},
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
+			local Successful = {}
+			for _, Target in ipairs(Args[1]) do
+				if Target.Character and Target.Character:FindFirstChild("Humanoid") then
+					Target.Character.Humanoid.JumpPower = Args[2]
+					Successful[#Successful + 1] = Target
+				end
+			end
+			
+			return Main.Util.HandlePlayerTargetResult(Executor, Silent, Args[1], Successful, {Value = Args[2]})
+		end
+	}
+	
 	Main.Commands.Damage = {
 		
-		Alias = { "damage" },
+		Alias = {"damage"},
 		
 		Description = "Damages the specified player by the specified amount",
 		
@@ -822,17 +821,17 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.Number, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.Number, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			local Plrs = Args[ 1 ]
+			local Plrs = Args[1]
 			
 			for a = 1, #Plrs do
 				
-				if Plrs[ a ].Character and Plrs[ a ].Character:FindFirstChild( "Humanoid" ) then
+				if Plrs[a].Character and Plrs[a].Character:FindFirstChild("Humanoid") then
 					
-					Plrs[ a ].Character.Humanoid:TakeDamage( Args[2] )
+					Plrs[a].Character.Humanoid:TakeDamage(Args[2])
 					
 				end
 				
@@ -846,7 +845,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.Jump = {
 		
-		Alias = { "jump" },
+		Alias = {"jump"},
 		
 		Description = "Causes the specified player(s) to jump",
 		
@@ -854,17 +853,17 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			local Plrs = Args[ 1 ]
+			local Plrs = Args[1]
 			
 			for a = 1, #Plrs do
 				
-				if Plrs[ a ].Character and Plrs[ a ].Character:FindFirstChild( "Humanoid" ) then
+				if Plrs[a].Character and Plrs[a].Character:FindFirstChild("Humanoid") then
 					
-					Plrs[ a ].Character.Humanoid.Jump = true
+					Plrs[a].Character.Humanoid.Jump = true
 					
 				end
 				
@@ -878,7 +877,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.Return = {
 		
-		Alias = { "return" },
+		Alias = {"return"},
 		
 		Description = "Teleports the specified player to the place before they were last teleported",
 		
@@ -886,13 +885,13 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Player, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Player, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			if not Main.Util.LastPos[ Args[ 1 ] ] then return false, "No previous location found" end
+			if not Main.Util.LastPos[Args[1]] then return false, "No previous location found" end
 			
-			Main.Util.Teleport( Args[ 1 ], Main.Util.LastPos[ Args[ 1 ] ] )
+			Main.Util.Teleport(Args[1], Main.Util.LastPos[Args[1]])
 			
 			return true
 			
@@ -902,7 +901,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.Goto = {
 		
-		Alias = { "goto" },
+		Alias = {"goto"},
 		
 		Description = "Teleports you to the specified player",
 		
@@ -910,11 +909,11 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Player, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Player, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 				
-			Main.Util.Teleport( Plr, Args[ 1 ].Character.HumanoidRootPart.CFrame + Vector3.new( math.random( -20, 20 ), math.random( -20, 20 ), math.random( -20, 20 ) ) / 20 )
+			Main.Util.Teleport(Executor, Args[1].Character.HumanoidRootPart.CFrame + Vector3.new(math.random(-20, 20), math.random(-20, 20), math.random(-20, 20)) / 20)
 			
 			return true
 			
@@ -924,7 +923,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.Bring = {
 		
-		Alias = { "bring" },
+		Alias = {"bring"},
 		
 		Description = "Teleports the specified player(s) to you",
 		
@@ -932,17 +931,17 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator&!$console",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			local Plrs = Args[ 1 ]
+			local Plrs = Args[1]
 			
-			if Plr.Character and Plr.Character:FindFirstChild( "HumanoidRootPart" ) then
+			if Executor.Character and Executor.Character:FindFirstChild("HumanoidRootPart") then
 				
 				for a = 1, #Plrs do
 					
-					Main.Util.Teleport( Plrs[ a ], Plr.Character.HumanoidRootPart.CFrame + Vector3.new( math.random( -20, 20 ), math.random( -20, 20 ), math.random( -20, 20 ) ) / 20 )
+					Main.Util.Teleport(Plrs[a], Executor.Character.HumanoidRootPart.CFrame + Vector3.new(math.random(-20, 20), math.random(-20, 20), math.random(-20, 20)) / 20)
 					
 				end
 				
@@ -956,7 +955,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.Teleport = {
 		
-		Alias = { "teleport", "tp", "send" },
+		Alias = {"teleport", "tp", "send"},
 		
 		Description = "Teleports the specified player(s) to the target player",
 		
@@ -964,19 +963,19 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.Player, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.Player, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			if Args[ 2 ].Character and Args[ 2 ].Character:FindFirstChild("HumanoidRootPart") then
+			if Args[2].Character and Args[2].Character:FindFirstChild("HumanoidRootPart") then
 				
-				local TargRoot = Args[ 2 ].Character.HumanoidRootPart
+				local TargRoot = Args[2].Character.HumanoidRootPart
 				
-				local Plrs = Args[ 1 ]
+				local Plrs = Args[1]
 				
 				for a = 1, #Plrs do
 					
-					Main.Util.Teleport( Plrs[ a ], TargRoot.CFrame + Vector3.new( math.random( -20, 20 ), math.random( -20, 20 ), math.random( -20, 20 ) ) / 20 )
+					Main.Util.Teleport(Plrs[a], TargRoot.CFrame + Vector3.new(math.random(-20, 20), math.random(-20, 20), math.random(-20, 20)) / 20)
 					
 				end
 				
@@ -990,7 +989,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.PlaceTeleport = {
 		
-		Alias = { "placeteleport", "place" },
+		Alias = {"placeteleport", "place"},
 		
 		Description = "Teleports specified player(s) to the specified place",
 		
@@ -1000,19 +999,19 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.PlaceId, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.PlaceId, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			for a = 1, #Args[ 1 ] do
+			for a = 1, #Args[1] do
 				
-				TeleportService:Teleport( Args[ 2 ], Args[ 1 ][ a ] )
+				TeleportService:Teleport(Args[2], Args[1][a])
 				
-				if a == 1 then wait( 1 ) end
+				if a == 1 then wait(1) end
 				
 			end
 			
-			--TeleportService:TeleportPartyAsync( Args[ 2 ], Args[ 1 ] )
+			--TeleportService:TeleportPartyAsync(Args[2], Args[1])
 			
 			return true
 			
@@ -1020,19 +1019,19 @@ return function ( Main, Client, VH_Events )
 		
 	}
 	
-	local TeamOverride = setmetatable( { }, { __mode = "k" } )
+	local TeamOverride = setmetatable({}, {__mode = "k"})
 	
-	local TeamLocked = ( _G.VH_Saved or { } ).TeamLocked or setmetatable( { }, { __mode = "k" } )
+	local TeamLocked = (_G.VH_Saved or {}).TeamLocked or setmetatable({}, {__mode = "k"})
 	
-	VH_Events.Destroyed.Event:Connect( function ( Update )
+	VH_Events.Destroyed.Event:Connect(function(Update)
 		
 		if not Update then
 			
-			for a, b in pairs( TeamLocked ) do
+			for a, b in pairs(TeamLocked) do
 				
-				b:Disconnect( )
+				b:Disconnect()
 				
-				TeamLocked[ a ] = nil
+				TeamLocked[a] = nil
 				
 			end
 			
@@ -1042,11 +1041,11 @@ return function ( Main, Client, VH_Events )
 		
 		_G.VH_Saved.TeamLocked = TeamLocked
 		
-	end )
+	end)
 	
 	Main.Commands.LockTeam = {
 		
-		Alias = { Main.TargetLib.AliasTypes.Toggle( 2, "lockteam", "lteam" ) },
+		Alias = {Main.TargetLib.AliasTypes.Toggle(2, "lockteam", "lteam")},
 		
 		Description = "(Un)Locks the specified player(s) team unless set by admin",
 		
@@ -1054,39 +1053,39 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.Boolean, Default = Main.TargetLib.Defaults.Toggle } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.Boolean, Default = Main.TargetLib.Defaults.Toggle}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			for a = 1, #Args[ 1 ] do
+			for a = 1, #Args[1] do
 				
-				if TeamLocked[ Args[ 1 ][ a ] ] then
+				if TeamLocked[Args[1][a]] then
 					
-					TeamLocked[ Args[ 1 ][ a ] ]:Disconnect( )
+					TeamLocked[Args[1][a]]:Disconnect()
 					
-					TeamLocked[ Args[ 1 ][ a ] ] = nil
+					TeamLocked[Args[1][a]] = nil
 					
 				end
 				
-				if Args[ 2 ] then
+				if Args[2] then
 					
-					local OriginalTeam = Args[ 1 ][ a ].Team
+					local OriginalTeam = Args[1][a].Team
 					
-					TeamLocked[ Args[ 1 ][ a ] ] = Args[ 1 ][ a ]:GetPropertyChangedSignal( "Team" ):Connect( function ( )
+					TeamLocked[Args[1][a]] = Args[1][a]:GetPropertyChangedSignal("Team"):Connect(function()
 						
-						if TeamOverride[ Args[ 1 ][ a ] ] then
+						if TeamOverride[Args[1][a]] then
 							
-							OriginalTeam = Args[ 1 ][ a ].Team
+							OriginalTeam = Args[1][a].Team
 							
-							TeamOverride[ Args[ 1 ][ a ] ] = nil
+							TeamOverride[Args[1][a]] = nil
 							
 						else
 							
-							Args[ 1 ][ a ].Team = OriginalTeam
+							Args[1][a].Team = OriginalTeam
 							
 						end
 						
-					end )
+					end)
 					
 				end
 				
@@ -1100,7 +1099,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.Team = {
 		
-		Alias = { "team", "setteam" },
+		Alias = {"team", "setteam"},
 		
 		Description = "Changes the team of the specified player(s) to the specified team",
 		
@@ -1108,19 +1107,19 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.Team, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.Team, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			for a = 1, #Args[ 1 ] do
+			for a = 1, #Args[1] do
 				
-				if TeamLocked[ Args[ 1 ][ a ] ] then
+				if TeamLocked[Args[1][a]] then
 					
-					TeamOverride[ Args[ 1 ][ a ] ] = true
+					TeamOverride[Args[1][a]] = true
 					
 				end
 				
-				Args[ 1 ][ a ].TeamColor = Args[ 2 ].TeamColor
+				Args[1][a].TeamColor = Args[2].TeamColor
 				
 			end
 			
@@ -1132,7 +1131,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.BalanceTeams = {
 		
-		Alias = { "balanceteams" },
+		Alias = {"balanceteams"},
 		
 		Description = "Balances the specified player(s) between the specified team(s)",
 		
@@ -1140,29 +1139,29 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.Teams } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.Teams}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			local Plrs = Args[ 1 ]
+			local Plrs = Args[1]
 			
-			local Teams = Args[ 2 ] or Teams:GetTeams( )
+			local Teams = Args[2] or Teams:GetTeams()
 			
-			local Cur = math.random( 1, #Teams )
+			local Cur = math.random(1, #Teams)
 			
 			while #Plrs > 0 do
 				
-				local Chosen = math.random( 1, #Plrs )
+				local Chosen = math.random(1, #Plrs)
 				
-				if TeamLocked[ Plrs[ Chosen ] ] then
+				if TeamLocked[Plrs[Chosen]] then
 					
-					TeamOverride[ Plrs[ Chosen ] ] = true
+					TeamOverride[Plrs[Chosen]] = true
 					
 				end
 				
-				Plrs[ Chosen ].TeamColor = Teams[ Cur ].TeamColor
+				Plrs[Chosen].TeamColor = Teams[Cur].TeamColor
 				
-				table.remove( Plrs, Chosen )
+				table.remove(Plrs, Chosen)
 				
 				Cur = Cur + 1
 				
@@ -1178,7 +1177,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.RandomiseTeams = {
 		
-		Alias = { "randomiseteams" },
+		Alias = {"randomiseteams"},
 		
 		Description = "Randomly places the specified player(s) in the specified team(s) or all",
 		
@@ -1186,21 +1185,21 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, Main.TargetLib.ArgTypes.Teams },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, Main.TargetLib.ArgTypes.Teams},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			local Teams = Args[ 2 ] or Teams:GetTeams( )
+			local Teams = Args[2] or Teams:GetTeams()
 			
-			for a = 1, #Args[ 1 ] do
+			for a = 1, #Args[1] do
 				
-				if TeamLocked[ Args[ 1 ][ a ] ] then
+				if TeamLocked[Args[1][a]] then
 					
-					TeamOverride[ Args[ 1 ][ a ] ] = true
+					TeamOverride[Args[1][a]] = true
 					
 				end
 				
-				Args[ 1 ][ a ].TeamColor = Teams[ math.random( #Teams ) ].TeamColor
+				Args[1][a].TeamColor = Teams[math.random(#Teams)].TeamColor
 				
 			end
 			
@@ -1212,7 +1211,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.Message = {
 		
-		Alias = { "message", "m" },
+		Alias = {"message", "m"},
 		
 		Description = "Creates a message with the specified text",
 		
@@ -1220,19 +1219,19 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.String, Required = true }, Main.TargetLib.ArgTypes.Time },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.String, Required = true}, Main.TargetLib.ArgTypes.Time},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			local Time = Args[ 2 ] or ( #Args[ 1 ] / 15 + 2 )
+			local Time = Args[2] or (#Args[1] / 15 + 2)
 			
 			if Time < 0 then return true end
 			
-			Main.PersistentFilter( Plr, "Message", Time, Args[ 1 ], Plr.Name )
+			Main.PersistentFilter(Executor, "Message", Time, Args[1], Executor.Name)
 			
 			if not Silent then
 				
-				wait( Time )
+				wait(Time)
 				
 			end
 			
@@ -1244,7 +1243,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.Hint = {
 		
-		Alias = { "hint", "h" },
+		Alias = {"hint", "h"},
 		
 		Description = "Creates a hint with the specified text",
 		
@@ -1252,19 +1251,19 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.String, Required = true }, Main.TargetLib.ArgTypes.Time },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.String, Required = true}, Main.TargetLib.ArgTypes.Time},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			local Time = Args[ 2 ] or ( #Args[ 1 ] / 15 + 2 )
+			local Time = Args[2] or (#Args[1] / 15 + 2)
 			
 			if Time < 0 then return true end
 			
-			Main.PersistentFilter( Plr, "Hint", Time, Args[ 1 ], Plr.Name )
+			Main.PersistentFilter(Executor, "Hint", Time, Args[1], Executor.Name)
 			
 			if not Silent then
 				
-				wait( Time )
+				wait(Time)
 				
 			end
 			
@@ -1276,7 +1275,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.Stats = {
 		
-		Alias = { "stats", "change", "setstat", "stat", "setstats" },
+		Alias = {"stats", "change", "setstat", "stat", "setstats"},
 		
 		Description = "Changes the value of the specified leaderboard stat for the specified player(s)",
 		
@@ -1284,27 +1283,27 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.String, Required = true, Name = "stat" }, { Func = Main.TargetLib.ArgTypes.String, Required = true, Name = "value" } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.String, Required = true, Name = "stat"}, {Func = Main.TargetLib.ArgTypes.String, Required = true, Name = "value"}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			Args[ 2 ] = Args[ 2 ]:lower( )
+			Args[2] = Args[2]:lower()
 			
 			local Found = false
 			
-			for a = 1, #Args[ 1 ] do
+			for a = 1, #Args[1] do
 				
-				local Stats = Args[ 1 ][ a ]:FindFirstChild( "leaderstats" )
+				local Stats = Args[1][a]:FindFirstChild("leaderstats")
 				
 				if Stats then
 					
-					Stats = Stats:GetChildren( )
+					Stats = Stats:GetChildren()
 					
 					for a = 1, #Stats do
 						
-						if Stats[ a ].Name:lower( ):sub( 1, #Args[ 2 ] ) == Args[ 2 ]:lower( ) then
+						if Stats[a].Name:lower():sub(1, #Args[2]) == Args[2]:lower() then
 							
-							Stats[ a ].Value = Args[ 3 ]
+							Stats[a].Value = Args[3]
 							
 							Found = true
 							
@@ -1326,7 +1325,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.ResetStats = {
 		
-		Alias = { "resetstats", "rs" },
+		Alias = {"resetstats", "rs"},
 		
 		Description = "Changes the value of all number leaderboard stats to 0 for the specified player(s)",
 		
@@ -1334,25 +1333,25 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
 			local Found = false
 			
-			for a = 1, #Args[ 1 ] do
+			for a = 1, #Args[1] do
 				
-				local Stats = Args[ 1 ][ a ]:FindFirstChild( "leaderstats" )
+				local Stats = Args[1][a]:FindFirstChild("leaderstats")
 				
 				if Stats then
 					
-					Stats = Stats:GetChildren( )
+					Stats = Stats:GetChildren()
 					
 					for a = 1, #Stats do
 						
-						if type( Stats[ a ].Value ) == "number" then
+						if type(Stats[a].Value) == "number" then
 							
-							Stats[ a ].Value = 0
+							Stats[a].Value = 0
 							
 							Found = true
 							
@@ -1372,17 +1371,17 @@ return function ( Main, Client, VH_Events )
 		
 	}
 	
-	local Locked = ( _G.VH_Saved or { } ).Locked
+	local Locked = (_G.VH_Saved or {}).Locked
 	
-	VH_Events.Destroyed.Event:Connect( function ( Update )
+	VH_Events.Destroyed.Event:Connect(function(Update)
 		
 		if not Update then
 			
 			if Locked then
 				
-				Locked[ 1 ]:Destroy( )
+				Locked[1]:Destroy()
 				
-				Locked[ 2 ]:Disconnect( )
+				Locked[2]:Disconnect()
 				
 			end
 			
@@ -1394,13 +1393,13 @@ return function ( Main, Client, VH_Events )
 		
 		return true
 		
-	end )
+	end)
 	
-	local Hard, Soft, Number = { [ "hard" ] = 0, [ "h" ] = 0, [ "true" ] = 0 }, { [ "soft" ] = 1, [ "s" ] = 1, [ "false" ] = 1 }, { [ "number" ] = 2, [ "n" ] = 2 }
+	local Hard, Soft, Number = {["hard"] = 0, ["h"] = 0, ["true"] = 0}, {["soft"] = 1, ["s"] = 1, ["false"] = 1}, {["number"] = 2, ["n"] = 2}
 	
 	Main.Commands.LockServer = {
 		
-		Alias = { "lockserver" },
+		Alias = {"lockserver"},
 		
 		Description = "Prevents players from joining the server\nIf the second argument is 'soft' players that leave can rejoin, if it is 'number' it locks it to the number of players on each team",
 		
@@ -1408,93 +1407,97 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = function ( self, Strings, Plr )
+		ArgTypes = {{Func = function(self, Strings, Plr)
 			
-			local String = table.remove( Strings, 1 ):lower( )
+			local String = table.remove(Strings, 1):lower()
 			
-			return ( String == Main.TargetLib.ValidChar or Hard[ String ] ) or Soft[ String ] or Number[ String ] or nil
+			return (String == Main.TargetLib.ValidChar or Hard[String]) or Soft[String] or Number[String] or nil
 			
-		end, Name = "hard_soft_number" }, Main.TargetLib.ArgTypes.Time },
+		end, Name = "hard_soft_number"}, Main.TargetLib.ArgTypes.Time},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
 			if Locked then
 				
-				Main.Commands.UnlockServer.Callback( )
+				Main.Commands.UnlockServer.Callback()
 				
 			end
 			
-			local PlrIds = { }
+			local PlrIds = {}
 			
-			if Args[ 1 ] == 1 then
+			if Args[1] == 1 then
 				
-				Main.PersistentFilter( Plr, "LockServer", "LockServer", nil, "1" )
+				Main.PersistentFilter(Executor, "LockServer", "LockServer", nil, "1")
 				
-				local Plrs = Players:GetPlayers( )
+				local Plrs = Players:GetPlayers()
 				
 				for a = 1, #Plrs do
 					
-					PlrIds[ Plrs[ a ].UserId ] = true
+					PlrIds[Plrs[a].UserId] = true
 					
 				end
 				
-			elseif Args[ 1 ] == 2 then
+			elseif Args[1] == 2 then
 				
-				Main.PersistentFilter( Plr, "LockServer", "LockServer", nil, "2" )
+				Main.PersistentFilter(Executor, "LockServer", "LockServer", nil, "2")
 				
-				local Teams = Teams:GetTeams( )
+				local Teams = Teams:GetTeams()
 				
 				for a = 1, #Teams do
 					
-					PlrIds[ Teams[ a ] ] = #Teams[ a ]:GetPlayers( )
+					PlrIds[Teams[a]] = #Teams[a]:GetPlayers()
 					
 				end
 				
 			else
 				
-				Main.PersistentFilter( Plr, "LockServer", "LockServer", nil, "3" )
+				Main.PersistentFilter(Executor, "LockServer", "LockServer", nil, "3")
 				
 			end
 			
-			Locked = Players.PlayerAdded:Connect( function ( Plr )
+			Locked = Players.PlayerAdded:Connect(function(Plr)
 				
-				if Args[ 1 ] == 1 then
+				if not Main.IsOwner(Plr.UserId) then
 					
-					if PlrIds[ Plr.UserId ] then
+					if Args[1] == 1 then
 						
-						return
+						if PlrIds[Plr.UserId] then
+							
+							return
+							
+						end
+						
+					elseif Args[1] == 2 then
+						
+						wait()
+						
+						if #Plr.Team:GetPlayers() <= PlrIds[Plr.Team] then
+							
+							return
+							
+						end
 						
 					end
 					
-				elseif Args[ 1 ] == 2 then
+					Main.AnnounceJoin[Plr] = Main.AnnounceJoin[Plr] or {}
 					
-					wait( )
+					Main.AnnounceJoin[Plr][#Main.AnnounceJoin[Plr] + 1] = "the server is locked"
 					
-					if #Plr.Team:GetPlayers( ) <= PlrIds[ Plr.Team ] then
+					Main.AnnouncedLeft[Plr] = false
 						
-						return
-						
-					end
+					Plr:Kick("Server is locked")
 					
 				end
 				
-				Main.AnnounceJoin[ Plr ] = Main.AnnounceJoin[ Plr ] or { }
-				
-				Main.AnnounceJoin[ Plr ][ #Main.AnnounceJoin[ Plr ] + 1 ] = "the server is locked"
-				
-				Main.AnnouncedLeft[ Plr ] = false
-					
-				Plr:Kick( "Server is locked" )
-				
-			end )
+			end)
 			
-			if Args[ 2 ] then
+			if Args[2] then
 				
-				delay( Args[ 2 ], function ( )
+				delay(Args[2], function()
 					
-					if Locked then Main.Commands.UnlockServer.Callback( ) end
+					if Locked then Main.Commands.UnlockServer.Callback() end
 					
-				end )
+				end)
 				
 			end
 			
@@ -1506,7 +1509,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.UnlockServer = {
 		
-		Alias = { "unlockserver" },
+		Alias = {"unlockserver"},
 		
 		Description = "Unlocks the server",
 		
@@ -1514,13 +1517,13 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
 			if not Locked then return false, "Server isn't locked" end
 			
 			Main.EndPersistentFilter("LockServer")
 			
-			Locked = Locked:Disconnect( )
+			Locked = Locked:Disconnect()
 			
 			return true
 			
@@ -1532,41 +1535,41 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.Rejoin = {
 		
-		Alias = { "rejoin" },
+		Alias = {"rejoin"},
 		
 		Description = "Makes you rejoin the server",
 		
 		Category = "Debug",
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			if Plr:FindFirstChild( "leaderstats" ) then
+			if Executor:FindFirstChild("leaderstats") then
 				
-				Rejoining = Rejoining or { }
+				Rejoining = Rejoining or {}
 				
-				Rejoining[ Plr.UserId ] = { ["Team"] = Plr.Team }
+				Rejoining[Executor.UserId] = {["Team"] = Executor.Team}
 				
-				local Stats = Plr.leaderstats:GetChildren( )
+				local Stats = Executor.leaderstats:GetChildren()
 				
 				for a = 1, #Stats do
 					
-					Rejoining[ Plr.UserId ][ Stats[ a ].Name ] = Stats[ a ].Value
+					Rejoining[Executor.UserId][Stats[a].Name] = Stats[a].Value
 					
 				end
 				
 				if not RejoiningEvent then
 					
-					RejoiningEvent = Players.PlayerAdded:Connect( function ( Plr )
+					RejoiningEvent = Players.PlayerAdded:Connect(function(Executor)
 						
-						if Rejoining[ Plr.UserId ] then
+						if Rejoining[Executor.UserId] then
 							
-							local leaderstats = Plr:WaitForChild( "leaderstats" )
+							local leaderstats = Executor:WaitForChild("leaderstats")
 							
-							for a, b in pairs( Rejoining[ Plr.UserId ] ) do
+							for a, b in pairs(Rejoining[Executor.UserId]) do
 								
 								if a ~= "Team" then
 									
-									leaderstats:WaitForChild( a ).Value = b
+									leaderstats:WaitForChild(a).Value = b
 									
 								end
 								
@@ -1574,37 +1577,37 @@ return function ( Main, Client, VH_Events )
 							
 							wait()
 							
-							Plr.Team = Rejoining[Plr.UserId].Team
+							Executor.Team = Rejoining[Executor.UserId].Team
 							
-							Rejoining[ Plr.UserId ] = nil
+							Rejoining[Executor.UserId] = nil
 							
 						end
 						
-						if not next( Rejoining ) then
+						if not next(Rejoining) then
 							
 							Rejoining = nil
 							
-							RejoiningEvent:Disconnect( )
+							RejoiningEvent:Disconnect()
 							
 							RejoiningEvent = nil
 							
 						end
 						
-					end )
+					end)
 					
 				end
 				
-				delay( 5, function ( )
+				delay(5, function()
 					
 					if RejoiningEvent then
 						
-						Rejoining[ Plr.UserId ] = nil
+						Rejoining[Executor.UserId] = nil
 						
-						if not next( Rejoining ) then
+						if not next(Rejoining) then
 							
 							Rejoining = nil
 							
-							RejoiningEvent:Disconnect( )
+							RejoiningEvent:Disconnect()
 							
 							RejoiningEvent = nil
 							
@@ -1612,11 +1615,11 @@ return function ( Main, Client, VH_Events )
 						
 					end
 					
-				end )
+				end)
 				
 			end
 			
-			TeleportService:TeleportToPlaceInstance( game.PlaceId, game.JobId, Plr )
+			TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, Executor)
 			
 			return true
 			
@@ -1625,56 +1628,90 @@ return function ( Main, Client, VH_Events )
 	}
 	
 	Main.Commands.Ping = {
-		
-		Alias = { "ping", "pingof" },
-		
-		Description = "Returns the current ping of the specified player or yourself",
-		
+		Alias = {"ping", "pingof"},
+		Description = "Returns the current ping of the specified player(s) or yourself",
 		Category = "Debug",
-		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true, Default = Main.TargetLib.Defaults.SelfTable } },
-		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
-			
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true, Default = Main.TargetLib.Defaults.SelfTable}},
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			local Msg = "The ping of the specified players are:"
 			
-			local Thread = coroutine.running( )
-			
+			local Thread = coroutine.running()
 			local WaitingFor = 0
-			
-			for a = 1, #Args[ 1 ] do
-				
+			for _, Target in ipairs(Args[1]) do
 				WaitingFor = WaitingFor + 1
-				
-				spawn( function ( )
-						
-					local Tick = tick( )
+				spawn(function()
+					local Tick = tick()
+					Client.Ping:InvokeClient(Target)
 					
-					Client.Ping:InvokeClient( Args[ 1 ][ a ] )
-					
-					Tick = tick( ) - Tick
-					
-					Tick = math.floor( Tick * 100000 + 0.5 ) / 100
-					
-					coroutine.resume( Thread, "\n" .. Args[ 1 ][ a ].Name .. " - " .. Tick .. "ms" )
-					
-				end )
-				
+					coroutine.resume( Thread, "\n" .. Target.Name .. " - " .. math.floor((tick() - Tick) * 100000 + 0.5) / 100 .. "ms" )
+				end)
 			end
 			
-			while WaitingFor ~= 0 do WaitingFor = WaitingFor - 1 Msg = Msg .. coroutine.yield( ) end
+			while WaitingFor ~= 0 do WaitingFor = WaitingFor - 1 Msg = Msg .. coroutine.yield() end
 			
-			Main.Util.SendMessage( Plr, Msg, "Info" )
+			Main.Util.SendMessage(Executor, Msg, "Info")
 			
 			return true
+		end,
+	}
+	
+	Main.Commands.FriendsOf = {
+		Alias = {"friendsof"},
+		Description = "Returns the number of friends the specified player(s) have",
+		Category = "Players",
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}},
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
+			local Msg = "The number of friends the specified players have are:"
 			
-		end
-		
+			local Thread = coroutine.running()
+			local WaitingFor = 0
+			for _, Target in ipairs(Args[1]) do
+				WaitingFor = WaitingFor + 1
+				spawn(function()
+					local Pages, Friends = Players:GetFriendsAsync(Target.UserId), 0
+					while true do
+						for _, item in ipairs(Pages:GetCurrentPage()) do
+							Friends = Friends + 1
+						end
+						
+						if Pages.IsFinished then
+							break
+						end
+						
+						Pages:AdvanceToNextPageAsync()
+					end
+					
+					coroutine.resume( Thread, "\n" .. Target.Name .. " - " .. Friends )
+				end)
+			end
+			
+			while WaitingFor ~= 0 do WaitingFor = WaitingFor - 1 Msg = Msg .. coroutine.yield() end
+			
+			Main.Util.SendMessage(Executor, Msg, "Info")
+			
+			return true
+		end,
+	}
+	
+	Main.Commands.AccountAge = {
+		Alias = {"accountage", "accountageof", "ageof"},
+		Description = "Returns the account age of the specified player(s)",
+		Category = "Players",
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}},
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
+			local Msg = "The account age of the specified players are:"
+			for _, Target in ipairs(Args[1]) do
+				Msg = Msg .. "\n" .. Target.Name .. " - " .. Target.AccountAge .. " days"
+			end
+			
+			Main.Util.SendMessage(Executor, Msg, "Info")
+			return true
+		end,
 	}
 	
 	Main.Commands.AddTime = {
 		
-		Alias = { "addtime" },
+		Alias = {"addtime"},
 		
 		Description = "Adds the specified time to the current time",
 		
@@ -1682,11 +1719,11 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Time, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Time, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			Lighting:SetMinutesAfterMidnight( Lighting:GetMinutesAfterMidnight( ) + Args[ 1 ] / 60 )
+			Lighting:SetMinutesAfterMidnight(Lighting:GetMinutesAfterMidnight() + Args[1] / 60)
 			
 			return true
 			
@@ -1696,7 +1733,7 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.SetTime = {
 		
-		Alias = { "settime" },
+		Alias = {"settime"},
 		
 		Description = "Sets the current time",
 		
@@ -1704,11 +1741,11 @@ return function ( Main, Client, VH_Events )
 		
 		CanRun = "$moderator, $debugger",
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Time, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Time, Required = true}},
 		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
-			Lighting:SetMinutesAfterMidnight( Args[ 1 ] / 60 )
+			Lighting:SetMinutesAfterMidnight(Args[1] / 60)
 			
 			return true
 			
@@ -1718,15 +1755,15 @@ return function ( Main, Client, VH_Events )
 	
 	Main.Commands.TeamRespawn = {
 		
-		Alias = { "teamrespawn", "set" },
+		Alias = {"teamrespawn", "set"},
 		
 		Description = "Changes the team of the specified player(s) to the specified team and respawns them",
 		
 		Category = "Players",
 		
-		Commands = { Main.Commands.Team, Main.Commands.Respawn },
+		Commands = {Main.Commands.Team, Main.Commands.Respawn},
 		
-		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.Team, Required = true } },
+		ArgTypes = {{Func = Main.TargetLib.ArgTypes.Players, Required = true}, {Func = Main.TargetLib.ArgTypes.Team, Required = true}},
 		
 	}
 			

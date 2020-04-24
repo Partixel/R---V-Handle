@@ -41,6 +41,9 @@ return {
 		Invisible / Cloak iteratively and save old
 		fix/plr(Arms / legs / camera)
 ]],
+	{Version = "0.72.0", SetupVersion = "1.3.8", Timestamp = 1587732257, Contributors = {"Partixel"}, Additions = {[[Added ExtendedTranslations module to handle translations]], [[Added TranslatedFuncs to VH_Client]], [[Added Util.FormatPlayerList(Executor, List, To)]], [[Added Util.HandlePlayerTargetResult(Executor, Silent, Targets, Successful, Format)]]}, Changes = {[[Updated a all Fun commands and a few other commands to use the new command result system]], [[Minor optimisations]], [[Loop and EndLoop command can now be used by moderators]], [[Help command now correctly lists arguments for aliases]]}},
+	{Version = "0.71.1", SetupVersion = "1.3.8", Timestamp = 1586457199, Contributors = {"Partixel"}, Changes = {[[Fixed time argument not allowing negative times]]}},
+	{Version = "0.71.0", SetupVersion = "1.3.8", Timestamp = 1584568346, Contributors = {"Partixel"}, Additions = {[[Added "accountageof/plrs" command]], [[Added "friendsof/plrs" command]]}},
 	{Version = "0.70.4", SetupVersion = "1.3.8", Timestamp = 1583064432, Contributors = {"Partixel"}, Changes = {[[Fixed an infinite wait in the rejoin command]]}},
 	{Version = "0.70.3", SetupVersion = "1.3.8", Timestamp = 1582831167, Contributors = {"Partixel"}, Changes = {[[Fixed an error in the Setup]]}},
 	{Version = "0.70.3", SetupVersion = "1.3.7", Timestamp = 1582831167, Contributors = {"Partixel"}, Changes = {[[Fixed a busy wait that some scripts were doing]]}},

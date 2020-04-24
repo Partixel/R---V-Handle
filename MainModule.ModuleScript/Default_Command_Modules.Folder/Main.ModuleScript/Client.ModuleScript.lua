@@ -388,16 +388,6 @@ end
 
 --------------
 
-function key( t, p )
-	
-	for a = 1, #t do
-		
-		if t[ a ] == p then return a end
-		
-	end
-	
-end
-
 return function ( Main, ModFolder, VH_Events )
 	
 	ModFolder:WaitForChild( "Ping" ).OnClientInvoke = function ( ) end
@@ -438,19 +428,17 @@ return function ( Main, ModFolder, VH_Events )
 		
 		Nametags = { }
 		
-		local Plrs = Players:GetPlayers( )
-		
-		for a = 1, #Plrs do
+		for _, Plr in ipairs(Players:GetPlayers( )) do
 			
-			if Plrs[ a ] ~= Players.LocalPlayer then
+			if Plr ~= Players.LocalPlayer then
 				
-				if Plrs[ a ].Character then
+				if Plr.Character then
 					
-					Nametag( Plrs[ a ], Plrs[ a ].Character )
+					Nametag( Plr, Plr.Character )
 					
 				end
 				
-				Events[ #Events + 1 ] = Plrs[ a ].CharacterAdded:Connect( function ( Char ) Nametag( Plrs[ a ], Char ) end )
+				Events[ #Events + 1 ] = Plr.CharacterAdded:Connect( function ( Char ) Nametag( Plr, Char ) end )
 				
 			end
 			
@@ -508,17 +496,17 @@ return function ( Main, ModFolder, VH_Events )
 		
 		if Nametags then
 			
-			for a = 1, #Events do
+			for k, Event in ipairs(Events) do
 				
-				Events[ a ]:Disconnect( )
+				Event:Disconnect( )
 				
-				Events[ a ] = nil
+				Events[ k ] = nil
 				
 			end
 			
-			for a = 1, #Nametags do
+			for _, Nametag in ipairs(Nametags) do
 				
-				Nametags[ a ]:Destroy( )
+				Nametag:Destroy( )
 				
 			end
 			
@@ -614,17 +602,7 @@ return function ( Main, ModFolder, VH_Events )
 			
 			if #Plrs == 1 then return end
 			
-			CurSpec = CurSpec + ( Am or 1 )
-			
-			if CurSpec > #Plrs then
-				
-				CurSpec = 1
-				
-			elseif CurSpec <= 0 then
-				
-				CurSpec = #Plrs
-				
-			end
+			ChangeSpec(1)
 			
 		end
 		
@@ -738,7 +716,7 @@ return function ( Main, ModFolder, VH_Events )
 			
 			Spec( Plr )
 			
-			CurSpec = key( Players:GetPlayers( ), Plr )
+			CurSpec = table.find( Players:GetPlayers( ), Plr )
 			
 		end
 		

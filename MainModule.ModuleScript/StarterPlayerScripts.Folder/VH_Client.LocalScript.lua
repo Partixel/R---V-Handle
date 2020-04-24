@@ -4,6 +4,8 @@ local VFolder = game:GetService("ReplicatedStorage" ):WaitForChild( "V-Handle" )
 
 local Main = { }
 
+Main.ExtendedTranslations = require(VFolder:WaitForChild("ExtendedTranslations"))
+
 Main.Objs = { }
 
 Main.Events = { }
@@ -30,7 +32,7 @@ local function EmptyTable( Table )
 	
 end
 
-local RunService, Plr = game:GetService( "RunService" ), game:GetService( "Players" ).LocalPlayer
+local RunService, LocalPlayer = game:GetService( "RunService" ), game:GetService( "Players" ).LocalPlayer
 
 local Server = RunService:IsServer( )
 
@@ -57,6 +59,7 @@ VH_Events:WaitForChild( "RemoteDestroyed" ).OnClientEvent:Connect( function ( Up
 	script:Destroy( )
 	
 end )
+Main.TranslatedFuncs = { }
 
 Main.FilteredFuncs = { }
 
@@ -64,16 +67,27 @@ Main.PersistentFilteredFuncs = { }
 
 _G.VH_Client = Main
 
-local function RequireModule( Mod )
-	
-	local Ran, Error = pcall( function ( ) require( Mod )( Main, Mod, VH_Events ) end )
-	
-	if not Ran then
-		
-		warn( Mod.Name .. " errored when required:\n" .. Error )
-		
+local function RequireModule(Mod)
+	local Ran, Error = true, nil
+	if Mod:IsA("ModuleScript") then
+		Ran, Error = pcall(function() require(Mod)(Main, Mod, VH_Events) end)
 	end
-	
+	if Ran then
+		if Mod:FindFirstChild("Translations") then
+			print("Translations", Mod)
+			local Ran, Translations = pcall(function() return require(Mod.Translations) end)
+			if Ran then
+				local Ran, Error = pcall(Translations.RobloxLocalizationTable and Main.ExtendedTranslations.ImportRobloxLocalizationTable or Main.ExtendedTranslations.ImportLocalizationTable, Translations)
+				if not Ran then
+					warn(Mod.Name .. " failed to load due to an error in its translation table:\n" .. Error)
+				end
+			else
+				warn(Mod.Name .. " failed to load due to an error in its translation table:\n" .. Translations)
+			end
+		end
+	else
+		warn(Mod.Name .. " errored when required:\n" .. Error)
+	end
 end
 
 VH_Command_Clients.ChildAdded:Connect( RequireModule )
@@ -83,6 +97,31 @@ for _, Mod in ipairs( VH_Command_Clients:GetChildren( ) ) do
 	RequireModule( Mod )
 	
 end
+
+local StarterGui = game:GetService("StarterGui")
+Main.TranslatedFuncs.CommandMessage = function(Message)
+	local Options = {Text = "V-Handle - " .. Message, Color = BrickColor.new("Fog").Color}
+	for _, Line in ipairs(string.split(Options.Text, "\n")) do
+		Options.Text = Line
+		StarterGui:SetCore("ChatMakeSystemMessage", Options)
+	end
+end
+Main.TranslatedFuncs.CommandWarning = function(Message)
+	local Options = {Text = "V - Handle - Warning - " .. Message, Color = Color3.fromRGB(255, 194, 61), Font = Enum.Font.Code}
+	for _, Line in ipairs(string.split(Options.Text, "\n")) do
+		Options.Text = Line
+		StarterGui:SetCore("ChatMakeSystemMessage", Options)
+	end
+end
+
+VH_Events:WaitForChild("TranslatedReplication").OnClientEvent:Connect(function(FuncName, Key, TranslateArgs, ...)
+	if Main.TranslatedFuncs[FuncName] then
+		local Text = Main.ExtendedTranslations.TranslateFallback(LocalPlayer.LocaleId, Key, TranslateArgs)
+		Main.TranslatedFuncs[ FuncName ](Text:sub(1, 1):upper() .. Text:sub(2), ...)
+	else
+		error("V-Handle: " .. FuncName .. " doesn't exist for TranslatedReplication")
+	end
+end)
 
 VH_Events:WaitForChild( "FilteredReplication" ).OnClientEvent:Connect( function ( FuncName, Text, ... )
 	

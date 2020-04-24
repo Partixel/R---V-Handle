@@ -1,35 +1,22 @@
 local StarterGui = game:GetService( "StarterGui" )
 
-return function ( Main, ModFolder, VH_Events )
-	
-	ModFolder:WaitForChild( "SystemMessage" ).OnClientEvent:Connect( function ( Options )
+return function(Main, ModFolder, VH_Events)
+	ModFolder:WaitForChild("SystemMessage").OnClientEvent:Connect(function(Options)
+		wait()
 		
-		local Text = Options.Text
-		
-		Text = string.split( Text, "\n" )
-		
-		wait( )
-		
-		for a = 1, #Text do
-			
-			Options.Text = Text[ a ]
-			
-			StarterGui:SetCore( "ChatMakeSystemMessage", Options )
-			
+		for _, Line in ipairs(string.split(Options.Text, "\n")) do
+			Options.Text = Line
+			StarterGui:SetCore("ChatMakeSystemMessage", Options)
 		end
-		
-	end )
+	end)
 	
-	ModFolder:WaitForChild( "Print" ).OnClientEvent:Connect( function ( Msg, Warn )
-		
-		Msg = string.split( Msg, "\n" )
-		
-		for a = 1, #Msg do
-			
-			if Warn then warn( Msg[ a ] ) else print( Msg[ a ] ) end
-			
+	ModFolder:WaitForChild( "Print" ).OnClientEvent:Connect(function(Msg, Warn)
+		for _, Text in ipairs(string.split(Msg, "\n")) do
+			if Warn then
+				warn( Text )
+			else
+				print( Text )
+			end
 		end
-		
-	end )
-	
+	end)
 end

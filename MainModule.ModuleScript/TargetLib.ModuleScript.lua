@@ -102,9 +102,37 @@ function Module.AddArgAsset(Type, TypeId, ValidID)
 			
 			Num = Num
 			
-			local _, Matched = pcall(function() return MarketplaceService:GetProductInfo(Num).AssetTypeId == TypeId end)
+			local Ran, Matched = pcall(function() return MarketplaceService:GetProductInfo(Num).AssetTypeId == TypeId end)
 			
-			if Matched == true then return Num end
+			if Ran and Matched == true then return Num end
+			
+		end
+		
+		return nil, false
+		
+	end
+	
+	Module.ArgTypeNames[Type] = Type .. "Id"
+	
+	Module.ArgTypes[Type] = function (self, Strings, Plr)
+		
+		local String = table.remove(Strings, 1)
+		
+		local Num = tonumber(String)
+		
+		if String == Module.ValidChar then
+			
+			Num = ValidID
+			
+		end
+		
+		if Num then
+			
+			Num = Num
+			
+			local Ran, Info = pcall(function() return MarketplaceService:GetProductInfo(Num) end)
+			
+			if Ran and Info.AssetTypeId == TypeId then return Info end
 			
 		end
 		
@@ -1041,7 +1069,7 @@ Module.ArgTypes.Time = function (self, Strings, Plr)
 		
 		local Time = 0
 		
-		for a, b in string.gmatch(Nums[1], "([%d%.]+)(%D*)") do
+		for a, b in string.gmatch(Nums[1], "(%-?[%d%.]+)(%w*)") do
 			
 			local Ran, Num = pcall(Calc, a)
 			
@@ -1123,9 +1151,11 @@ Module.AddArgMultiple("Player")
 
 Module.AddArgMultiple("Team")
 
-Module.AddArgAsset("Sound", 3, 130775431)
+Module.AddArgAsset("Sound", 3, 279206904)
 
 Module.AddArgAsset("Place", 9, 64542766)
+
+Module.AddArgAsset("Gear", 19, 125859385)
 
 Module.Defaults.Toggle = function (self, Strings, Plr)
 	
