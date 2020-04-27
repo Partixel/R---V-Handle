@@ -648,6 +648,8 @@ function Main.RunCmdStacks(Executor, CmdStacks, Silent)
 		Main.CommandRan:Fire(Success, Result, Executor, CmdStack[3], {Fill(CmdStack[2])}, CmdStack[4], CmdStacks, Silent)
 		
 		if not Success then
+			warn("VH - Error -", Executor, Result)
+			
 			if Silent then
 				Msgs[#Msgs + 1] = Result
 				return true, table.concat(Msgs, ",\n"), true
@@ -1707,6 +1709,8 @@ local CmdOptions = {
 	
 	Callback = {"function"},
 	
+	Options = {"table", "nil"},
+	
 	Config = {"table", "nil"},
 	
 	NoTest = {"boolean", "nil"},
@@ -1848,13 +1852,17 @@ local function Metatable(self, Key, Value)
 	local ModName = Mod and Mod.script and Mod.script:GetFullName()
 	
 	if Main.Config.CommandOptions and Main.Config.CommandOptions[Key] then
-		
 		for a, b in pairs(Main.Config.CommandOptions[Key]) do
-			
-			Value[a] = b
-			
+			if a ~= "Overrides" then
+				Value[a] = b
+			end
 		end
 		
+		if Main.Config.CommandOptions[Key].Overrides then
+			for _, Func in ipairs(Main.Config.CommandOptions[Key]) do
+				Func(Value)
+			end
+		end
 	end
 	
 	local Options = Value.Commands and AliasCmdOptions or CmdOptions
