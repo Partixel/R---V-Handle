@@ -2,6 +2,8 @@
 
 local Main, Players, InsertService, Chat, ServerStorage, RunService, TextService, StarterPlayerScripts, ChatModules = {}, game:GetService("Players"), game:GetService("InsertService"), game:GetService("Chat"), game:GetService("ServerStorage"), game:GetService("RunService"), game:GetService("TextService"), game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts"), game:GetService("Chat"):WaitForChild("ChatModules")
 
+Main.CoroutineErrorHandling = require(game:GetService("ReplicatedStorage"):FindFirstChild("CoroutineErrorHandling") and game:GetService("ReplicatedStorage").CoroutineErrorHandling:FindFirstChild("MainModule") or game:GetService("ServerStorage"):FindFirstChild("CoroutineErrorHandling") and game:GetService("ServerStorage").CoroutineErrorHandling:FindFirstChild("MainModule") or 4851605998)
+
 require(game:GetService("ServerStorage"):FindFirstChild("TimeSync") and game:GetService("ServerStorage").TimeSync:FindFirstChild("MainModule") or 4698309617) -- TimeSync
 
 local LoaderModule = require(game:GetService("ServerStorage"):FindFirstChild("LoaderModule") and game:GetService("ServerStorage").LoaderModule:FindFirstChild("MainModule") or 03593768376)("V-Handle")
@@ -18,7 +20,7 @@ VFolder.Parent = game:GetService("ReplicatedStorage")
 
 if _G.VH_Admin and _G.VH_Admin.Destroy then
 	
-	pcall(function() _G.VH_Admin.Destroy() end)
+	Main.CoroutineErrorHandling.RunFunctionWithWarn(_G.VH_Admin.Destroy)
 	
 end
 
@@ -86,7 +88,7 @@ Main.Config = ServerStorage:FindFirstChild("VH_Config") and require(ServerStorag
 
 ----==== Debugger ====----
 
-coroutine.wrap(function(...) return require(...) end)(game:GetService("ServerStorage"):FindFirstChild("DebugUtil") and game:GetService("ServerStorage").DebugUtil:FindFirstChild("MainModule") or 953754819)
+Main.CoroutineErrorHandling.CoroutineWithStack(require, game:GetService("ServerStorage"):FindFirstChild("DebugUtil") and game:GetService("ServerStorage").DebugUtil:FindFirstChild("MainModule") or 953754819)
 
 ----==== Create Admin Variables ====----
 
@@ -350,7 +352,7 @@ function Main.PersistentFilter(From, FuncName, Key_Time, Text, ...)
 		local Key = {}
 		PersistentFilters[Key] = {From = From, FuncName = FuncName, Key_Time = tick() + Key_Time, Text = Text, Args = Args}
 		
-		coroutine.wrap(EndTimedFilter)(Key, Key_Time, FuncName, Text)
+		Main.CoroutineErrorHandling.CoroutineWithStack(EndTimedFilter, Key, Key_Time, FuncName, Text)
 	end
 end
 
@@ -613,10 +615,10 @@ local function HandleCmdResult(From, Key, UnfilteredArgs, FilteredArgs)
 	end
 	
 	for _, ToPlr in ipairs(Players:GetPlayers()) do
-		coroutine.wrap(function()
+		Main.CoroutineErrorHandling.CoroutineWithStack(function()
 			local Replacements = GetReplacements(From, ToPlr, UnfilteredArgs, FilteredArgs)
 			VH_Events.TranslatedReplication:FireClient(ToPlr, "CommandMessage", Key, Replacements)
-		end)()
+		end)
 	end
 	
 	local Replacements = GetReplacements(From, Main.Console, UnfilteredArgs, FilteredArgs)
@@ -634,7 +636,7 @@ function Main.RunCmdStacks(Executor, CmdStacks, Silent)
 		
 		local CmdStack = table.remove(CmdStacks, 1)
 		
-		local Success, Result, RanMsg = pcall(CmdStack[1].Callback, CmdStack[1], Executor, CmdStack[3], CmdStack[2], CmdStacks, Silent)
+		local Success, Result, RanMsg = xpcall(CmdStack[1].Callback, Main.CoroutineErrorHandling.ErrorHandler, CmdStack[1], Executor, CmdStack[3], CmdStack[2], CmdStacks, Silent)
 		if Success and type(Result) ~= "table" then
 			warn(CmdStack[3] .. " is returning a legacy result, please update it")
 			Legacy = true
@@ -648,6 +650,8 @@ function Main.RunCmdStacks(Executor, CmdStacks, Silent)
 		Main.CommandRan:Fire(Success, Result, Executor, CmdStack[3], {Fill(CmdStack[2])}, CmdStack[4], CmdStacks, Silent)
 		
 		if not Success then
+			Result = Main.CoroutineErrorHandling.GetError(Result)
+			
 			warn("VH - Error -", Executor, Result)
 			
 			if Silent then
@@ -1236,7 +1240,7 @@ function Main.GetLatestId(AssetId)
 	if Ran then
 		return Id
 	else
-		Ran, Id = pcall(game.HttpService.GetAsync, game.HttpService, "https://rbxapi.v-handle.com/?type=1&id=" .. AssetId)
+		Ran, Id = xpcall(game.HttpService.GetAsync, Main.CoroutineErrorHandling.ErrorHandler, game.HttpService, "https://rbxapi.v-handle.com/?type=1&id=" .. AssetId)
 		if Ran then
 			return tonumber(Id)
 		else
@@ -1254,7 +1258,7 @@ function Main.GetLatest()
 			if LatestID == LatestId then
 				return Latest
 			else
-				local Ran, Mod = pcall(InsertService.LoadAssetVersion, InsertService, LatestID)
+				local Ran, Mod = xpcall(InsertService.LoadAssetVersion, Main.CoroutineErrorHandling.ErrorHandler, InsertService, LatestID)
 				if Ran and Mod then
 					local ModChild = Mod:GetChildren()[1]
 					ModChild.Parent = nil
@@ -2192,9 +2196,9 @@ local function RequireModule(Mod, Required, LoopReq)
 		end
 		
 		if Mod:FindFirstChild("Translations") then
-			local Ran, Translations = pcall(function() return require(Mod.Translations) end)
+			local Ran, Translations = xpcall(require, Main.CoroutineErrorHandling.ErrorHandler, Mod.Translations)
 			if Ran then
-				local Ran, Error = pcall(Translations.RobloxLocalizationTable and Main.ExtendedTranslations.ImportRobloxLocalizationTable or Main.ExtendedTranslations.ImportLocalizationTable, Translations)
+				local Ran, Error = xpcall(Translations.RobloxLocalizationTable and Main.ExtendedTranslations.ImportRobloxLocalizationTable or Main.ExtendedTranslations.ImportLocalizationTable, Main.CoroutineErrorHandling.ErrorHandler, Translations)
 				if not Ran then
 					warn(Mod.Name .. " failed to load due to an error in its translation table:\n" .. Error)
 				
@@ -2237,7 +2241,7 @@ local function RequireModule(Mod, Required, LoopReq)
 			ModuleObjs[Mod] = CommandClient
 		end
 		
-		local Ran, Error = pcall(function() require(Mod)(Main, CommandClient, VH_Events) end)
+		local Ran, Error = xpcall(function() require(Mod)(Main, CommandClient, VH_Events) end, Main.CoroutineErrorHandling.ErrorHandler)
 		
 		if not Ran then
 			
@@ -2265,26 +2269,16 @@ local function RequireModule(Mod, Required, LoopReq)
 	
 end
 
-local Mods = script.Default_Command_Modules:GetChildren()
-
-for a = 1, #Mods do
-	
-	if Mods[a] == script.Default_Command_Modules.Core or Mods[a] == script.Default_Command_Modules.Util or not VH_Command_Modules:FindFirstChild(Mods[a].Name) then
-		
-		coroutine.wrap(RequireModule)(Mods[a], Mods[a] == script.Default_Command_Modules.Core or Mods[a] == script.Default_Command_Modules.Util)
-		
+local Required = {[script.Default_Command_Modules.Core] = true, [script.Default_Command_Modules.Util] = true}
+for _, Module in ipairs(script.Default_Command_Modules:GetChildren()) do
+	if Required[Module] or not VH_Command_Modules:FindFirstChild(Module.Name) then
+		Main.CoroutineErrorHandling.CoroutineWithStack(RequireModule, Module, Required[Module])
 	end
-	
 end
 
 Main.Events[#Main.Events + 1] = VH_Command_Modules.ChildAdded:Connect(RequireModule)
-
-Mods = VH_Command_Modules:GetChildren()
-
-for a = 1, #Mods do
-	
-	coroutine.wrap(RequireModule)(Mods[a])
-	
+for _, Module in ipairs(VH_Command_Modules:GetChildren()) do
+	Main.CoroutineErrorHandling.CoroutineWithStack(RequireModule, Module)
 end
 
 ----==== External Commands ====----
@@ -2327,7 +2321,7 @@ end
 
 for a = 1, #VH_ExternalCmds do
 	
-	coroutine.wrap(VH_ExternalCmds[a])(Main)
+	Main.CoroutineErrorHandling.CoroutineWithStack(VH_ExternalCmds[a], Main)
 	
 end
 
@@ -2340,7 +2334,7 @@ end
 
 ----==== Looped threads & ASync DataStore Loading ====----
 
-coroutine.wrap(function()
+Main.CoroutineErrorHandling.CoroutineWithStack(function()
 	
 	for a, b in pairs(DataStore:GetAsync("Bans") or {}) do
 		
@@ -2366,13 +2360,13 @@ coroutine.wrap(function()
 			
 			if Main.GetUserPower(a) ~= b and Players:GetPlayerByUserId(a) then
 				
-				coroutine.wrap(function()
+				Main.CoroutineErrorHandling.CoroutineWithStack(function()
 					
 					while not Main.Util do Main.ModuleLoaded.Event:Wait() end
 					
 					Main.Util.SendMessage(Players:GetPlayerByUserId(a), "Your new user power is '" .. Main.UserPowerName(b) .. "'!", "Info")
 					
-				end)()
+				end)
 								
 			end
 			
@@ -2388,9 +2382,9 @@ coroutine.wrap(function()
 	
 	if Main then Main.Destroy() end
 	
-end)()
+end)
 
-coroutine.wrap(function()
+Main.CoroutineErrorHandling.CoroutineWithStack(function()
 	
 	local CurVersion = Main.GetLatestId(571587156) or Main.GetLatestId(543870197)
 	
@@ -2408,7 +2402,7 @@ coroutine.wrap(function()
 		
 	end
 	
-end)()
+end)
 
 ----==== Events & Client ====----
 
