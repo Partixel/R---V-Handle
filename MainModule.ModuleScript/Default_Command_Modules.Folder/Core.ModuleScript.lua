@@ -314,7 +314,7 @@ return function ( Main, Client, VH_Events )
 		
 		Category = "Core",
 		
-		CanRun = "$admin",
+		CanRun = "$supermod",
 		
 		ArgTypes = { { Func = Main.TargetLib.ArgTypes.Players, Required = true }, { Func = Main.TargetLib.ArgTypes.PowerNumber, Required = true, Default = function ( self, Strings, Plr, Last, Alias )
 			
