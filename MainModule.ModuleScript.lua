@@ -1410,7 +1410,7 @@ Main.UserPower = setmetatable({}, {__newindex = function(self, Key, Value)
 	
 end})
 
-Main.UserPower.console, Main.UserPower.owner, Main.UserPower.superadmin, Main.UserPower.admin, Main.UserPower.mod, Main.UserPower.moderator, Main.UserPower.user = 60, 50, 40, 30, 20, 20, 10
+Main.UserPower.console, Main.UserPower.owner, Main.UserPower.superadmin, Main.UserPower.admin, Main.UserPower.supermod, Main.UserPower.supermoderator, Main.UserPower.mod, Main.UserPower.moderator, Main.UserPower.user = 100, 80, 60, 60, 40, 40, 20, 20, 0
 
 function Main.UserPowerName(UserPowerNum)
 	
