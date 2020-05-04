@@ -1124,19 +1124,18 @@ local Destroy, Disconnect = workspace.Destroy, workspace.Changed:Connect(functio
 Disconnect, _ = Disconnect.Disconnect, Disconnect:Disconnect()
 
 local function EmptyTable(Table)
-	
 	for a, b in pairs(Table) do
-		
-		pcall(Disconnect, b)
-		
-		pcall(Destroy, b)
-		
-		if type(b) == "table" then EmptyTable(b) end
+		local Type = typeof(b)
+		if Type == "RBXScriptConnection" then
+			b:Disconnect()
+		elseif Type == "Instance" then
+			b:Destroy()
+		elseif Type == "table" then
+			EmptyTable(b)
+		end
 		
 		Table[a] = nil
-		
 	end
-	
 end
 
 local ModuleObjs = {}
