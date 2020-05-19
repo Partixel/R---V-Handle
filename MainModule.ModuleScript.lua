@@ -2,7 +2,7 @@
 
 local Main, Players, InsertService, Chat, ServerStorage, RunService, TextService, StarterPlayerScripts, ChatModules = {}, game:GetService("Players"), game:GetService("InsertService"), game:GetService("Chat"), game:GetService("ServerStorage"), game:GetService("RunService"), game:GetService("TextService"), game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts"), game:GetService("Chat"):WaitForChild("ChatModules")
 
-Main.CoroutineErrorHandling = require(game:GetService("ReplicatedStorage"):FindFirstChild("CoroutineErrorHandling") and game:GetService("ReplicatedStorage").CoroutineErrorHandling:FindFirstChild("MainModule") or game:GetService("ServerStorage"):FindFirstChild("CoroutineErrorHandling") and game:GetService("ServerStorage").CoroutineErrorHandling:FindFirstChild("MainModule") or 4851605998)
+Main.CoroutineErrorHandling = require(game:GetService("ReplicatedStorage"):FindFirstChild("CoroutineErrorHandling") or game:GetService("ServerStorage"):FindFirstChild("CoroutineErrorHandling") and game:GetService("ServerStorage").CoroutineErrorHandling:FindFirstChild("MainModule") or 4851605998)
 
 require(game:GetService("ServerStorage"):FindFirstChild("TimeSync") and game:GetService("ServerStorage").TimeSync:FindFirstChild("MainModule") or 4698309617) -- TimeSync
 
