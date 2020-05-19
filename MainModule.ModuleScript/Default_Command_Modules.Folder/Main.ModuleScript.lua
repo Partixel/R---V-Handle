@@ -196,10 +196,31 @@ return function(Main, Client, VH_Events)
 		
 	}
 	
+	local Spectating = (_G.VH_Saved or {}).Spectating or setmetatable({}, {__mode = "k"})
+	
+	VH_Events.Destroyed.Event:Connect(function(Update)
+		
+		if not Update then
+			
+			for a, b in pairs(Spectating) do
+				
+				b:Destroy()
+				
+			end
+			
+			return
+			
+		end
+		
+		_G.VH_Saved.Spectating = Spectating
+		
+	end)
+	
 	Client.Spectate.OnServerEvent:Connect(function(Plr)
-		
-		Plr:LoadCharacter()
-		
+		if Spectating[Plr] then
+			Spectating[Plr] = nil
+			Plr:LoadCharacter()
+		end
 	end)
 	
 	Main.Commands.Spectate = {
@@ -228,9 +249,13 @@ return function(Main, Client, VH_Events)
 				
 				Client.Spectate:FireClient(Executor, Args[2])
 				
-			else
+			elseif Spectating[Executor] and not Executor.Character then
 				
 				Client.Spectate:FireClient(Executor, false)
+				
+			else
+				
+				return false, "You are not spectating anyone"
 				
 			end
 			
