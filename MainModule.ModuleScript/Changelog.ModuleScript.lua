@@ -41,6 +41,7 @@ return {
 		Invisible / Cloak iteratively and save old
 		fix/plr(Arms / legs / camera)
 ]],
+	{Version = "0.73.3", SetupVersion = "1.3.8", Timestamp = 1591344175, Contributors = {"Partixel"}, Changes = {[[Fixed strings arguments not correctly merging multiple arguments using the ArgSplit character]], [[Fixed inability to unspec/]]}},
 	{Version = "0.73.2", SetupVersion = "1.3.8", Timestamp = 1589891318, Contributors = {"Partixel"}, Changes = {[[Fixed CoroutineErrorHandling require]], [[Fixed unspectate command being abused to respawn yourself]]}},
 	{Version = "0.73.1", SetupVersion = "1.3.8", Timestamp = 1587732257, Contributors = {"Partixel"}, Changes = {[[Now provides full stack traces when a command errors]], [[Changed "setpower/" to require supermod]], [[Optimised EmptyTable function]], [[Changed user power numbers to be evenly spread]]}},
 	{Version = "0.73.0", SetupVersion = "1.3.8", Timestamp = 1587732257, Contributors = {"Partixel"}, Additions = {[[Added the ability to add Override functions for commands in the config (Main.Config.CommandOptions = {[CommandName] = {Overrides = {function(Command) end}}})]], [[Commands can now have an Options table for any values that may want to be changed via config]]}},

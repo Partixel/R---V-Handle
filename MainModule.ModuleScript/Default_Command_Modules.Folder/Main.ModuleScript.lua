@@ -199,21 +199,14 @@ return function(Main, Client, VH_Events)
 	local Spectating = (_G.VH_Saved or {}).Spectating or setmetatable({}, {__mode = "k"})
 	
 	VH_Events.Destroyed.Event:Connect(function(Update)
-		
 		if not Update then
-			
 			for a, b in pairs(Spectating) do
-				
 				b:Destroy()
-				
 			end
-			
 			return
-			
 		end
 		
 		_G.VH_Saved.Spectating = Spectating
-		
 	end)
 	
 	Client.Spectate.OnServerEvent:Connect(function(Plr)
@@ -238,31 +231,30 @@ return function(Main, Client, VH_Events)
 		Callback = function(self, Executor, Cmd, Args, NextCmds, Silent)
 			
 			if Args[1] then
-				
-				if Args[2] == Executor then return false, "You can't spectate yourself!" end
+				if Args[2] == Executor then
+					return false, "You can't spectate yourself!"
+				end
 				
 				if Executor.Character then
-					
 					Executor.Character:Destroy()
-					
+					Executor.Character = nil
 				end
+				
+				Spectating[Executor] = true
 				
 				Client.Spectate:FireClient(Executor, Args[2])
 				
-			elseif Spectating[Executor] and not Executor.Character then
+				return true
 				
+			elseif Spectating[Executor] and not Executor.Character then
 				Client.Spectate:FireClient(Executor, false)
 				
+				return true
 			else
 				
 				return false, "You are not spectating anyone"
-				
 			end
-			
-			return true
-			
 		end
-		
 	}
 	
 	Main.Commands.Kill = {
