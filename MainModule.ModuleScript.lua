@@ -387,7 +387,7 @@ local function Fill(Table, a, max)
 	
 end
 
-function Main.GetCmdStacks(Executor, Cmd, StrArgs)
+function Main.GetCmdStacks(Executor, Cmd, StrArgs, ArgSplit)
 	
 	local CmdObj, Args = Main.GetCommandAndArgs(Cmd, Executor)
 	
@@ -443,7 +443,7 @@ function Main.GetCmdStacks(Executor, Cmd, StrArgs)
 							
 							if type(Arg) == "function" then
 								
-								local Parsed, Ran, FailMsg = Arg(type(CmdObj.ArgTypes[a]) == "table" and CmdObj.ArgTypes[a] or {}, Tmp, Executor, a == #CmdObj.ArgTypes, Cmd)
+								local Parsed, Ran, FailMsg = Arg(type(CmdObj.ArgTypes[a]) == "table" and CmdObj.ArgTypes[a] or {}, Tmp, Executor, a == #CmdObj.ArgTypes, Cmd, ArgSplit)
 								
 								if CmdObj.ArgTypes[a].Required and (Parsed == nil or Ran == false) then
 									
@@ -487,7 +487,7 @@ function Main.GetCmdStacks(Executor, Cmd, StrArgs)
 						
 						if type(Arg) == "function" then
 							
-							local Parsed, Ran, FailMsg = Arg(type(CmdObj.ArgTypes[a]) == "table" and CmdObj.ArgTypes[a] or {}, Tmp, Executor, a == #CmdObj.ArgTypes, Cmd, Args)
+							local Parsed, Ran, FailMsg = Arg(type(CmdObj.ArgTypes[a]) == "table" and CmdObj.ArgTypes[a] or {}, Tmp, Executor, a == #CmdObj.ArgTypes, Cmd, Args, ArgSplit)
 							
 							if CmdObj.ArgTypes[a].Required and (Parsed == nil or Ran == false) then
 								
@@ -511,7 +511,7 @@ function Main.GetCmdStacks(Executor, Cmd, StrArgs)
 						
 						local Func = type(CmdObj.ArgTypes[a]) == "function" and CmdObj.ArgTypes[a] or CmdObj.ArgTypes[a].Func
 						
-						local Parsed, Ran, FailMsg = Func(type(CmdObj.ArgTypes[a]) == "table" and CmdObj.ArgTypes[a] or {}, Tmp, Executor, a == #CmdObj.ArgTypes, Cmd, Args)
+						local Parsed, Ran, FailMsg = Func(type(CmdObj.ArgTypes[a]) == "table" and CmdObj.ArgTypes[a] or {}, Tmp, Executor, a == #CmdObj.ArgTypes, Cmd, Args, ArgSplit)
 						
 						if (Parsed == nil or Ran == false) then
 							
@@ -832,7 +832,7 @@ function Main.ParseCmdStacks(Executor, Msg, ChatSpeaker, Silent)
 		
 		if Cmd ~= "" then
 			
-			local Found = Main.GetCmdStacks(Executor, Cmd, Args, CmdStrings, Silent)
+			local Found = Main.GetCmdStacks(Executor, Cmd, Args, ArgSplit)
 			
 			if type(Found) == "table" then
 				

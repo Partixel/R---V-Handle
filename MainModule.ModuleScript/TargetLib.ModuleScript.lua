@@ -853,13 +853,13 @@ end
 
 -- ArgTypes --
 
-Module.ArgTypes.String = function (self, Strings, Plr, LastArg)
+Module.ArgTypes.String = function (self, Strings, Plr, LastArg, Cmd, Args, ArgSplit)
 	
 	local String
 	
 	if LastArg then
 		
-		String = table.concat(Strings, " ")
+		String = table.concat(Strings, ArgSplit)
 		
 	else
 		
@@ -899,15 +899,7 @@ Module.ArgTypes.String = function (self, Strings, Plr, LastArg)
 				
 			else
 				
-				if Strings[1]:sub(1, 1) == " " then
-					
-					String = String .. table.remove(Strings, 1)
-					
-				else
-					
-					String = String .. " " .. table.remove(Strings, 1)
-					
-				end
+				String = String .. ArgSplit .. table.remove(Strings, 1)
 				
 			end
 			
