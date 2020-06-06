@@ -926,6 +926,8 @@ return function ( Main, Client, VH_Events )
 		
 		Category = "Core",
 		
+		CanRun = "$mod, $debugger",
+		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
 			local Str = "Chat Logs:\n"
