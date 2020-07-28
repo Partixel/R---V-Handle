@@ -441,7 +441,7 @@ return function(Main, Client, VH_Events)
 					
 					if Args[2] then
 						
-						if not Invincible[Args[1][a]] then
+						if Hum.Health ~= math.huge then
 							
 							Invincible[Args[1][a]] = {Hum.Health, Hum.MaxHealth}
 							
@@ -454,6 +454,8 @@ return function(Main, Client, VH_Events)
 					else
 						
 						local Health, Max = unpack(Invincible[Args[1][a]] or {100, 100})
+						
+						Invincible[Args[1][a]] = nil
 						
 						Hum.MaxHealth = Max or 100
 						
