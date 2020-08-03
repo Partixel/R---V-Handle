@@ -94,7 +94,7 @@ return function ( Main, Client, VH_Events )
 			
 			if pcall( function ( ) require( NewMain ) end ) and _G.VH_Admin then return true end
 			
-			require( game:GetService( "ServerStorage" ):WaitForChild( "EmergencyFunctions" ) )
+			require( game:GetService("ServerScriptService"):WaitForChild("V-Handle Setup"):WaitForChild("Setup"):WaitForChild( "OnFail" ) )
 			
 			return true
 			
@@ -384,7 +384,7 @@ return function ( Main, Client, VH_Events )
 		
 	}
 	
-	Main.Commands.PermUserPower = {
+	--[[Main.Commands.PermUserPower = {
 		
 		Alias = { "permpower", "pp", "permuserpower", "pup", { function ( self, Alias, Plr )
 			
@@ -478,7 +478,7 @@ return function ( Main, Client, VH_Events )
 			
 		end
 		
-	}
+	}]]
 	
 	Main.Commands.Kick = {
 		
@@ -574,7 +574,7 @@ return function ( Main, Client, VH_Events )
 		
 	}
 	
-	Main.Commands.PermBan = {
+	--[[Main.Commands.PermBan = {
 		
 		Alias = { "permban" },
 		
@@ -626,7 +626,7 @@ return function ( Main, Client, VH_Events )
 			
 		end
 		
-	}
+	}]]
 	
 	Main.Commands.UnBan = {
 		

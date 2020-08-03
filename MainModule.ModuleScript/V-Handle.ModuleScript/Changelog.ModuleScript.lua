@@ -41,6 +41,7 @@ return {
 		Invisible / Cloak iteratively and save old
 		fix/plr(Arms / legs / camera)
 ]],
+	{Version = "0.74.0", SetupVersion = "2.0.0", Timestamp = 1596579951, Contributors = {"Partixel"}, Changes = {[[New module and setup format to allow for updater plugin to work with any correctly configured module]]}},
 	{Version = "0.73.5", SetupVersion = "1.3.8", Timestamp = 1593035975, Contributors = {"Partixel"}, Changes = {[[Fixed god command]]}},
 	{Version = "0.73.4", SetupVersion = "1.3.8", Timestamp = 1591445219, Contributors = {"Partixel"}, Changes = {[[Made "chatlogs/" require moderator+ as it shows whispers and teamchat, etc]]}},
 	{Version = "0.73.3", SetupVersion = "1.3.8", Timestamp = 1591344175, Contributors = {"Partixel"}, Changes = {[[Fixed strings arguments not correctly merging multiple arguments using the ArgSplit character]], [[Fixed inability to unspec/]]}},
