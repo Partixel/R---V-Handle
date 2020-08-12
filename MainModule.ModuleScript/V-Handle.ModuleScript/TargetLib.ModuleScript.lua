@@ -7,6 +7,7 @@ local Module, Players, Teams, MarketplaceService = {}, game:GetService("Players"
 
 -- PLR TARGETTING
 -- me
+-- others
 -- all
 -- random
 -- name
@@ -794,27 +795,23 @@ function Module.FindFriendsOfPlr(self, String, Plr)
 end
 
 function Module.FindPlrsFromString(self, String, Plr)
-	
 	if Plr then
-		
 		if String:lower() == "me" then
-			
 			return true, Plr
+		elseif String:lower() == "others" then
+			local Plrs = Players:GetPlayers()
 			
+			table.remove(Plrs, table.find(Plrs, Plr))
+			
+			return true, Plrs
 		end
 		
 	end
 	
 	local Plr = tonumber(String) and Players:GetPlayerByUserId(String) or nil
-	
 	if Plr then
-		
 		return true, Plr
-		
 	end
-	
-	return
-	
 end
 
 Module.MatchFuncs = {Module.FindPlrsInTeam, Module.FindPlrsInGroups, Module.FindFriendsOfPlr, Module.FindPlrsNearPlr, Module.FindPlrsFromString}
