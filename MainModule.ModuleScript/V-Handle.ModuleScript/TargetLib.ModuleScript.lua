@@ -17,10 +17,11 @@ local Module, Players, Teams, MarketplaceService = {}, game:GetService("Players"
 -- %Team
 -- $UserPower
 -- >OwnerType
--- ^GroupId^Rank
--- @Allied
--- #Enemy
--- *Near*Distance
+-- ^GroupId[><=]Rank
+-- ^GroupId@ -- Allies
+-- ^GroupId# -- Enemies
+-- @AccountAge[><=]
+-- *Near[><=]Distance
 
 -- %TEAM TARGETTING
 -- me
@@ -528,98 +529,35 @@ function Module.FindGroup(self, String, Plr)
 	
 	String = String:match('^%s*(.*%S)') or ""
 	
-	local GroupId, Type, Rank = String:match("^(%d+)([><=^]*)(%d*)")
+	local GroupId, Type, Rank = String:match("^(-*%d+)([><=@#]*)(-*%d*)")
 	
 	GroupId, Rank = tonumber(GroupId or ""), tonumber(Rank or "1")
 	
 	if not GroupId then return {} end
 	
-	return {GroupId}, Rank or 1, Type == "=" and 1 or Type == "<" and 2 or nil
-	
-end
-
-function Module.FindAllied(self, String, Plr)
-	
-	String = String:lower()
-	
-	if String:sub(1, 1) ~= "@" then return end
-	
-	String = String:sub(2)
-	
-	String = String:match('^%s*(.*%S)') or ""
-	
-	local GroupId = tonumber(String)
-	
-	if not GroupId then return {} end
-	
-	local Allies = {GroupId}
-	
-	local Pages = game:GetService("GroupService"):GetAlliesAsync(GroupId)
-	
-	if not Pages then return Allies end
-	
-	while true do
+	if Type == "@" or Type == "#" then
+		local Groups = {GroupId}
 		
-		for a, b in pairs(Pages:GetCurrentPage()) do
+		local Pages = (Type == "@" and game:GetService("GroupService").GetAlliesAsync or game:GetService("GroupService").GetEnemiesAsync)(game:GetService("GroupService"), GroupId)
+		
+		if not Pages then return Groups end
+		
+		while true do
+			for a, b in ipairs(Pages:GetCurrentPage()) do
+				Groups[#Groups + 1] = b.Id
+			end
 			
-			Allies[#Allies + 1] = b.Id
+			if Pages.IsFinished then
+				break
+			end
 			
+			Pages:AdvanceToNextPageAsync()
 		end
 		
-		if Pages.IsFinished then
-			
-			break
-			
-		end
-		
-		Pages:AdvanceToNextPageAsync()
-		
+		return Groups
+	else
+		return {GroupId}, Rank or 1, Type == "=" and 1 or Type == "<" and 2 or nil
 	end
-	
-	return Allies
-	
-end
-
-function Module.FindEnemy(self, String, Plr)
-	
-	String = String:lower()
-	
-	if String:sub(1, 1) ~= "#" then return end
-	
-	String = String:sub(2)
-	
-	String = String:match('^%s*(.*%S)') or ""
-	
-	local GroupId = tonumber(String)
-	
-	if not GroupId then return {} end
-	
-	local Enemies = {}
-	
-	local Pages = game:GetService("GroupService"):GetEnemiesAsync(GroupId)
-	
-	if not Pages then return {} end
-	
-	while true do
-		
-		for a, b in pairs(Pages:GetCurrentPage()) do
-			
-			Enemies[#Enemies + 1] = b.Id
-			
-		end
-		
-		if Pages.IsFinished then
-			
-			break
-			
-		end
-		
-		Pages:AdvanceToNextPageAsync()
-		
-	end
-	
-	return Enemies
-	
 end
 
 function Module.FindFriend(self, String, Plr)
@@ -636,6 +574,34 @@ function Module.FindFriend(self, String, Plr)
 	
 end
 
+function Module.FindAge(self, String, Plr)
+	
+	String = String:lower()
+	
+	if String:sub(1, 1) ~= "@" then return end
+	 
+	String = String:sub(2)
+	
+	String = String:match('^%s*(.*%S)') or ""
+	
+	local Age, Type = String:match("^(-*%d+)([><=]*)")
+	
+	Age = tonumber(Age or "")
+	
+	if not Age then return end
+	
+	Type = Type == "=" and 1 or Type == "<" and 2 or nil
+	
+	local Plrs = Players:GetPlayers()
+	for i = #Plrs, 1, -1 do
+		if (Type == 1 and Plrs[i].AccountAge ~= Age) or (Type == 2 and Plrs[i].AccountAge > Age) or (Type == nil and Plrs[i].AccountAge < Age) then
+			table.remove(Plrs, i)
+		end
+	end
+	
+	return true, Plrs
+end
+
 function Module.FindPlrsNearPlr(self, String, Plr)
 	
 	String = String:lower()
@@ -646,7 +612,7 @@ function Module.FindPlrsNearPlr(self, String, Plr)
 	
 	String = String:match('^%s*(.*%S)') or ""
 	
-	local Target, Type, Dist = String:match("^(.+)([><=%*]*)(%d*)")
+	local Target, Type, Dist = String:match("^(.+)([><=]*)(-*%d*)")
 	
 	Target = Module.FindPlayers(self, Target or "", Plr)[1]
 
@@ -685,8 +651,6 @@ function Module.FindPlrsInGroups(self, String, Plr)
 	String = String:lower()
 	
 	local Groups, Rank, Type = Module.FindGroup(self, String, Plr)
-	
-	if Groups == nil then Groups, Rank = Module.FindAllied(self, String, Plr) or Module.FindEnemy(self, String, Plr), nil end
 	
 	if Groups then
 		
