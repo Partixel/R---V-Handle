@@ -814,7 +814,7 @@ function Module.FindPlrsFromString(self, String, Plr)
 	end
 end
 
-Module.MatchFuncs = {Module.FindPlrsInTeam, Module.FindPlrsInGroups, Module.FindFriendsOfPlr, Module.FindPlrsNearPlr, Module.FindPlrsFromString}
+Module.MatchFuncs = {Module.FindPlrsInTeam, Module.FindPlrsInGroups, Module.FindFriendsOfPlr, Module.FindPlrsNearPlr, Module.FindAge, Module.FindPlrsFromString}
 
 function Module.FindPlayers(self, String, Plr)
 	
