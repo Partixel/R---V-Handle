@@ -19,13 +19,13 @@ return {
 	Config.UserPowers = { ["1234"] = "admin" } - This gives admin to the player with a userid equal to "1234"
 	Config.UserPowers = { ["^4321^50"] = "admin" } - This gives admin to anyone in the group "4321" and have a rank above "50"
 	Config.UserPowers = { ["^4321&!^1234^12"] = "admin" } - This gives admin to anyone in the group "4321" and don't have a rank of 12 or above in the group "1234"]]
-	UserPowers = { }, -- Default - { }
+	UserPowers = {}, -- Default - { }
 	
 	--[[Players matching a string on this list is prevented from joining the game with the reason being the value or a default message if true
 	--Examples--
 	Config.Banned = { ["partixel"] = true }
 	Config.Banned = { ["1234"] = "Hacking", ["^1059575"] = "Bad group" }]]
-	Banned = { }, -- Default - { }
+	Banned = {}, -- Default - { }
 	
 	--[[If true the specified command module will not load
 	Use this if you don't want commands from said command module ( e.g. if you don't want 'Fun' commands do [ "VH_Fun" ] = true]]
@@ -37,5 +37,7 @@ return {
 		
 	}, -- Default - { VH_Fun = false, VH_Main = false, }
 	
-	SetupVersion = "2.0.0", -- DO NOT CHANGE THIS
+	Trello = {},
+	
+	SetupVersion = "2.1.0", -- DO NOT CHANGE THIS
 }
