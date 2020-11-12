@@ -41,6 +41,7 @@ return {
 		Invisible / Cloak iteratively and save old
 		fix/plr(Arms / legs / camera)
 ]],
+	{Version = "0.76.0", SetupVersion = "2.1.0", Timestamp = 1605210721, Contributors = {"Partixel"}, Additions = {[[Added support for trello admin and ban lists]]}, Changes = {[[Re-enabled permban and permpower with separate datastores for VIP servers]], [[Unban now checks you have permission to run permban to unban permanent bans]], [[Fixed a UnitTest]], [[Removed an unused function in TargetLib]], [[Bug fix when checking commands result]]}},
 	{Version = "0.75.0", SetupVersion = "2.0.0", Timestamp = 1597234471, Contributors = {"Partixel"}, Additions = {[[Added AccountAge player targetting (@Age\[><=\])]], [[Added "others" player targetting as an alias for !me]]}, Changes = {[[Changed ally and enemy group player targeting from @Id and #Id to ^Id@ and ^Id# to save on starting symbols]], [[Can no longer use ^GroupId^RankId, must now be either ^Id=RankId, ^Id>RankId or Id<RankId and ditto for *Near*Distance]]}},
 	{Version = "0.74.0", SetupVersion = "2.0.0", Timestamp = 1596579951, Contributors = {"Partixel"}, Changes = {[[New module and setup format to allow for updater plugin to work with any correctly configured module]]}},
 	{Version = "0.73.5", SetupVersion = "1.3.8", Timestamp = 1593035975, Contributors = {"Partixel"}, Changes = {[[Fixed god command]]}},
