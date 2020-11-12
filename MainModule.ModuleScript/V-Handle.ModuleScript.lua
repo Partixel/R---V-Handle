@@ -655,7 +655,7 @@ function Main.RunCmdStacks(Executor, CmdStacks, Silent)
 		end
 		
 		if Result.Success then
-			if Result.Message then
+			if not CmdStack[1].Silent and Result.Message then
 				local Key = CmdStack[1].Name .. Result.Message[1]
 				if Silent then
 					local Filters
