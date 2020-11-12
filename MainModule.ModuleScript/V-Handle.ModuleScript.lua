@@ -1,8 +1,10 @@
 ----==== Create variables ====----
 
-local Main, Players, InsertService, Chat, ServerStorage, RunService, TextService, StarterPlayerScripts, ChatModules = {}, game:GetService("Players"), game:GetService("InsertService"), game:GetService("Chat"), game:GetService("ServerStorage"), game:GetService("RunService"), game:GetService("TextService"), game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts"), game:GetService("Chat"):WaitForChild("ChatModules")
+local Main, Players, InsertService, Chat, ServerStorage, RunService, TextService, StarterPlayerScripts, HttpService, ChatModules = {}, game:GetService("Players"), game:GetService("InsertService"), game:GetService("Chat"), game:GetService("ServerStorage"), game:GetService("RunService"), game:GetService("TextService"), game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts"), game:GetService("HttpService"), game:GetService("Chat"):WaitForChild("ChatModules")
 
 Main.CoroutineErrorHandling = require(game:GetService("ReplicatedStorage"):FindFirstChild("CoroutineErrorHandling") or game:GetService("ServerStorage"):FindFirstChild("CoroutineErrorHandling") and game:GetService("ServerStorage").CoroutineErrorHandling:FindFirstChild("MainModule") or 4851605998)
+
+Main.ScopedStore = require(script.ScopedStore)
 
 require(game:GetService("ServerStorage"):FindFirstChild("TimeSync") and game:GetService("ServerStorage").TimeSync:FindFirstChild("MainModule") or 4698309617) -- TimeSync
 
@@ -712,7 +714,7 @@ function Main.RunCmdStacks(Executor, CmdStacks, Silent)
 		if Silent then
 			return true, table.concat(Msgs, ",\n"), Legacy
 		end
-						
+		
 		Main.Util.SendMessage(Executor, table.concat(Msgs, ",\n"), "Warning")
 	end
 	
@@ -910,7 +912,7 @@ function Main.Chatted(...)
 	
 end
 
-local HttpEnabled = pcall(function() game.HttpService:GetAsync("https://www.google.com") end)
+local HttpEnabled = pcall(function() HttpService:GetAsync("https://www.google.com") end)
 
 function Main.PlayerAdded(Plr, JustUpdated)
 	
@@ -952,58 +954,25 @@ function Main.PlayerAdded(Plr, JustUpdated)
 		
 	end
 	
-	local Banned, BanInfo = Main.GetBanned(Plr.UserId)
-	
-	if Banned then
-		
-		if Main.Config.AnnounceJoin then
-			
-			Main.AnnounceJoin[Plr] = Main.AnnounceJoin[Plr] or {}
-			
-			Main.AnnounceJoin[Plr][#Main.AnnounceJoin[Plr] + 1] = "they are banned" .. (BanInfo.Reason and (" for " .. TextService:FilterStringAsync(BanInfo.Reason, BanInfo.Banner):GetNonChatStringForBroadcastAsync()) or "")
-			
-			Main.AnnouncedLeft[Plr] = false
-			
-		end
-		
-		Plr:Kick("You have been banned by " .. Main.Util.UsernameFromID(BanInfo.Banner) .. (BanInfo.Reason and (" for " ..  TextService:FilterStringAsync(BanInfo.Reason, BanInfo.Banner):GetChatForUserAsync(Plr.UserId)) or "") .. " - You get unbanned in " .. Main.Util.TimeRemaining(BanInfo.Time))
-		
-		return
-		
-	end
-	
-	for a, b in pairs(Main.Config.Banned or {}) do
-		
-		local Num, Banned = tonumber(a)
-		
-		if not Num then
-			
-			Banned = Main.TargetLib.MatchesPlr(a, Plr)
-		
-		elseif Num == Plr.UserId then
-			
-			Banned = true
-			
-		end
-		
-		if Banned then
-			
+	local BanInfo = Main.GetBanStoreMatch(Plr)
+	if BanInfo then
+		if BanInfo.Banner then
 			if Main.Config.AnnounceJoin then
-				
 				Main.AnnounceJoin[Plr] = Main.AnnounceJoin[Plr] or {}
-				
-				Main.AnnounceJoin[Plr][#Main.AnnounceJoin[Plr] + 1] = " they are banned" .. (b == true and "" or (" for " .. b))
-				
+				Main.AnnounceJoin[Plr][#Main.AnnounceJoin[Plr] + 1] = "they are banned" .. (type(BanInfo.Reason) == "string" and (" for " .. TextService:FilterStringAsync(BanInfo.Reason, BanInfo.Banner):GetNonChatStringForBroadcastAsync()) or "")
 				Main.AnnouncedLeft[Plr] = false
-				
 			end
 			
-			Plr:Kick(b == true and "You are banned" or ("You are banned for " .. b))
+			Plr:Kick("You have been banned by " .. Main.Util.UsernameFromID(BanInfo.Banner) .. (type(BanInfo.Reason) == "string" and (" for " .. TextService:FilterStringAsync(BanInfo.Reason, BanInfo.Banner):GetChatForUserAsync(Plr.UserId)) or "") .. (type(BanInfo.Time) == "number" and (" - You get unbanned in " .. Main.Util.TimeRemaining(BanInfo.Time)) or ""))
+		else
+			if Main.Config.AnnounceJoin then
+				Main.AnnounceJoin[Plr] = Main.AnnounceJoin[Plr] or {}
+				Main.AnnounceJoin[Plr][#Main.AnnounceJoin[Plr] + 1] = "they are banned" .. (type(BanInfo.Reason) == "string" and (" for " .. BanInfo.Reason) or "")
+				Main.AnnouncedLeft[Plr] = false
+			end
 			
-			return
-			
+			Plr:Kick("You have been banned" .. (type(BanInfo.Reason) == "string" and (" for " .. BanInfo.Reason) or "") .. (type(BanInfo.Time) == "number" and (" - You get unbanned in " .. Main.Util.TimeRemaining(BanInfo.Time)) or ""))
 		end
-		
 	end
 	
 	if Main.Config.ReservedFor and  #Players:GetPlayers() > Players.MaxPlayers - (Main.Config.ReservedSlots or 1) and not Main.IsDebugger(Plr.UserId) and not Main.TargetLib.MatchesPlr(Main.Config.ReservedFor, Plr) then
@@ -1024,44 +993,9 @@ function Main.PlayerAdded(Plr, JustUpdated)
 		
 	end
 	
-	if RunService:IsStudio() or Main.IsOwner(Plr.UserId) then
-		
-		Main.SetUserPower(Plr.UserId, Main.UserPower.owner)
-		
-	elseif Main.TempAdminPowers[tostring(Plr.UserId)] == nil then
-		
-		local Override = 0
-		
-		local TargetPower
-		
-		for a, b in pairs(Main.Config.UserPowers or {}) do
-			
-			local _, Count = a:find("^-*")
-			
-			local UserPower = Main.UserPowerFromString(b)
-			
-			if UserPower == Main.UserPower.owner then
-				
-				warn("VH - Warning - Cannot set players to Owner userpower via config - " .. a)
-				
-			end
-			
-			if (Count >= Override or UserPower > TargetPower) and UserPower ~= Main.UserPower.owner and Main.TargetLib.MatchesPlr(a:sub(Count + 1), Plr) then
-				
-				Override = Count
-				
-				TargetPower = UserPower
-				
-			end
-			
-		end
-		
-		if TargetPower then
-			
-			Main.SetUserPower(Plr.UserId, TargetPower)
-			
-		end
-		
+	local Power = Main.GetUserPowersStoreMatch(Plr)
+	if Power then
+		Main.SetUserPower(Plr.UserId, Power)
 	end
 	
 	if JustUpdated then
@@ -1131,16 +1065,15 @@ function Main.Destroy(Update)
 	
 	if Update then
 		
-		_G.VH_Saved = {TempBans = Main.TempBans, TempAdminPowers = Main.TempAdminPowers}
+		_G.VH_Saved = {}
 		
 	end
 	
 	VH_Events.Destroyed:Fire(Update)
 	
 	if Update then
-	
-		Main.TempBans, Main.TempAdminPowers, Main.Config = nil, nil, nil
-		
+		Main.CoroutineErrorHandling, Main.ScopedStore = nil, nil
+		Main.Config = nil
 	end
 	
 	if #VH_Command_Modules:GetChildren() == 0 then
@@ -1214,7 +1147,7 @@ function Main.GetLatestId(AssetId)
 	if Ran then
 		return Id
 	else
-		Ran, Id = xpcall(game.HttpService.GetAsync, Main.CoroutineErrorHandling.ErrorHandler, game.HttpService, "https://rbxapi.v-handle.com/?type=1&id=" .. AssetId)
+		Ran, Id = xpcall(HttpService.GetAsync, Main.CoroutineErrorHandling.ErrorHandler, HttpService, "https://rbxapi.v-handle.com/?type=1&id=" .. AssetId)
 		if Ran then
 			return tonumber(Id)
 		else
@@ -1263,178 +1196,262 @@ if not Ran or type(DataStore) ~= "userdata" or not pcall(function() DataStore:Ge
 	
 end
 
-----==== Ban Setup ====----
+Main.DataStore = DataStore
 
-Main.TempBans = (_G.VH_Saved or {}).TempBans or {}
+----==== Trello Helper Functions ====----
 
-Main.Events[#Main.Events + 1] = DataStore:OnUpdate("Bans", function(Value)
-	
-	for a, b in pairs(Value or {}) do
-		
-		Main.TempBans[a] = b
-		
-		local Plr = game.Players:GetPlayerByUserId(tonumber(a)) 
-		
-		if Plr then
-			
-			if Main.Config.AnnounceLeft then
-						
-				Main.AnnouncedLeft[Plr] = " has been banned" .. (b.Reason and (" for " .. TextService:FilterStringAsync(b.Reason, b.Banner):GetNonChatStringForBroadcastAsync()) or "")
-				
-			end
-			
-			Plr:Kick("You have been banned by " .. Main.Util.UsernameFromID(b.Banner) .. (b.Reason and (" for " .. TextService:FilterStringAsync(b.Reason, b.Banner):GetChatForUserAsync(Plr.UserId)) or "") .. " - You get unbanned in " .. Main.Util.TimeRemaining(b.Time))
-			
+local function GetCards(Key, Token, Id, Type, Before, Bans)
+	local Result = HttpService:RequestAsync{Url = "https://api.trello.com/1/" .. Type .. "/" .. Id .. "/cards?" .. (Before and ("before=" .. Before .. "&") or "") .. "key=" .. Key .. "&token=" .. Token, Method = "GET", Headers = {Accept = "application/json"}}
+	if Result.Success then
+		Result = HttpService:JSONDecode(Result.Body)
+
+		Bans = Bans or {}
+		for _, UserData in ipairs(Result) do
+			Bans[string.split(UserData.name, " ")[1]] = "Exploiting - " .. UserData.desc
 		end
-		
-	end
-	
-end)
 
-function Main.GetBanned(UserId)
-	
-	local BanInfo = Main.TempBans[tostring(UserId)]
-	
-	if not BanInfo then return false end
-	
-	if BanInfo.Time == true then return true, BanInfo end
-	
-	if os.time() < BanInfo.Time then return true, BanInfo end
-	
-	Main.SetBan(tostring(UserId), nil, BanInfo.Perm)
-	
-	return false
-	
+		if #Result >= 1000 then
+			return GetCards(Key, Token, Id, Type, os.date("!%Y-%m-%dT%H:%M:%SZ", tonumber(string.sub(Result[#Result].id, 1, 8), 16)), Bans)
+		else
+			return Bans
+		end
+	elseif Result.StatusCode == 429 then
+		wait(10)
+
+		return GetCards(Key, Token, Id, Type, Before, Bans)
+	end
 end
 
-function Main.SetBan(UserId, BanInfo, Perm)
-	
-	if Perm then
-		
-		if BanInfo then
-			
-			BanInfo.Perm = true
-			
+----==== Ban Setup ====----
+
+Main.BanStore = Main.ScopedStore()
+
+Main.GetBanStoreMatch = function(Plr)
+	local Remove = {}
+	print(Plr.UserId)
+	for PlrString, BanInfo, Scope in Main.BanStore:pairs() do
+		print("CHECK", PlrString, Scope)
+		local Match
+		if Scope ~= "Config" and not Scope:find("Trello") then
+			if PlrString == tostring(Plr.UserId) then
+				Match = type(BanInfo) ~= "table" and {Reason = BanInfo, Scope = Scope} or BanInfo
+			end
+		elseif Main.TargetLib.MatchesPlr(PlrString, Plr) then
+			Match = type(BanInfo) ~= "table" and {Reason = BanInfo, Scope = Scope} or BanInfo
 		end
 		
-		DataStore:UpdateAsync("Bans", function(Value)
-			
-			Value = Value or {}
-			
-			Value[tostring(UserId)] = BanInfo
-			
-			return Value
-			
-		end)
-		
+		if Match then
+			if type(Match.Time) == "number" then
+				if os.time() < Match.Time then
+					return Match
+				else
+					Remove[Scope] = Remove[Scope] or {}
+					Remove[Scope][#Remove[Scope] + 1] = PlrString
+					if Scope == "DataStore" or Scope == "VIPDataStore" then
+						Main.DataStore:UpdateAsync(game.PrivateServerId ~= "" and (game.PrivateServerId .. "VIPBans") or "Bans", function(Value)
+							Value = Value or {}
+							Value[PlrString] = nil
+							return Value
+						end)
+					end
+				end
+			else
+				return Match
+			end
+		end
 	end
 	
-	Main.TempBans[tostring(UserId)] = BanInfo
+	for Scope, List in pairs(Remove) do
+		for _, PlrString in ipairs(List) do
+			Main.BanStore[Scope][PlrString] = nil
+		end
+	end
+end
+
+Main.BanStore.Config = Main.Config.Banned
+Main.BanStore.Local = (_G.VH_Saved or {}).LocalBanStore or {}
+VH_Events.Destroyed.Event:Connect(function(Update)
+	if Update then
+		_G.VH_Saved.LocalBanStore = Main.BanStore.Local
+		Main.BanStore.Local = nil
+	end
+end)
+
+Main.BanStore.DataStore = Main.DataStore:GetAsync("Bans") or {}
+Main.Events[#Main.Events + 1] = Main.DataStore:OnUpdate("Bans", function(Value)
+	Main.BanStore.DataStore = Value or {}
+	
+	for _, Plr in ipairs(Players:GetPlayers()) do
+		local BanInfo = Main.GetBanStoreMatch(Plr)
+		if BanInfo then
+			if BanInfo.Banner then
+				if Main.Config.AnnounceLeft then
+					Main.AnnouncedLeft[Plr] = " has been banned" .. (type(BanInfo.Reason) == "string" and (" for " .. TextService:FilterStringAsync(BanInfo.Reason, BanInfo.Banner):GetNonChatStringForBroadcastAsync()) or "")
+				end
+				
+				Plr:Kick("You have been banned by " .. Main.Util.UsernameFromID(BanInfo.Banner) .. (type(BanInfo.Reason) == "string" and (" for " .. TextService:FilterStringAsync(BanInfo.Reason, BanInfo.Banner):GetChatForUserAsync(Plr.UserId)) or "") .. (type(BanInfo.Time) == "number" and (" - You get unbanned in " .. Main.Util.TimeRemaining(BanInfo.Time)) or ""))
+			else
+				if Main.Config.AnnounceLeft then
+					Main.AnnouncedLeft[Plr] = " has been banned" .. (type(BanInfo.Reason) == "string" and (" for " .. BanInfo.Reason) or "")
+				end
+				
+				Plr:Kick("You have been banned" .. (type(BanInfo.Reason) == "string" and (" for " .. BanInfo.Reason) or "") .. (type(BanInfo.Time) == "number" and (" - You get unbanned in " .. Main.Util.TimeRemaining(BanInfo.Time)) or ""))
+			end
+		end
+	end
+end)
+
+if game.PrivateServerId ~= "" then
+	Main.BanStore.VIPDataStore = Main.DataStore:GetAsync(game.PrivateServerId .. "VIPBans") or {}
+	Main.Events[#Main.Events + 1] = Main.DataStore:OnUpdate(game.PrivateServerId .. "VIPBans", function(Value)
+		Main.BanStore.VIPDataStore = Value or {}
+		
+		for _, Plr in ipairs(Players:GetPlayers()) do
+			local BanInfo = Main.GetBanStoreMatch(Plr)
+			if BanInfo then
+				if BanInfo.Banner then
+					if Main.Config.AnnounceLeft then
+						Main.AnnouncedLeft[Plr] = " has been banned" .. (type(BanInfo.Reason) == "string" and (" for " .. TextService:FilterStringAsync(BanInfo.Reason, BanInfo.Banner):GetNonChatStringForBroadcastAsync()) or "")
+					end
+					
+					Plr:Kick("You have been banned by " .. Main.Util.UsernameFromID(BanInfo.Banner) .. (type(BanInfo.Reason) == "string" and (" for " .. TextService:FilterStringAsync(BanInfo.Reason, BanInfo.Banner):GetChatForUserAsync(Plr.UserId)) or "") .. (type(BanInfo.Time) == "number" and (" - You get unbanned in " .. Main.Util.TimeRemaining(BanInfo.Time)) or ""))
+				else
+					if Main.Config.AnnounceLeft then
+						Main.AnnouncedLeft[Plr] = " has been banned" .. (type(BanInfo.Reason) == "string" and (" for " .. BanInfo.Reason) or "")
+					end
+					
+					Plr:Kick("You have been banned" .. (type(BanInfo.Reason) == "string" and (" for " .. BanInfo.Reason) or "") .. (type(BanInfo.Time) == "number" and (" - You get unbanned in " .. Main.Util.TimeRemaining(BanInfo.Time)) or ""))
+				end
+			end
+		end
+	end)
+end
+
+if Main.Config.Trello and Main.Config.Trello.Banned then
+	for Name, Trello in pairs(Main.Config.Trello.Banned) do
+		Main.BanStore[Name .. " Trello"] = GetCards(Trello.Key, Trello.Token, Trello.Id, Trello.Type)
+	end
 	
 end
 
 ----==== UserPower Setup ====----
 
-Main.TempAdminPowers = (_G.VH_Saved or {}).TempAdminPowers or {}
+Main.AdminCache = {}
+Main.UserPowersStore = Main.ScopedStore()
 
-Main.Events[#Main.Events + 1] = DataStore:OnUpdate("AdminPowers", function(Value)
-	
-	 for a, b in pairs(Value or {}) do
-		
-		if not Main then return end
-		
-		local CurPower = Main.GetUserPower(a)
-		
-		if CurPower < Main.UserPower.owner and CurPower ~= b then
+Main.GetUserPowersStoreMatch = function(Plr)
+	if RunService:IsStudio() or Main.IsOwner(Plr.UserId) then
+		return Main.UserPower.owner
+	else
+		local Override, TargetPower = 0, nil
+		for PlrString, PowerString, Scope in Main.UserPowersStore:pairs() do
+			local _, Count = PlrString:find("^-*")
 			
-			Main.TempAdminPowers[a] = b
+			local UserPower = Main.UserPowerFromString(PowerString)
 			
-			a = tonumber(a)
-			
-			if Players:GetPlayerByUserId(a) then
-				
-				while not Main.Util do Main.ModuleLoaded.Event:Wait() end
-				
-				Main.Util.SendMessage(Players:GetPlayerByUserId(a), "Your new user power is '" .. Main.UserPowerName(b) .. "'!", "Info")
-				
+			if UserPower == Main.UserPower.owner and Scope ~= "Core" then
+				warn("VH - Warning - Cannot set players to Owner userpower via config - " .. PlrString)
 			end
-			
+
+			if (Count >= Override or UserPower > TargetPower) and UserPower ~= Main.UserPower.owner then
+				if Scope ~= "Config" and not Scope:find("Trello") then
+					if PlrString == tostring(Plr.UserId) then
+						Override, TargetPower = Count, UserPower
+					end
+				elseif Main.TargetLib.MatchesPlr(PlrString:sub(Count + 1), Plr) then
+					Override, TargetPower = Count, UserPower
+				end
+			end
 		end
-		
+
+		if TargetPower then
+			return TargetPower
+		end
 	end
-	
+end
+
+Main.UserPowersStore.Core = {}
+Main.UserPowersStore.Config = Main.Config.UserPowers
+Main.UserPowersStore.Local = (_G.VH_Saved or {}).LocalUserPowersStore or {}
+VH_Events.Destroyed.Event:Connect(function(Update)
+	if Update then
+		_G.VH_Saved.LocalUserPowersStore = Main.UserPowersStore.Local
+		Main.UserPowersStore.Local = nil
+	end
 end)
+
+Main.UserPowersStore.DataStore = Main.DataStore:GetAsync("UserPowers") or {}
+Main.Events[#Main.Events + 1] = Main.DataStore:OnUpdate("UserPowers", function(Value)
+	Main.UserPowersStore.DataStore = Value or {}
+	
+	for _, Plr in ipairs(Players:GetPlayers()) do
+		local CurPower = Main.GetUserPower(Plr.UserId)
+		local Power = Main.GetUserPowersStoreMatch(Plr)
+		if CurPower ~= Power then
+			Main.SetUserPower(Plr.UserId, Power)
+			Main.Util.SendMessage(Plr, "Your user power has been updated to '" .. Main.UserPowerName(Power) .. "'!", "Info")
+		end
+	end
+end)
+
+if game.PrivateServerId ~= "" then
+	Main.UserPowersStore.VIPDataStore = Main.DataStore:GetAsync(game.PrivateServerId .. "VIPUserPowers") or {}
+	Main.Events[#Main.Events + 1] = Main.DataStore:OnUpdate(game.PrivateServerId .. "VIPUserPowers", function(Value)
+		Main.UserPowersStore.VIPDataStore = Value or {}
+
+		for _, Plr in ipairs(Players:GetPlayers()) do
+			local CurPower = Main.GetUserPower(Plr.UserId)
+			local Power = Main.GetUserPowersStoreMatch(Plr)
+			if CurPower ~= Power then
+				Main.SetUserPower(Plr.UserId, Power)
+				Main.Util.SendMessage(Plr, "Your user power has been updated to '" .. Main.UserPowerName(Power) .. "'!", "Info")
+			end
+		end
+	end)
+end
+
+if Main.Config.Trello and Main.Config.Trello.UserPowers then
+	for Name, Trello in pairs(Main.Config.Trello.UserPowers) do
+		Main.UserPowersStore[Name .. " Trello"] = GetCards(Trello.Key, Trello.Token, Trello.Id, Trello.Type)
+	end
+end
 
 local UserPowerCache = {}
 
 Main.UserPower = setmetatable({}, {__newindex = function(self, Key, Value)
-	
 	if rawget(self, Key) then
-		
 		UserPowerCache[rawget(self, Key)] = nil
-		
 	end
 	
 	if Value then
-		
 		UserPowerCache[Value] = Key:lower()
-		
 	end
 	
 	rawset(self, Key:lower(), Value)
-	
 end})
 
-Main.UserPower.console, Main.UserPower.owner, Main.UserPower.superadmin, Main.UserPower.admin, Main.UserPower.supermod, Main.UserPower.supermoderator, Main.UserPower.mod, Main.UserPower.moderator, Main.UserPower.user = 100, 80, 60, 60, 40, 40, 20, 20, 0
+Main.UserPower.console, Main.UserPower.owner, Main.UserPower.superadmin, Main.UserPower.admin, Main.UserPower.supermod, Main.UserPower.supermoderator, Main.UserPower.mod, Main.UserPower.moderator, Main.UserPower.user = 100, 80, 70, 60, 40, 40, 20, 20, 0
 
 function Main.UserPowerName(UserPowerNum)
-	
 	return UserPowerCache[UserPowerNum] or "user"
-	
 end
 
 function Main.UserPowerFromString(String)
-	
 	return Main.UserPower[String:lower()] or (UserPowerCache[tonumber(String)] and tonumber(String))
-	
 end
 
 ----==== Player UserPowers ====----
 
 function Main.GetUserPower(UserId)
-	
-	if UserId == "Console" then return Main.UserPower.console end
-	
-	return Main.TempAdminPowers[tostring(UserId)] or Main.UserPower.user
-	
-end
-
-function Main.GetPermUserPower()
-	
-	return DataStore:GetAsync("AdminPowers") or {}
-	
-end
-
-function Main.SetUserPower(UserId, UserPower, Perm)
-	
-	if not Perm and UserPower == Main.UserPower.user then UserPower = nil end
-	
-	Main.TempAdminPowers[tostring(UserId)] = UserPower
-	
-	if Perm then
-		
-		DataStore:UpdateAsync("AdminPowers", function(Value)
-			
-			Value = Value or {}
-			
-			Value[tostring(UserId)] = UserPower
-			
-			return Value
-			
-		end)
-		
+	if UserId == "Console" then
+		return Main.UserPower.console
+	else
+		return Main.AdminCache[tostring(UserId)] or Main.UserPower.user
 	end
-	
+end
+
+function Main.SetUserPower(UserId, UserPower)
+	Main.AdminCache[tostring(UserId)] = UserPower
 end
 
 local Debuggers = {
@@ -1448,39 +1465,32 @@ local Debuggers = {
 }
 
 Main.Events[#Main.Events + 1] = Players.PlayerRemoving:Connect(function(Plr)
-	
-	if not Debuggers[Plr.UserId] then Debuggers[Plr.UserId] = nil end
-	
+	if not Debuggers[Plr.UserId] then
+		Debuggers[Plr.UserId] = nil
+	end
 end)
 
 function Main.IsOwner(UserId)
-	
-	local Ran, Result = pcall(function() return game:GetService("HttpService"):GetAsync("https://rbxapi.v-handle.com/?type=2&userid=" .. UserId .. "&placeid=" .. game.PlaceId, true) end)
-	
+	local Ran, Result = pcall(function()
+		return HttpService:GetAsync("https://rbxapi.v-handle.com/?type=2&userid=" .. UserId .. "&placeid=" .. game.PlaceId, true)
+	end)
 	if Ran and type(Result) == "string" then
-		
-		Ran, Result = pcall(function() return game:GetService("HttpService"):JSONDecode(Result) end)
-		
+		Ran, Result = pcall(function() return HttpService:JSONDecode(Result) end)
 		if Ran then
-			
 			Debuggers[UserId] = Result.CanManage
-			
 			return Result.CanManage
-			
 		end
-		
 	end
-	
 end
 
 function Main.IsDebugger(UserId)
-	
-	if RunService:IsStudio() or UserId == "Console" then return true end
-	
-	if Debuggers[UserId] ~= nil then return Debuggers[UserId] end
-	
-	return Main.IsOwner(UserId)
-	
+	if RunService:IsStudio() or UserId == "Console" then
+		return true
+	elseif Debuggers[UserId] ~= nil then
+		return Debuggers[UserId]
+	else
+		return Main.IsOwner(UserId)
+	end
 end
 
 ----==== UserPower Targetting (Name or Number) ====----
@@ -1582,19 +1592,12 @@ Main.TargetLib.ArgTypeNames.PowerNumber = "power"
 ----==== UserPower Defaults ====----
 
 if game.CreatorType == Enum.CreatorType.User or game.CreatorId == 0 then
-	
-	Main.TempAdminPowers[tostring(game.CreatorId)] = Main.UserPower.owner
-	
+	Main.UserPowersStore.Core[tostring(game.CreatorId)] = "owner"
 else
-	
 	local GroupInfo = game:GetService("GroupService"):GetGroupInfoAsync(game.CreatorId)
-	
 	if GroupInfo.Owner then
-		
-		Main.TempAdminPowers[tostring(GroupInfo.Owner.Id)] = Main.UserPower.owner
-		
+		Main.UserPowersStore.Core[tostring(GroupInfo.Owner.Id)] = "owner"
 	end
-	
 end
 
 ----==== OwnerType Targetting ====----
@@ -2266,37 +2269,27 @@ end]]--
 local VH_ExternalCmds = (_G.VH_Saved or {}).VH_ExternalCmds or {}
 
 VH_Events.Destroyed.Event:Connect(function(Update)
-	
-	if not Update then return end
-	
-	_G.VH_Saved.VH_ExternalCmds = VH_ExternalCmds
-	
+	if Update then
+		_G.VH_Saved.VH_ExternalCmds = VH_ExternalCmds
+	end
 end)
 
 function _G.VH_AddExternalCmds(Func)
-	
 	VH_ExternalCmds[#VH_ExternalCmds + 1] = Func
 	
 	Func(Main)
 	
 	return #VH_ExternalCmds
-	
 end
 
 function _G.VH_RemoveExternalCmds(Key)
-	
 	local Size = #_G.VH_ExternalCmds
-	
 	_G.VH_ExternalCmds[Key] = _G.VH_ExternalCmds[Size]
-	
 	_G.VH_ExternalCmds[Size] = nil
-	
 end
 
 for a = 1, #VH_ExternalCmds do
-	
 	Main.CoroutineErrorHandling.CoroutineWithStack(VH_ExternalCmds[a], Main)
-	
 end
 
 if _G.VH_AddExternalCmdsQueue then
@@ -2306,76 +2299,27 @@ if _G.VH_AddExternalCmdsQueue then
 	_G.VH_AddExternalCmdsQueue = nil
 end
 
-----==== Looped threads & ASync DataStore Loading ====----
+----==== Async looped threads ====----
 
 Main.CoroutineErrorHandling.CoroutineWithStack(function()
-	
-	for a, b in pairs(DataStore:GetAsync("Bans") or {}) do
-		
-		if b.Time ~= true and b.Time - os.time() < 0 then
-			
-			Main.SetBan(a, nil, true)
-			
-		else
-			
-			Main.TempBans[a] = b
-			
-		end
-		
-	end
-	
-	for a, b in pairs(DataStore:GetAsync("AdminPowers") or {}) do
-		
-		if Main.GetUserPower(a) < Main.UserPower.owner then
-			
-			Main.TempAdminPowers[a] = b
-			
-			a = tonumber(a)
-			
-			if Main.GetUserPower(a) ~= b and Players:GetPlayerByUserId(a) then
-				
-				Main.CoroutineErrorHandling.CoroutineWithStack(function()
-					
-					while not Main.Util do Main.ModuleLoaded.Event:Wait() end
-					
-					Main.Util.SendMessage(Players:GetPlayerByUserId(a), "Your new user power is '" .. Main.UserPowerName(b) .. "'!", "Info")
-					
-				end)
-								
-			end
-			
-		end
-		
-	end
-	
 	while script.Parent do
-		
 		script.AncestryChanged:Wait()
-		
 	end
-	
-	if Main then Main.Destroy() end
-	
+
+	if Main then 
+		Main.Destroy()
+	end
 end)
 
 Main.CoroutineErrorHandling.CoroutineWithStack(function()
-	
 	local CurVersion = Main.GetLatestId(571587156) or Main.GetLatestId(543870197)
-	
 	while wait(math.min(math.max(30, Main.Config.UpdatePeriod or 60), 1800)) and Main do
-		
 		local LatestVersion = Main.GetLatestId(571587156) or Main.GetLatestId(543870197)
-		
 		if tonumber(Latest) and CurVersion ~= LatestVersion then
-			
 			Main.Commands.Update:Callback()
-			
 			break
-			
 		end
-		
 	end
-	
 end)
 
 ----==== Events & Client ====----

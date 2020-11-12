@@ -344,6 +344,8 @@ return function ( Main, Client, VH_Events )
 				
 				if PlrsPower < UserPower and PlrsPower ~= TargetPower and Plr ~= Plrs[ a ] then
 					
+					Main.UserPowersStore.Local[tostring(Plrs[ a ].UserId)] = TargetPowerName
+					
 					Main.SetUserPower( Plrs[ a ].UserId, TargetPower )
 					
 					if not Silent then
@@ -384,7 +386,7 @@ return function ( Main, Client, VH_Events )
 		
 	}
 	
-	--[[Main.Commands.PermUserPower = {
+	Main.Commands.PermUserPower = {
 		
 		Alias = { "permpower", "pp", "permuserpower", "pup", { function ( self, Alias, Plr )
 			
@@ -410,7 +412,7 @@ return function ( Main, Client, VH_Events )
 		
 		ArgTypes = { { Func = Main.TargetLib.ArgTypes.UserId, Required = true }, { Func = Main.TargetLib.ArgTypes.PowerNumber, Default = function ( self, Strings, Plr, Last, Alias )
 			
-			if Strings[ 1 ] == nil then print"ran" return end
+			if Strings[ 1 ] == nil then return end
 			
 			if Strings[ 1 ] == Main.TargetLib.ValidChar then return Main.UserPower.admin end
 			
@@ -423,24 +425,37 @@ return function ( Main, Client, VH_Events )
 			local UserPower = Main.GetUserPower( Plr.UserId )
 			
 			local Ids, TargetPower = { Args[ 1 ] }, Args[ 2 ]
-			
-			if TargetPower and TargetPower >= UserPower then return false, "Cannot target specified user power" end
-			
-			if TargetPower == Main.UserPower.owner or TargetPower == Main.UserPower.console then return false, "Cannot target specified user power" end
-			
+
 			local TargetPowerName = Main.UserPowerName( TargetPower )
+			
+			if TargetPower and TargetPower >= UserPower then return false, "Cannot set to " .. TargetPowerName .. " because it is above your user power" end
+			
+			if TargetPower == Main.UserPower.owner or TargetPower == Main.UserPower.console then return false, "Cannot set to " .. TargetPowerName .. " because it is restricted" end
 			
 			local Invalid = { }
 			
 			for a = 1, #Ids do
 				
-				local PlrsPower = Main.GetUserPower( Ids[ a ] )
+				local PlrsPower = Main.GetUserPower(Ids[a])
 				
-				if PlrsPower < UserPower and PlrsPower ~= TargetPower and tostring( Plr.UserId ) ~= Ids[ a ] then
+				if PlrsPower < UserPower and PlrsPower ~= TargetPower and Plr.UserId ~= Ids[ a ] then
 					
-					Main.SetUserPower( Ids[ a ], TargetPower, true )
+					Main.UserPowersStore.Local[tostring(Ids[a])] = nil
+					if game.PrivateServerId ~= "" then
+						Main.UserPowersStore.VIPDataStore[tostring(Ids[a])] = TargetPower and TargetPowerName or nil
+					else
+						Main.UserPowersStore.DataStore[tostring(Ids[a])] = TargetPower and TargetPowerName or nil
+					end
 					
-					local TPlr = Players:GetPlayerByUserId( Ids[ a ] )
+					Main.SetUserPower( Ids[ a ], TargetPower )
+					
+					Main.DataStore:UpdateAsync(game.PrivateServerId ~= "" and (game.PrivateServerId .. "VIPUserPowers") or "UserPowers", function(Value)
+						Value = Value or {}
+						Value[tostring(Ids[a])] = TargetPower and TargetPowerName or nil
+						return Value
+					end)
+					
+					local TPlr = Players:GetPlayerByUserId(Ids[a])
 					
 					if TPlr and not Silent then
 						
@@ -478,7 +493,7 @@ return function ( Main, Client, VH_Events )
 			
 		end
 		
-	}]]
+	}
 	
 	Main.Commands.Kick = {
 		
@@ -546,7 +561,7 @@ return function ( Main, Client, VH_Events )
 			
 			if Main.GetUserPower( Args[ 1 ] ) <= UserPower and Plr.UserId ~= Args[ 1 ] then
 				
-				Main.SetBan( Args[ 1 ], { Time = Time, Reason = Args[ 2 ], Banner = Plr.UserId } )
+				Main.BanStore.Local[tostring(Args[1])] = {Time = Time, Reason = Args[ 2 ], Banner = Plr.UserId, Username = Main.Util.UsernameFromID( Args[ 1 ] )}
 				
 				local Banned = Players:GetPlayerByUserId( Args[ 1 ] )
 				
@@ -554,11 +569,11 @@ return function ( Main, Client, VH_Events )
 					
 					if Main.Config.AnnounceLeft then
 						
-						Main.AnnouncedLeft[ Banned ] = " has been banned" .. ( Args[ 2 ] and ( " for " .. FilterResult:GetChatForUserAsync( Args[ 1 ] ) ) or "" )
+						Main.AnnouncedLeft[ Banned ] = " has been banned" .. ( Args[ 2 ] and ( " for " .. FilterResult:GetNonChatStringForBroadcastAsync() ) or "" )
 						
 					end
 					
-					Banned:Kick( "You have been banned by " .. Plr.Name .. ( Args[ 2 ] and ( " for " .. FilterResult:GetChatForUserAsync( Args[ 1 ] ) ) or "" ) .. " - You get unbanned in " .. Main.Util.TimeRemaining( Time ) )
+					Banned:Kick( "You have been banned by " .. Plr.Name .. ( Args[ 2 ] and ( " for " .. FilterResult:GetChatForUserAsync( Args[ 1 ] ) ) or "" ) .. (type(Time) == "number" and (" - You get unbanned in " .. Main.Util.TimeRemaining(Time)) or "") )
 					
 				end
 				
@@ -574,7 +589,7 @@ return function ( Main, Client, VH_Events )
 		
 	}
 	
-	--[[Main.Commands.PermBan = {
+	Main.Commands.PermBan = {
 		
 		Alias = { "permban" },
 		
@@ -600,7 +615,18 @@ return function ( Main, Client, VH_Events )
 			
 			if Main.GetUserPower( Args[ 1 ] ) <= UserPower and Plr.UserId ~= Args[ 1 ] then
 				
-				Main.SetBan( Args[ 1 ], { Time = Time, Banner = Plr.UserId, Reason = Args[ 2 ] }, true )
+				Main.BanStore.Local[tostring(Args[1])] = nil
+				if game.PrivateServerId ~= "" then
+					Main.BanStore.VIPDataStore[tostring(Args[1])] = { Time = Time, Banner = Plr.UserId, Reason = Args[ 2 ], Perm = true, Username = Main.Util.UsernameFromID( Args[ 1 ] ) }
+				else
+					Main.BanStore.DataStore[tostring(Args[1])] = { Time = Time, Banner = Plr.UserId, Reason = Args[ 2 ], Perm = true, Username = Main.Util.UsernameFromID( Args[ 1 ] ) }
+				end
+				
+				Main.DataStore:UpdateAsync(game.PrivateServerId ~= "" and (game.PrivateServerId .. "VIPBans") or "Bans", function(Value)
+					Value = Value or {}
+					Value[tostring(Args[1])] = { Time = Time, Banner = Plr.UserId, Reason = Args[ 2 ], Perm = true, Username = Main.Util.UsernameFromID( Args[ 1 ] ) }
+					return Value
+				end)
 				
 				local Banned = Players:GetPlayerByUserId( Args[ 1 ] )
 				
@@ -608,11 +634,11 @@ return function ( Main, Client, VH_Events )
 					
 					if Main.Config.AnnounceLeft then
 						
-						Main.AnnouncedLeft[ Banned ] = " has been banned" .. ( Args[ 2 ] and ( " for " .. FilterResult:GetChatForUserAsync( Args[ 1 ].UserId ) ) or "" )
+						Main.AnnouncedLeft[ Banned ] = " has been banned" .. ( Args[ 2 ] and ( " for " .. FilterResult:GetNonChatStringForBroadcastAsync() ) or "" )
 						
 					end
 					
-					Banned:Kick( "You have been banned by " .. Plr.Name .. ( Args[ 2 ] and ( " for " .. FilterResult:GetChatForUserAsync( Args[ 1 ].UserId ) ) or "" ) .. " - You get unbanned in " .. Main.Util.TimeRemaining( Time ) )
+					Banned:Kick( "You have been banned by " .. Plr.Name .. ( Args[ 2 ] and ( " for " .. FilterResult:GetChatForUserAsync( Args[ 1 ] ) ) or "" ) .. (type(Time) == "number" and (" - You get unbanned in " .. Main.Util.TimeRemaining(Time)) or ""))
 					
 				end
 				
@@ -626,7 +652,7 @@ return function ( Main, Client, VH_Events )
 			
 		end
 		
-	}]]
+	}
 	
 	Main.Commands.UnBan = {
 		
@@ -648,9 +674,47 @@ return function ( Main, Client, VH_Events )
 			
 			String = String:lower( )
 			
-			for a, b in pairs( Main.TempBans ) do
+			for a, b in pairs(Main.BanStore.Local) do
 				
-				if String == a or Main.Util.UsernameFromID( a ):lower( ) == String then return a end
+				if String == a then
+					
+					return {a, "Local"}
+					
+				elseif type(b) == "table" and b.Username then
+					
+					if b.Username:lower() == String then
+						
+						return {a, "Local"}
+						
+					end
+					
+				elseif Main.Util.UsernameFromID( a ):lower( ) == String then
+					
+					return {a, "Local"}
+					
+				end
+				
+			end
+			
+			for a, b in pairs(game.PrivateServerId ~= "" and Main.BanStore.VIPDataStore or Main.BanStore.DataStore) do
+				
+				if String == a then
+					
+					return {a, game.PrivateServerId ~= "" and "VIPDataStore" or "DataStore"}
+					
+				elseif type(b) == "table" and b.Username then
+					
+					if b.Username:lower() == String then
+						
+						return {a, game.PrivateServerId ~= "" and "VIPDataStore" or "DataStore"}
+						
+					end
+					
+				elseif Main.Util.UsernameFromID( a ):lower( ) == String then
+					
+					return {a, game.PrivateServerId ~= "" and "VIPDataStore" or "DataStore"}
+					
+				end
 				
 			end
 			
@@ -660,18 +724,19 @@ return function ( Main, Client, VH_Events )
 		
 		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
 			
-			local Banned, BanType = Main.GetBanned( Args[ 1 ] )
-			
-			if BanType.Perm then
-				
-				if Main.GetUserPower( Plr.UserId ) < Main.UserPower.superadmin then return false, "Not enough user power to remove a permanent ban!" end
-				
-				Main.SetBan( Args[ 1 ], nil, true )
-				
+			if Args[1][2] == "Local" then
+				Main.BanStore.Local[Args[1][1]] = nil
 			else
-				
-				Main.SetBan( Args[ 1 ], nil )
-				
+				if Main.TargetLib.MatchesPlr(Main.Commands.PermBan.CanRun, Plr) then
+					return false, "Not enough user power to remove a permanent ban!"
+				else
+					Main.BanStore[Args[1][2]][Args[1][1]] = nil
+					Main.DataStore:UpdateAsync(game.PrivateServerId ~= "" and (game.PrivateServerId .. "VIPBans") or "Bans", function(Value)
+						Value = Value or {}
+						Value[Args[1][1]] = nil
+						return Value
+					end)
+				end
 			end
 			
 			return true
@@ -1738,163 +1803,87 @@ return function ( Main, Client, VH_Events )
 	}
 	
 	Main.Commands.Bans = {
-		
-		Alias = { "bans", "banlist" },
-		
+		Alias = {"bans", "banlist"},
 		Description = "Lists all of the bans",
-		
 		Category = "Core",
-		
 		CanRun = "$moderator, $debugger",
-		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
-			
-			local Str = ""
-			
-			local PermBans = { }
-			
+		Callback = function (self, Plr, Cmd, Args, NextCmds, Silent)
 			local Thread = coroutine.running()
-			
 			local WaitingFor = 0
-			
-			for a, b in pairs( Main.TempBans ) do
-				
-				if b.Time == true or b.Time - os.time( ) > 0 then
-					
-					if b.Perm then
-						
-						PermBans[ a ] = b
-						
+			for PlrString, BanInfo, Scope in Main.BanStore:pairs() do
+				WaitingFor = WaitingFor + 1
+				spawn(function()
+					local Ran, Username
+					if type(BanInfo) == "table" and BanInfo.Username then
+						Ran, Username = true, BanInfo.Username
 					else
-						
-						WaitingFor = WaitingFor + 1
-						
-						spawn( function ( )
-							
-							coroutine.resume( Thread, Main.Util.UsernameFromID( a ) .. " - " .. ( b.Reason and TextService:FilterStringAsync( b.Reason, b.Banner ):GetChatForUserAsync( Plr.UserId ) .. " - " or "" )  .. Main.Util.TimeRemaining( b.Time ) .. "\n" )
-							
-						end )
-						
+						Ran, Username = pcall(Main.Util.UsernameFromID, PlrString)
 					end
 					
-				end
-				
+					coroutine.resume(Thread, Scope .. " - " .. (Ran and Username or PlrString) .. (type(BanInfo) == "string" and (" - " .. BanInfo) or type(BanInfo) == "table" and type(BanInfo.Reason) == "string" and ( " - " .. BanInfo.Reason) or "") .. (type(BanInfo.Time) == "number" and (" - Unbanned in " .. Main.Util.TimeRemaining(BanInfo.Time)) or "") .. "\n")
+				end)
 			end
 			
-			while WaitingFor ~= 0 do WaitingFor = WaitingFor - 1 Str = Str .. coroutine.yield( ) end
-			
-			for a, b in pairs( PermBans ) do
-				
-				WaitingFor = WaitingFor + 1
-				
-				spawn( function ( )
-					
-					coroutine.resume( Thread, "Perm - " .. Main.Util.UsernameFromID( a ) .. " - " .. ( b.Reason and TextService:FilterStringAsync( b.Reason, b.Banner ):GetChatForUserAsync( Plr.UserId ) .. " - " or "" )  .. Main.Util.TimeRemaining( b.Time ) .. "\n" )
-					
-				end )
-				
+			local Str = ""
+			while WaitingFor ~= 0 do
+				WaitingFor = WaitingFor - 1 Str = Str .. coroutine.yield()
 			end
-			
-			while WaitingFor ~= 0 do WaitingFor = WaitingFor - 1 Str = Str .. coroutine.yield( ) end
-			
-			for a, b in pairs( Main.Config.Banned or { } ) do
-				
-				WaitingFor = WaitingFor + 1
-				
-				spawn( function ( )
-					
-					coroutine.resume( Thread, "Config - " .. Main.Util.UsernameFromID( a ) .. ( type( b ) == "string" and ( " - " .. b ) or "" ) ..  "\n" )
-					
-				end )
-				
-			end
-			
-			while WaitingFor ~= 0 do WaitingFor = WaitingFor - 1 Str = Str .. coroutine.yield( ) end
 			
 			if Str == "" then
-				
 				Str = "No bans exist"
-				
 			else
-				
 				Str = "Bans:\n" .. Str:sub( 1, -2 )
-				
 			end
 			
 			Main.Util.PrintClient( Plr, Str )
 			
-			if Silent then return true, "Check your client log ( F9 )" end
-			
-			Main.Util.SendMessage( Plr, "Check your client log ( F9 )", "Info" )
-			
-			return true
-			
+			if Silent then
+				return true, "Check your client log ( F9 )"
+			else
+				Main.Util.SendMessage( Plr, "Check your client log ( F9 )", "Info" )
+				return true
+			end
 		end
-		
 	}
 	
 	Main.Commands.UserPowers = {
-		
-		Alias = { "powers", "powerlist", "userpowers", "userpowerlist", { function ( self, Alias )
-			
+		Alias = {"powers", "powerlist", "userpowers", "userpowerlist", {function(self, Alias)
 			return Alias:sub( -1 ) == "s" and Main.UserPower[ Alias:sub( 1, -2 ) ] ~= nil
-			
-		end, "users" } },
-		
+		end, "users"}},
 		Description = "Lists all of the user powers",
-		
 		Category = "Core",
-		
 		CanRun = "$moderator, $debugger",
-		
-		Callback = function ( self, Plr, Cmd, Args, NextCmds, Silent )
+		Callback = function (self, Plr, Cmd, Args, NextCmds, Silent)
+			local Thread = coroutine.running()
+			local WaitingFor = 0
+			for PlrString, Power, Scope in Main.UserPowersStore:pairs() do
+				WaitingFor = WaitingFor + 1
+				spawn(function()
+					local Ran, Username = pcall(Main.Util.UsernameFromID, PlrString)
+					coroutine.resume(Thread, Scope .. " - " .. (Ran and Username or PlrString) .. " - " .. Main.UserPowerName(Main.UserPowerFromString(Power)) .. "\n")
+				end)
+			end
 			
 			local Str = ""
-			
-			local PermPowers = Main.GetPermUserPower( )
-			
-			for a, b in pairs( Main.TempAdminPowers ) do
-				
-				if PermPowers[ a ] ~= b then
-					
-					Str = Str .. Main.Util.UsernameFromID( a ) .. " - " .. ( Main.UserPowerName( b ) or "nil" ) .. "\n"
-					
-				end
-				
-			end
-			
-			for a, b in pairs( PermPowers ) do
-				
-				Str = Str .. "Perm - " .. Main.Util.UsernameFromID( a ) .. " - " .. ( Main.UserPowerName( b ) or "nil" ) .. "\n"
-				
-			end
-			
-			for a, b in pairs( Main.Config.UserPowers or { } ) do
-				
-				Str = Str .. "Config - " .. Main.Util.UsernameFromID( a ) .. " - " .. ( Main.UserPowerName( Main.UserPowerFromString( b ) ) or "nil" ) .. "\n"
-				
+			while WaitingFor ~= 0 do
+				WaitingFor = WaitingFor - 1 Str = Str .. coroutine.yield()
 			end
 			
 			if Str == "" then
-				
 				Str = "No user powers exist"
-				
 			else
-				
 				Str = "Powers:\n" .. Str:sub( 1, -2 )
-				
 			end
 			
 			Main.Util.PrintClient( Plr, Str )
 			
-			if Silent then return true, "Check your client log ( F9 )" end
-			
-			Main.Util.SendMessage( Plr, "Check your client log ( F9 )", "Info" )
-			
-			return true
-			
+			if Silent then
+				return true, "Check your client log ( F9 )"
+			else
+				Main.Util.SendMessage( Plr, "Check your client log ( F9 )", "Info" )
+				return true
+			end
 		end
-		
 	}
 	
 	local CmdLogs = ( _G.VH_Saved or { } ).CmdLogs or { }
