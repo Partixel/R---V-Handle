@@ -232,9 +232,6 @@ local function GetValidTools()
 	
 end
 
-local function TableHasActualMatch(Table, String, ExactOnly)
-end
-
 local function TableHasMatchingObj(Table, String, ExactOnly)
 	local Regex = String:match("r(%b())")
 	if not ExactOnly and Regex then
