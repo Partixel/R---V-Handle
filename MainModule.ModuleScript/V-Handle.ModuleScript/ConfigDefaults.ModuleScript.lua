@@ -46,6 +46,23 @@ Config.Banned = {["1234"] = "Hacking", ["^1059575"] = "Bad group"}]],
 		[[If true the specified command module will not load
 Use this if you don't want commands from said command module (e.g. if you don't want 'Fun' commands do ["VH_Fun"] = true]]
 	},
+	{
+		"Trello",
+		{},
+		[[Add tables into either a "Banned" or "UserPowers" sub table to allow fetching bans/userpowers from trello
+Example:
+Trello = {
+	Banned = {
+		Exploiters = {
+			Key = "Your Trello Key",
+			Token = "Your Trello Token",
+			Id = "Your Trello List or Board Id",
+			Type = 'lists' or 'boards' depending on the above,
+	},
+},]]
+	},
+
+	
 	
 	SetupVersion = "2.0.0",
 }
