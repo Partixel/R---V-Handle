@@ -64,5 +64,5 @@ Trello = {
 
 	
 	
-	SetupVersion = "2.0.0",
+	SetupVersion = "2.1.0",
 }

@@ -1228,9 +1228,7 @@ Main.BanStore = Main.ScopedStore()
 
 Main.GetBanStoreMatch = function(Plr)
 	local Remove = {}
-	print(Plr.UserId)
 	for PlrString, BanInfo, Scope in Main.BanStore:pairs() do
-		print("CHECK", PlrString, Scope)
 		local Match
 		if Scope ~= "Config" and not Scope:find("Trello") then
 			if PlrString == tostring(Plr.UserId) then
