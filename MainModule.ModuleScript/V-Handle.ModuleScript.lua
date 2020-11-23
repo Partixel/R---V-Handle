@@ -1175,11 +1175,11 @@ function Main.GetLatest()
 					
 					return Latest
 				else
-					Error = "Couldn't insert latest version of " .. ID .. "\n" .. Mod
+					Error = "Couldn't insert latest version of " .. tostring(ID) .. "\n" .. tostring(Mod)
 				end
 			end
 		else
-			Error = "Couldn't get latest version of " .. ID .. "\n" .. LatestID
+			Error = "Couldn't get latest version of " .. tostring(ID) .. "\n" .. tostring(LatestID)
 		end
 	end
 	
