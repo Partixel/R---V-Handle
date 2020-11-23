@@ -1199,31 +1199,25 @@ end
 Main.DataStore = DataStore
 
 ----==== Trello Helper Functions ====----
-
-local function GetCards(Key, Token, Id, Type, Before, Bans)
-	local Result = HttpService:RequestAsync{Url = "https://api.trello.com/1/" .. Type .. "/" .. Id .. "/cards?" .. (Before and ("before=" .. Before .. "&") or "") .. "key=" .. Key .. "&token=" .. Token, Method = "GET", Headers = {Accept = "application/json"}}
+local function GetCards(Key, Token, Id, Type, Bans)
+	local Result = HttpService:RequestAsync{Url = "https://api.trello.com/1/" .. Type .. "/" .. Id .. "/cards?key=" .. Key .. "&token=" .. Token, Method = "GET", Headers = {Accept = "application/json"}}
 	if Result.Success then
 		Result = HttpService:JSONDecode(Result.Body)
-
+		
 		Bans = Bans or {}
 		for _, UserData in ipairs(Result) do
 			Bans[string.split(UserData.name, " ")[1]] = "Exploiting - " .. UserData.desc
 		end
-
-		if #Result >= 1000 then
-			return GetCards(Key, Token, Id, Type, os.date("!%Y-%m-%dT%H:%M:%SZ", tonumber(string.sub(Result[#Result].id, 1, 8), 16)), Bans)
-		else
-			return Bans
-		end
+		
+		return Bans
 	elseif Result.StatusCode == 429 then
-		wait(10)
-
-		return GetCards(Key, Token, Id, Type, Before, Bans)
+		wait(1)
+		
+		return GetCards(Key, Token, Id, Type, Bans)
 	end
 end
 
 ----==== Ban Setup ====----
-
 Main.BanStore = Main.ScopedStore()
 
 Main.GetBanStoreMatch = function(Plr)
