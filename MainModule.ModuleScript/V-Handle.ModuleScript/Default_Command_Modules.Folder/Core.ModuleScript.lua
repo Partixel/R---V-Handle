@@ -1820,7 +1820,7 @@ return function ( Main, Client, VH_Events )
 						Ran, Username = pcall(Main.Util.UsernameFromID, PlrString)
 					end
 					
-					coroutine.resume(Thread, Scope .. " - " .. (Ran and Username or PlrString) .. (type(BanInfo) == "string" and (" - " .. BanInfo) or type(BanInfo) == "table" and type(BanInfo.Reason) == "string" and ( " - " .. BanInfo.Reason) or "") .. (type(BanInfo.Time) == "number" and (" - Unbanned in " .. Main.Util.TimeRemaining(BanInfo.Time)) or "") .. "\n")
+					coroutine.resume(Thread, Scope .. " - " .. (Ran and Username or PlrString) .. (type(BanInfo) == "string" and (" - " .. BanInfo) or type(BanInfo) == "table" and type(BanInfo.Reason) == "string" and ( " - " .. BanInfo.Reason) or "") .. (type(BanInfo) == "table" and type(BanInfo.Time) == "number" and (" - Unbanned in " .. Main.Util.TimeRemaining(BanInfo.Time)) or "") .. "\n")
 				end)
 			end
 			
